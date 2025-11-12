@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+		   xmlns="http://www.averna.com/products/proligent/analytics/DIT/6.85"
+		   elementFormDefault="qualified"
+		   targetNamespace="http://www.averna.com/products/proligent/analytics/DIT/6.85">
+
+  <xs:include schemaLocation="Datawarehouse.Model.xsd"/>
+  <xs:include schemaLocation="Datawarehouse.ComponentUnit.xsd"/>
+
+  <xs:complexType name="TrackedComponentUnitType">
+    <xs:annotation>
+      <xs:documentation>
+        A tracked component unit is a component manufactured by a supplier to which we assign a product unit to be able to track it, run tests on it, etc.
+
+        Adding a tracked component unit links the product unit to the provided component unit. Many product unit may link to the same component unit
+        (this can be the case when a component unit represent a lot of component units to which the manufacturer gave no unique identity). However,
+        a product unit can only be associated to one component unit.
+
+        Tracked component units can't be updated (we can't modify the component unit associated to a product unit).
+
+        Tracked component units are unique by their ProductUnitUniqueIdentifier.
+      </xs:documentation>
+    </xs:annotation>
+
+    <xs:sequence>
+
+      <xs:element name="ProductUnitUniqueIdentifier" type="ProductUnitUniqueIdentifierType">
+        <xs:annotation>
+          <xs:documentation>
+            The identify of the product unit to which we want to associate the component unit.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+
+      <xs:element name="ComponentUnitIdentifier" type="ComponentUnitIdentifierType">
+        <xs:annotation>
+          <xs:documentation>
+            The identify of the component unit we want to associate to the mentioned product unit.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+
+      <xs:element name="CustomData" type="CustomDataType" minOccurs="0" maxOccurs="1" />
+      
+    </xs:sequence>
+
+  </xs:complexType>
+
+</xs:schema>

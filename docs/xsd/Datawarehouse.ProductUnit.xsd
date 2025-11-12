@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+		   xmlns="http://www.averna.com/products/proligent/analytics/DIT/6.85"
+		   elementFormDefault="qualified"
+		   targetNamespace="http://www.averna.com/products/proligent/analytics/DIT/6.85">
+	
+  <xs:include schemaLocation="Datawarehouse.Model.xsd"/>
+  <xs:include schemaLocation="Datawarehouse.Shipment.xsd"/>
+  <xs:include schemaLocation="Datawarehouse.ComponentUnit.xsd"/>
+
+  <xs:complexType name="ProductUnitType">
+    <xs:annotation>
+      <xs:documentation>
+        Defines a product unit.
+        Product units are globaly unique by the combinaison of their ProductFullName and ProductUnitIdentifier properties.
+      </xs:documentation>
+    </xs:annotation>
+	
+    <xs:sequence minOccurs="0" maxOccurs="1" >
+
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element name="Characteristic" type="CharacteristicType" />
+        <xs:element name="Document" type="DocumentType" />
+      </xs:choice>
+
+      <xs:element name="CustomData" type="CustomDataType" minOccurs="0" maxOccurs="1" />
+      
+    </xs:sequence>
+		
+    
+    <xs:attribute name="ProductUnitIdentifier" type="NonEmptyString_50" use="required">
+      <xs:annotation>
+        <xs:documentation>
+          Defines the unique identifier for the product unit.  The Serial Number is often used for this purpose.
+          Note that ProductUnitIdentifiers must be unique for each ProductFullName.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="ProductFullName" type="FullName" use="required">
+      <xs:annotation>
+        <xs:documentation>
+          Full name of the product. If a hierarchy exists, the full name must contain the fully qualified name, each level being separated by a forward slash ("/").
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="Scrapped" type="xs:boolean" use="optional">
+      <xs:annotation>
+        <xs:documentation>
+          Flag representing whether the product unit has been scrapped or not.  When not specified, it is assumed that the product unit is not scrapped.          
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="ScrappedTime" type="DateTime" use="optional">
+      <xs:annotation>
+        <xs:documentation>
+          Scrap date and time of the product unit.  If the 'Scrapped' attribute is set to 'True', the 'ScrappedTime' attribute has to be specified.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="CreationTime" type="DateTime" use="optional">
+      <xs:annotation>
+        <xs:documentation>
+          Creation date and time of the product unit.
+
+          This attribute can't be updated after having been provided once.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    
+    <xs:attribute name="ManufacturingTime" type="DateTime" use="optional">
+      <xs:annotation>
+        <xs:documentation>
+          Date and time at which the product unit was manufactured.
+
+          This attribute can't be updated after having been provided once.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="ByManufacturer" type="NonEmptyString_255" use="optional">
+      <xs:annotation>
+        <xs:documentation>
+          Name of the original EMS provider or manufacturing site.
+
+          This attribute can't be updated after having been provided once.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+  </xs:complexType>
+  
+</xs:schema>

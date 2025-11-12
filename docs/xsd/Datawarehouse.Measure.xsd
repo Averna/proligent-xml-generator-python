@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+		   xmlns="http://www.averna.com/products/proligent/analytics/DIT/6.85"
+		   elementFormDefault="qualified"
+		   targetNamespace="http://www.averna.com/products/proligent/analytics/DIT/6.85">
+
+  <xs:include schemaLocation="Datawarehouse.Model.xsd"/>
+  <xs:include schemaLocation="Datawarehouse.Failure.xsd"/>
+
+  <xs:complexType name="MeasureType">
+    <xs:sequence>
+      <xs:element name="Value">
+        <xs:annotation>
+          <xs:documentation>
+            ​Defines the value acquired by the measure.
+            An empty value of type STRING will always get stored as NULL, even if the empty value is provided.
+            An empty value of any other type is invalid.
+            Measures are globaly unique by their MeasureId property.
+            Measures are not updatable.
+          </xs:documentation>
+        </xs:annotation>
+
+        <xs:complexType>
+          <xs:simpleContent>
+            <xs:extension base="String_4000">
+
+              <xs:attribute name="Type" type="MeasureKind" use="required">
+                <xs:annotation>
+                  <xs:documentation>​Defines the data type of the value acquired by the measure.</xs:documentation>
+                </xs:annotation>
+              </xs:attribute>
+
+              <xs:attribute name="Precision" type="xs:unsignedByte" use="optional">
+                <xs:annotation>
+                  <xs:documentation>​​Defines the numeric precision of the measure value. Only valid for values of type REAL.</xs:documentation>
+                </xs:annotation>
+              </xs:attribute>
+
+            </xs:extension>
+          </xs:simpleContent>
+        </xs:complexType>
+      </xs:element>
+
+      <xs:element name="Limit" minOccurs="0" maxOccurs="1">
+        <xs:complexType id="MeasureLimitType">
+          <xs:sequence>
+            <xs:element name="CustomData" type="CustomDataType" minOccurs="0" maxOccurs="1" />
+          </xs:sequence>
+          <xs:attribute name="LimitExpression" type="NonEmptyString_2000" use="required">
+            <xs:annotation>
+              <xs:documentation>
+                The limit expression associated with the measure.  If the expression matches one of the following
+                patterns, the lower and higher limits will be extracted and stored in the datawarehouse for the
+                reports that use limits. Limits not matching the types and patterns below will cause a rejection to occur.
+
+                1)  lower_bound &lt;= X &lt;= higher_bound
+                2)  lower_bound &lt; X &lt;= higher_bound
+                3)  lower_bound &lt;= X &lt; higher_bound
+                4)  lower_bound &lt; X &lt; higher_bound
+                5)  lower_bound &lt;= X
+                6)  lower_bound &lt; X
+                7)  X &lt;= higher_bound
+                8)  X &lt; higher_bound
+                9)  X == higher_bound
+                10) X != higher_bound
+                12) X &lt;= lower_bound OR higher_bound &lt;= X
+                13) X &lt; lower_bound OR higher_bound &lt;= X
+                14) X &lt;= lower_bound OR higher_bound &lt; X
+                15) X &lt; lower_bound OR higher_bound &lt; X
+
+                X can be an integer e.g. 3
+                X can be a real e.g. 3.5
+                X can be a real not a number e.g. NaN
+                X can be a scientific int e.g. 2e3
+                X can be a scientific real e.g. 3.5e-3
+                X can be a DateTime
+                X can be a boolean e.g. 1, true
+                
+                A limit expression can also be a string.
+
+              </xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+        </xs:complexType>
+      </xs:element>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+            <xs:element name="Characteristic" type="CharacteristicType">
+                <xs:annotation>
+                  <xs:documentation>
+                    Defines a characteristic, a key/value pair used to store arbitrary information associated to this measure.
+                    Characteristics are updatable even though the measure itself can't be updated.
+                  </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="FailureReference" type="FailureReferenceType"/>
+        </xs:choice>
+      <xs:element name="CustomData" type="CustomDataType" minOccurs="0" maxOccurs="1" />
+    </xs:sequence>
+
+    <xs:attribute name="MeasureId" type="Guid" use="optional">
+      <xs:annotation>
+        <xs:documentation>
+          Defines the measure unique identifier.
+          This ID must be unique across step runs.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="MeasureTime" type="DateTime" use="required">
+      <xs:annotation>
+        <xs:documentation>Defines the date when the measure was acquired.</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="Comments" type="NonNullableString_TruncateAt_255" use="optional">
+      <xs:annotation>
+        <xs:documentation>​​Defines a comment associated to the measure.</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="Unit" type="NonEmptyString_30" use="optional">
+      <xs:annotation>
+        <xs:documentation>​Defines the name of the unit of the measure value (Ex: Kilometer).  When a symbol is provided, the unit becomes required.</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="Symbol" type="NonEmptyString_20" use="optional">
+      <xs:annotation>
+        <xs:documentation>​Defines the symbol of the unit for the measure value (ex: KM).  When a unit is provided, the symbol becomes required.</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="MeasureExecutionStatus" type="ExecutionStatusKind" use="required">
+      <xs:annotation>
+        <xs:documentation>Define the execution status of the measure</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+  </xs:complexType>
+</xs:schema>

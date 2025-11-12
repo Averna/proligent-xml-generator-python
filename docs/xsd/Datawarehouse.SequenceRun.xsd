@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+		   xmlns="http://www.averna.com/products/proligent/analytics/DIT/6.85"
+		   elementFormDefault="qualified"
+		   targetNamespace="http://www.averna.com/products/proligent/analytics/DIT/6.85">
+  
+  <xs:include schemaLocation="Datawarehouse.Model.xsd"/>
+  <xs:include schemaLocation="Datawarehouse.StepRun.xsd"/>
+  <xs:include schemaLocation="Datawarehouse.Failure.xsd"/>
+
+
+  <xs:complexType name="SequenceRunType">
+    <xs:annotation>
+      <xs:documentation>
+        A sequence run is a time-bound logical container for a set of step runs.
+        Sequence runs are globaly unique by their SequenceRunId property.
+        SequenceRunType defines a sequence run when it is executed in the context of a process and an operation.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element name="StepRun" type="StepRunType">
+          <xs:annotation>
+            <xs:documentation>Defines a step run, a container for the execution of a step that contains measures.</xs:documentation>
+          </xs:annotation>
+        </xs:element>
+
+        <xs:element name="Characteristic" type="CharacteristicType">
+          <xs:annotation>
+            <xs:documentation>Defines a characteristic, a key/value pair used to store arbitrary information associated to this sequence run.</xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element name="Document" type="DocumentType" />
+        <xs:element name="FailureReference" type="FailureReferenceType" />
+      </xs:choice>
+      <xs:element name="CustomData" type="CustomDataType" minOccurs="0" maxOccurs="1" />
+    </xs:sequence>
+
+    <xs:attribute name="StartDate" type="DateTime" use="required">
+      <xs:annotation>
+        <xs:documentation>Defines the actual date where the sequence run started.</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="EndDate" type="DateTime" use="optional">
+      <xs:annotation>
+        <xs:documentation>
+          Defines the actual date where the sequence run ended.
+          If 'SequenceExecutionStatus' is equal to 'NOT_COMPLETED' this value must be ommited.
+          SequenceRunId must have been provided to allow sequence run updates through DIT increment.
+          This value must be greater or equal than StartDate.
+
+          Note that the if the Data Warehouse already contains this sequence run but it is not already
+          closed, the EndDate written in the Data Warehouse will be set according to the following rule: EndDate(in database) = StartDate(in database) + (EndDate(from xml) - StartDate(from xml)).
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="SequenceExecutionStatus" type="ExecutionStatusKind" use="required">
+      <xs:annotation>
+        <xs:documentation>Defines the latest execution status of the sequence run.</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="SequenceRunId" type="Guid" use="optional">
+      <xs:annotation>
+        <xs:documentation>
+          Defines a Sequence Run identifier, used to update sequence runs when results are generated partially, i.e. without an end date.
+          If this ID is not specified, the current run is considered as anonymous and will not be updateable once inserted in the DataWarehouse.
+          This ID must be unique across operation runs.
+      </xs:documentation>
+      </xs:annotation>  
+    </xs:attribute>
+
+    <xs:attribute name="SequenceFullName" type="SequenceFullName" use="required">
+      <xs:annotation>
+        <xs:documentation>
+          Defines the full name of the sequence executed in this sequence run.
+          This attribute cannot be updated.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="SequenceVersion" type="NonEmptyString_64" use="optional">
+      <xs:annotation>
+        <xs:documentation>
+          Defines the sequence's version for this sequence run. This field is optional to support non-versionable Sequences.
+          The version string must be string-comparable to support ordering by version.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="StationFullName" type="FullName" use="required">
+      <xs:annotation>
+        <xs:documentation>
+          Defines the station where the sequence run was executed.
+          This attribute cannot be updated.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="User" type="NonEmptyString_255" use="optional">
+      <xs:annotation>
+        <xs:documentation>
+          Defines the user that executed the sequence run.
+          This attribute cannot be updated.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:complexType>
+
+  <xs:complexType name="StandaloneSequenceRunType">
+    <xs:annotation>
+      <xs:documentation>
+        A stand alone sequence run is a time-bound logical container for a set of step runs.
+        Stand alone sequence runs are globaly unique by their SequenceRunId property.
+        StandaloneSequenceRunType defines a sequence run when the process and an operation context cannot be provided.
+        
+        The process and operation context can be set by having a OperationRunId in the optional OperationRunId property.
+        
+        If the process and operation context is not provided with this stand alone sequence run, it can be later made
+        by providing a SequenceRunReference to this SequenceRunId in the OperationRun element.
+        
+        If the SequenceRunId is not provided in this stand alone sequence run, it will be impossible to set the process and operation context using the SequenceRunReference.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="SequenceRunType">
+
+        <xs:attribute name="ProductUnitIdentifier" type="NonEmptyString_50" use="required">
+          <xs:annotation>
+            <xs:documentation>
+              Defines the product unit identifier on which the sequence is ran.
+
+              This attribute cannot be updated.
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+
+        <xs:attribute name="ProductFullName" type="FullName" use="required">
+          <xs:annotation>
+            <xs:documentation>
+              Defines the name the product for the current sequence run.
+
+              This attribute cannot be updated.
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="OperationRunId" type="Guid" use="optional">
+          <xs:annotation>
+            <xs:documentation>
+              Defines the process and operation context.
+              The refered OperationRun can be imported before or after this result.
+              The reference is optional. A SequenceRun can exists without a process and operation context
+              The process and operation context can also be provided when importing the OperationRun
+
+              Once specified, this attribute cannot be updated.
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="SequenceRunReferenceType" >
+    <xs:annotation>
+      <xs:documentation>
+        SequenceRun imported as StandaloneSequenceRunType element can have their process and operation context
+        set with this reference.
+
+        SequenceRunRefFact are unique by the ID of their parent Operation run and the ID of the referred sequence run.
+      </xs:documentation>
+
+    </xs:annotation>
+    
+    <xs:sequence>
+      <xs:element name="CustomData" type="CustomDataType" minOccurs="0" maxOccurs="1" />
+    </xs:sequence>
+    
+    <xs:attribute name="Id" type="Guid" use="required">
+      <xs:annotation>
+        <xs:documentation>The identifier of the related SequenceRun.</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:complexType>
+
+</xs:schema>

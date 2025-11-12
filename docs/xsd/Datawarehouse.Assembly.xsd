@@ -1,0 +1,361 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+		   xmlns="http://www.averna.com/products/proligent/analytics/DIT/6.85"
+		   elementFormDefault="qualified"
+		   targetNamespace="http://www.averna.com/products/proligent/analytics/DIT/6.85">
+  
+  <xs:include schemaLocation="Datawarehouse.Model.xsd"/>
+  <xs:include schemaLocation="Datawarehouse.ComponentUnit.xsd"/>
+
+  <xs:simpleType name="AssemblyActionKind">
+    <xs:restriction base="xs:NMTOKEN">
+      
+      <xs:enumeration value="ASSEMBLE">
+        <xs:annotation>
+          <xs:documentation>
+            This action indicates that a component unit or product unit was assembled on a parent product.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      
+      <xs:enumeration value="DISASSEMBLE">
+        <xs:annotation>
+          <xs:documentation>
+            This action indicates that a component unit or product unit was disassembled from a parent product.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      
+      <xs:enumeration value="SET_CURRENT">
+        <xs:annotation>
+          <xs:documentation>
+            This action indicates that a component unit or product unit was assembled on a parent product after the fact.  
+            This will typically be used when you receive products that are already assembled and you are interested
+            in tracking the resulting assembly.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+            
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:complexType name="AssemblyTraceParentType">
+
+    <xs:sequence>
+      <xs:element name="CustomData" type="CustomDataType" minOccurs="0" maxOccurs="1" />
+    </xs:sequence>
+    
+    <xs:attribute name="ProductFullName" type="FullName" use="required">
+      <xs:annotation>
+        <xs:documentation>
+          The product full name of the parent product unit that contains a new assembled child.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="ProductUnitIdentifier" type="NonEmptyString_50" use="required">
+      <xs:annotation>
+        <xs:documentation>
+          The product unit identifier of the parent product unit that contains a new assembled child.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="ReferenceDesignator" type="NonEmptyString_50" use="optional">
+      <xs:annotation>
+        <xs:documentation>
+          A string that identifies the instance or location of the component that was assembled or
+          disassembled.  For example, if you have two instances of a given product unit or component unit
+          on your parent product, then the reference designator can be used to associate a name with each
+          of these instances.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    
+  </xs:complexType>
+                  
+  <xs:complexType name="SequenceRunAssemblyContextType">
+
+    <xs:sequence>
+      <xs:element name="CustomData" type="CustomDataType" minOccurs="0" maxOccurs="1" />
+    </xs:sequence>
+    
+    <xs:attribute name="Id" type="Guid" use="required">
+      <xs:annotation>
+        <xs:documentation>
+          The identifier of the sequence run where the assembly/disassembly was performed.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    
+  </xs:complexType>
+
+  <xs:complexType name="OperationRunAssemblyContextType">
+
+    <xs:sequence>
+      <xs:element name="CustomData" type="CustomDataType" minOccurs="0" maxOccurs="1" />
+    </xs:sequence>
+    
+    <xs:attribute name="Id" type="Guid" use="required">
+      <xs:annotation>
+        <xs:documentation>
+          The identifier of the operation run where the assembly/disassembly was performed.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+  </xs:complexType>
+  
+  <xs:complexType name="AssemblyContextType">
+    <xs:annotation>
+      <xs:documentation>
+        Used to indicate in which execution context the assembly/disassembly was performed.  It can be either 
+        executed in a sequence run or operation run.  If your assembly/disassembly is performed outside of an
+        execution context, simply don't provide an assembly context.
+      </xs:documentation>
+    </xs:annotation>
+
+    <xs:sequence>
+      <xs:choice minOccurs="1" maxOccurs="1">
+        <xs:element name="SequenceRun"  type="SequenceRunAssemblyContextType" />
+        <xs:element name="OperationRun" type="OperationRunAssemblyContextType" />
+      </xs:choice>
+      <xs:element name="CustomData" type="CustomDataType" minOccurs="0" maxOccurs="1" />
+    </xs:sequence>
+    
+  </xs:complexType>
+  
+  <xs:complexType name="AssemblyTraceType">
+    <xs:annotation>
+      <xs:documentation>
+        An assembly trace is used to track what is being assembled and dissasembled.  In the case where you disassemble
+        or assemble parts in reaction to a test failure, it is possible to link the assembly/dissasembly actions with 
+        the failure.
+        
+        An assembly trace is uniquely identified by:
+         - the identity of the parent (including the reference designator)
+         - the identity of the child 
+         - the assembly action
+         - the assembly time
+        
+        An assembly trace is not updatable.
+      </xs:documentation>
+    </xs:annotation>
+
+    <xs:sequence>  
+      <xs:element name="Parent"           type="AssemblyTraceParentType"     minOccurs="1" maxOccurs="1"/>
+      <xs:element name="Child"            type="ComponentUnitReferenceType"  minOccurs="1" maxOccurs="1"/>
+      <xs:element name="AssemblyContext"  type="AssemblyContextType"         minOccurs="0" maxOccurs="1"/>
+      <xs:element name="CustomData"       type="CustomDataType"              minOccurs="0" maxOccurs="1" />
+    </xs:sequence>
+    
+    <xs:attribute name="Action" type="AssemblyActionKind" use="required">
+      <xs:annotation>
+        <xs:documentation>
+          The assembly action performed.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="ActionTime" type="DateTime" use="required">
+      <xs:annotation>
+        <xs:documentation>
+          The time when the assembly action was performed.  When the 'Action' is equal to 'SET_CURRENT' it should 
+          be the time when the current assembly was identified and entered in the system.  
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="FailureId" type="Guid" use="optional">
+      <xs:annotation>
+        <xs:documentation>
+          When the assembly action is performed in the context of a failure, the 'FailureId' attribute
+          can be used to link the action with the failure.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="StationFullName" type="FullName" use="optional">
+      <xs:annotation>
+        <xs:documentation>
+          The station where the assembly action was performed.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="Operator" type="NonEmptyString_255" use="optional">
+      <xs:annotation>
+        <xs:documentation>
+          The operator that performed the assembly action.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+      <xs:attribute name="ChildComponentCount" use="optional" default="1">
+          <xs:annotation>
+              <xs:documentation>
+                  The count of identical components that were part of this assembly trace.
+                  Default value when not provided is 1. Must be a value greater or equal to 0.
+
+                  This attribute can't be updated.
+              </xs:documentation>
+          </xs:annotation>
+          <xs:simpleType>
+              <xs:restriction base="xs:int">
+                  <xs:minInclusive value="0" />
+              </xs:restriction>
+          </xs:simpleType>
+      </xs:attribute>
+
+  </xs:complexType>
+
+  <xs:complexType name="AssemblyRuleParentType">
+    
+    <xs:attribute name="ProductFullName" type="FullName" use="required">
+      <xs:annotation>
+        <xs:documentation>
+          The product full name of the parent product that is affected by the assembly rule.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="ReferenceDesignator" type="NonEmptyString_50" use="optional">
+      <xs:annotation>
+        <xs:documentation>
+          A string that identifies the instance or location of the child component that is affected by the 
+          assembly rule.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:complexType>
+
+  <xs:complexType name="AssemblyRuleProductChildType">
+    <xs:attribute name="ProductFullName" type="FullName" use="required">
+      <xs:annotation>
+        <xs:documentation>
+          The full name of the child product that can be assembled.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:complexType>
+
+  <xs:complexType name="AssemblyRuleComponentChildType">
+    
+    <xs:attribute name="Manufacturer" type="FullName" use="optional">
+      <xs:annotation>
+        <xs:documentation>
+		  The name of the component manufacturer.  When the attribute is not specified, it means that it is
+		  possible to assemble the designed component coming from any manufacturer.  Otherwise, only
+		  components coming from this specific manufacturer are allowed.
+		</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="ManufacturerPartNumber" type="NonEmptyString_128" use="required">
+      <xs:annotation>
+        <xs:documentation>
+          The part number of the component as defined by the manufacturer.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="ComponentFullName" type="FullName" use="required">
+      <xs:annotation>
+        <xs:documentation>
+          The component full name of the component as redefined by your manufacturing process on
+          top of the part number defined by the component manufacturer. If none exist,
+          the manufacturerPartNumber can be provided.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    
+  </xs:complexType>
+  
+  <xs:complexType name="AssemblyRuleChildType">
+
+    <xs:choice minOccurs="1" maxOccurs="1">
+      <xs:element name="Product"   type="AssemblyRuleProductChildType" />
+      <xs:element name="Component" type="AssemblyRuleComponentChildType" />
+    </xs:choice>
+    
+    <xs:attribute name="IsAlternative" type="xs:boolean" use="required">
+      <xs:annotation>
+        <xs:documentation>
+          You usually have a preferred child for an assembly.  But even if you have preferences, you may 
+          be willing to accept using alternative childs.  For example, you may prefer the CPU coming from 
+          manufacturer 'X' but if he is running out of stock, you may be willing to use the CPU coming 
+          from manufacturer 'Y'.  In that case, you would have two assembly rules.  The first one would set
+          'IsAlternative' to 'false' for manufacturer 'X' while you would set 'IsAlternative' to 'true' for
+          any other allowed manufacturer.
+          
+          Note that the DIT will not do any validation on that field.  So if you provide multiple rules
+          that cause a given product to have multiple rules with 'IsAlternative' to 'false', no errors 
+          will be flagged.
+        </xs:documentation>
+      </xs:annotation>
+      
+    </xs:attribute>
+    
+  </xs:complexType>
+  
+  <xs:complexType name="AssemblyRuleType">
+    
+    <xs:annotation>
+      <xs:documentation>
+
+        ************************ IMPORTANT NOTE ************************
+
+        This type of fact exists in the XSD but is not processed by the 
+        DIT.  It is only here for discussion purposes.  No bridge should
+        generate this kind of fact.
+
+        ****************************************************************
+
+        An assembly rule defines the rules that have to be respected when your products are assembled.
+        For example, it can be used to say that at location 'U22' of your product 'X' you want to assemble
+        product 'Y' of manufacturer 'Z'.
+
+        If you support many alternative childs for a given parent/reference designator combination,
+        you will need to send multiple 'AssemblyRuleType' to the DIT and use the attribute
+        'IsAlternative' of 'AssemblyRuleChildType' to identify your preferred type of child.
+
+        This type is fully updatable including 'IsDeleted' which makes it possible to undelete an
+        assembly rule.
+      </xs:documentation>
+    </xs:annotation>
+
+    <xs:sequence>
+      <xs:element name="Parent" type="AssemblyRuleParentType"  minOccurs="1" maxOccurs="1"/>
+      <xs:element name="Child"  type="AssemblyRuleChildType"   minOccurs="1" maxOccurs="1"/>
+    </xs:sequence>
+    
+    <xs:attribute name="Id" type="Guid" use="required">
+      <xs:annotation>
+        <xs:documentation>
+          The unique identifier of the assembly rule.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="Description" type="NonNullableString_255" use="required">
+      <xs:annotation>
+        <xs:documentation>
+          The description of the assembly rule.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="IsDeleted" type="xs:boolean" use="optional">
+      <xs:annotation>
+        <xs:documentation>
+          Can be used to flag an assembly rule as deleted.  Once deleted, it is not possible to undelete
+          an assembly rule.
+          
+          When the attribute is not specified, it is assumed that the rule is not deleted.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    
+  </xs:complexType>
+  
+</xs:schema>

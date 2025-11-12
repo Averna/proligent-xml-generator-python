@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+		   xmlns="http://www.averna.com/products/proligent/analytics/DIT/6.85"
+		   elementFormDefault="qualified"
+		   targetNamespace="http://www.averna.com/products/proligent/analytics/DIT/6.85">
+  
+  <xs:include schemaLocation="Datawarehouse.Model.xsd" />
+  <xs:include schemaLocation="Datawarehouse.OperationRun.xsd"/>
+  <xs:include schemaLocation="Datawarehouse.OperationCycle.xsd"/>
+  <xs:include schemaLocation="Datawarehouse.Failure.xsd"/>
+
+
+  <xs:complexType name="ProcessRunType">
+    <xs:annotation>
+      <xs:documentation>
+        Defines a process run, a logical container for the execution of operations.
+        Process runs are globaly unique by their ProcessRunId property.
+      </xs:documentation>
+    </xs:annotation>
+
+    <xs:sequence>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element name="OperationRun" type="OperationRunType" />
+        <xs:element name="OperationCycle" type="OperationCycleType" />
+        <xs:element name="FailureReference" type="FailureReferenceType" />
+      </xs:choice>
+      <xs:element name="CustomData" type="CustomDataType" minOccurs="0" maxOccurs="1" />
+    </xs:sequence>
+
+    <xs:attribute name="ProcessRunId" type="Guid" use="optional">
+      <xs:annotation>
+        <xs:documentation>
+          Defines an ID for this process run. This ID should be reused when providing results for a process run spanned over multiple files.
+          If no ProcessRunId is provided, all the results of this process run must be provided in the context of a single ProcessRun.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>    
+    
+    <xs:attribute name="ProcessFullName" type="ProcessFullName" use="required">
+      <xs:annotation>
+        <xs:documentation>
+          Defines the name of the process for this process run.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="ProcessVersion" type="NonEmptyString_64" use="optional">
+      <xs:annotation>
+        <xs:documentation>
+          Defines the process's version for this operation opportunity. This field is optional to support non-versionable process.
+          The version string must be string-comparable to support ordering by version.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>   
+
+    <xs:attribute name="ProductUnitIdentifier" type="NonEmptyString_50" use="required">
+      <xs:annotation>
+        <xs:documentation>
+          Defines the product unit identifier on which the process is ran.
+
+          This attribute cannot be updated.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    
+    <xs:attribute name="ProductFullName" type="FullName" use="required">
+      <xs:annotation>
+        <xs:documentation>
+          Defines the name the product for the current process run.
+
+          This attribute cannot be updated.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="ProcessRunStatus" type="ExecutionStatusKind" use="required">
+      <xs:annotation>
+        <xs:documentation>Defines the last known status of the process run.</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="ProcessRunStartTime" type="DateTime" use="required">
+      <xs:annotation>
+        <xs:documentation>Defines the start date of the process run.</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="ProcessRunEndTime" type="DateTime" use="optional">
+      <xs:annotation>
+        <xs:documentation>
+          Defines the end date of the process run.  If 'ProcessRunStatus' is equal to 'NOT_COMPLETED' this value must be ommited.
+          This value must be greater or equal than ProcessRunStartTime.
+
+          Note that the if the Data Warehouse already contains this process run but it is not already
+          closed, the ProcessRunEndTime written in the Data Warehouse will be set according to the following rule: ProcessRunEndTime(in database) = ProcessRunStartTime(in database) + (ProcessRunEndTime(from xml) - ProcessRunStartTime(from xml)).
+
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="ProcessMode" type="NonEmptyString_64" use="optional">
+      <xs:annotation>
+        <xs:documentation>Defines the mode on which the process run has been ran, E.G. NPI, Production, etc.</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+  </xs:complexType>
+</xs:schema>

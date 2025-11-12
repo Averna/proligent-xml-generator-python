@@ -1,0 +1,80 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+		   xmlns="http://www.averna.com/products/proligent/analytics/DIT/6.85"
+		   elementFormDefault="qualified"
+		   targetNamespace="http://www.averna.com/products/proligent/analytics/DIT/6.85">
+
+  <xs:include schemaLocation="Datawarehouse.Model.xsd"/>
+
+  <xs:simpleType name="CharacteristicKind">
+    <xs:restriction base="xs:NMTOKEN">
+      <xs:enumeration value="ProductUnit"/>
+      <xs:enumeration value="OperationRun"/>
+      <xs:enumeration value="SequenceRun"/>
+      <xs:enumeration value="StepRun"/>
+      <xs:enumeration value="Failure"/>
+      <xs:enumeration value="Defect"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:complexType name="MappedCharacteristicsType" >
+    <xs:annotation>
+      <xs:documentation>
+      </xs:documentation>
+    </xs:annotation>
+
+    <xs:sequence>
+      <xs:element name="CustomData" type="CustomDataType" minOccurs="0" maxOccurs="1" />
+    </xs:sequence>
+    
+    <xs:attribute name="Type" type="CharacteristicKind" use="required">
+      <xs:annotation>
+        <xs:documentation>The Model element type to which the Mapping is created</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="DWCharacteristicName"  type="NonEmptyString_434">
+      <xs:annotation>
+        <xs:documentation>
+          The characteristic name to include in the CUBE as a dimension
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+  </xs:complexType>
+
+  <xs:complexType name="CubeCharacteristicsMappingType" >
+    <xs:annotation>
+      <xs:documentation>
+        The Proligent OLAP database only support slicing and dicing on a finite number of characteristics for each known kind.
+        The available number is determined prior to installation. It can be looked up in the T_APPLICATION_CHARACTERISTIC_CONFIG
+        table. For each CharacteristicKind a enumeration of specified Characteristic name can be provide to include them in
+        the OLAP database as dimension making the slicable and diceable.
+      </xs:documentation>
+    </xs:annotation>
+
+    <xs:sequence>
+      <xs:element name="MappedCharacteristics" type="MappedCharacteristicsType" minOccurs="0" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:documentation>
+            Defines a characteristic name to Map and make accessible in the CUBE filters database.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="CustomData" type="CustomDataType" minOccurs="0" maxOccurs="1" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name ="ApplicationConfigType">
+    <xs:sequence>
+      <xs:element name="CubeCharacteristicsMapping" type="CubeCharacteristicsMappingType" minOccurs="0" maxOccurs="1">
+        <xs:annotation>
+          <xs:documentation>
+            Proligent configurable parameters.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="CustomData" type="CustomDataType" minOccurs="0" maxOccurs="1" />
+    </xs:sequence>
+  </xs:complexType>
+</xs:schema>

@@ -1,0 +1,16 @@
+<?xml version='1.0' encoding='utf-8'?>
+<Proligent.Datawarehouse xmlns="http://www.averna.com/products/proligent/analytics/DIT/6.85" GenerationTime="2024-01-01T12:00:00+01:00" DataSourceFingerprint="00000000-0000-0000-0000-000000000001">
+  <TopProcessRun ProcessRunId="00000000-0000-0000-0000-000000000002" ProcessFullName="Process/readme_example2" ProductUnitIdentifier="DutSerialNumber" ProductFullName="Product/readme_example2" ProcessRunStatus="PASS" ProcessRunStartTime="2024-01-01T12:00:00+01:00" ProcessRunEndTime="2024-01-01T12:00:00+01:00" ProcessMode="PROD">
+    <OperationRun OperationRunId="00000000-0000-0000-0000-000000000003" ProcessFullName="Process/readme_example2" OperationName="Operation1" StationFullName="Station/readme_example2" OperationStatus="PASS" OperationRunStartTime="2024-01-01T12:00:00+01:00" OperationRunEndTime="2024-01-01T12:00:00+01:00">
+      <SequenceRun StartDate="2024-01-01T12:00:00+01:00" EndDate="2024-01-01T12:00:00+01:00" SequenceExecutionStatus="PASS" SequenceRunId="00000000-0000-0000-0000-000000000004" SequenceFullName="Sequence1" StationFullName="Station/readme_example2">
+        <StepRun StepExecutionStatus="PASS" StepRunId="00000000-0000-0000-0000-000000000006" StepName="Step1" StartDate="2024-01-01T12:00:00+01:00" EndDate="2024-01-01T12:00:00+01:00">
+          <Measure MeasureId="00000000-0000-0000-0000-000000000005" MeasureTime="2024-01-01T12:00:00+01:00" MeasureExecutionStatus="PASS">
+            <Value Type="INTEGER">15</Value>
+            <Limit LimitExpression="10 &lt;= X &lt; 25" />
+          </Measure>
+        </StepRun>
+      </SequenceRun>
+    </OperationRun>
+  </TopProcessRun>
+  <ProductUnit ProductUnitIdentifier="DutSerialNumber" ProductFullName="Product/readme_example2" ByManufacturer="Averna" />
+</Proligent.Datawarehouse>

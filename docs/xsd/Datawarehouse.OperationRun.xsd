@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+		   xmlns="http://www.averna.com/products/proligent/analytics/DIT/6.85"
+		   elementFormDefault="qualified"
+		   targetNamespace="http://www.averna.com/products/proligent/analytics/DIT/6.85">
+
+	<xs:include schemaLocation="Datawarehouse.Model.xsd" />
+	<xs:include schemaLocation="Datawarehouse.SequenceRun.xsd"/>
+	<xs:include schemaLocation="Datawarehouse.Failure.xsd"/>
+
+
+	<xs:complexType name="OperationRunType">
+		<xs:annotation>
+			<xs:documentation>
+				Defines the operation run, a logical container for the execution of sequences and processes.
+				Operation runs are globaly unique by their OperationRunId property.
+			</xs:documentation>
+		</xs:annotation>
+
+		<xs:sequence>
+			<xs:choice minOccurs="0" maxOccurs="unbounded">
+				<xs:element name="Characteristic" type="CharacteristicType"/>
+        <xs:element name="Document" type="DocumentType" />
+				<xs:element name="SequenceRun" type="SequenceRunType" />
+				<xs:element name="FailureReference" type="FailureReferenceType" />
+				<xs:element name="SequenceRunReference" type="SequenceRunReferenceType" />
+			</xs:choice>
+      <xs:element name="CustomData" type="CustomDataType" minOccurs="0" maxOccurs="1" />
+		</xs:sequence>
+
+		<xs:attribute name="OperationRunId" type="Guid" use="optional">
+			<xs:annotation>
+				<xs:documentation>
+					Defines an ID for this opportunity. This ID should be reused when providing results for an operation run spanned over multiple files.
+					If no OperationRunId is provided, all the results of this operation run must be provided in the context of a single OperationRun.
+					The OperationRunId must be unique across process runs.
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+
+		<xs:attribute name="ProcessFullName" type="ProcessFullName" use="required">
+			<xs:annotation>
+				<xs:documentation>
+					Defines the name of the current process in which this operation run is defined.  This may be different from the
+					'ProcessFullName' of the parent 'TopProcessRun' if the current operation is in a sub-process of the top parent.
+
+					This attribute cannot be updated.
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+
+		<xs:attribute name="ProcessVersion" type="NonEmptyString_64" use="optional">
+			<xs:annotation>
+				<xs:documentation>
+					Defines the process version of the process in which this operation run is defined. This field is optional to support
+					non-versionable processes. The version string must be string-comparable to support ordering by version.
+
+					This attribute cannot be updated.
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+
+		<xs:attribute name="OperationName" type="NonEmptyString_65" use="required">
+			<xs:annotation>
+				<xs:documentation>
+					Defines the name of the operation for this operation run.
+
+					This attribute cannot be updated.
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+
+		<xs:attribute name="StationFullName" type="FullName" use="optional">
+			<xs:annotation>
+				<xs:documentation>
+					Defines the station where the operation run was executed.
+					This attribute cannot be updated.
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+
+		<xs:attribute name="User" type="NonEmptyString_255" use="optional">
+			<xs:annotation>
+				<xs:documentation>
+					Defines the user that executed the operation run.
+					This attribute cannot be updated.
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+
+
+		<xs:attribute name="CallingOperationRunId" type="Guid" use="optional">
+			<xs:annotation>
+				<xs:documentation>
+					Defines the id of the operation run that launched the current operation run.
+					Consider specifying a value when the process full name of the current operation run
+					is different than the process full name of its process run. Setting this value will enable
+					the ability to track the operation run call stack.
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+
+		<xs:attribute name="OperationStatus" type="ExecutionStatusKind" use="required">
+			<xs:annotation>
+				<xs:documentation>
+					Defines the last known status of the operation run.
+
+					This attribute can only be updated when closing the operation run (i.e. when providing a value for 'OperationRunEndTime').
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+
+		<xs:attribute name="OperationRunStartTime" type="DateTime" use="required">
+			<xs:annotation>
+				<xs:documentation>
+					Defines the start date of the operation run.
+
+					This attribute cannot be updated.
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+
+		<xs:attribute name="OperationRunEndTime" type="DateTime" use="optional">
+			<xs:annotation>
+				<xs:documentation>
+          Defines the end date of the operation run.  If 'OperationStatus' is equal to 'NOT_COMPLETED' this value must be ommited.
+          This value must be greater or equal than OperationRunEndTime.
+
+          Note that the if the Data Warehouse already contains this operation run but it is not already
+          closed, the OperationRunEndTime written in the Data Warehouse will be set according to the following rule: OperationRunEndTime(in database) = OperationRunStartTime(in database) + (OperationRunEndTime(from xml) - OperationRunStartTime(from xml)).
+
+          This attribute cannot be updated.
+        </xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+
+	</xs:complexType>
+</xs:schema>

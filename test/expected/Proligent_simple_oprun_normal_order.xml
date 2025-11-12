@@ -1,0 +1,45 @@
+<?xml version='1.0' encoding='utf-8'?>
+<Proligent.Datawarehouse xmlns="http://www.averna.com/products/proligent/analytics/DIT/6.85" GenerationTime="2024-01-01T09:00:00-05:00" DataSourceFingerprint="00000000-0000-0000-0000-000000000001">
+  <TopProcessRun ProcessRunId="00000000-0000-0000-0000-000000000003" ProcessFullName="PythonLibrary/Process/simple_oprun_normal_order" ProductUnitIdentifier="PU-001" ProductFullName="PythonLibrary/Product/simple_oprun_normal_order" ProcessRunStatus="PASS" ProcessRunStartTime="2024-01-01T08:00:00-05:00" ProcessRunEndTime="2024-01-01T08:20:00-05:00" ProcessMode="PROD">
+    <OperationRun OperationRunId="00000000-0000-0000-0000-000000000004" ProcessFullName="PythonLibrary/Process/simple_oprun_normal_order" OperationName="Operation/Example" StationFullName="PythonLibrary/Station/simple_oprun_normal_order" User="operator" OperationStatus="PASS" OperationRunStartTime="2024-01-01T08:00:00-05:00" OperationRunEndTime="2024-01-01T08:20:00-05:00">
+      <Characteristic FullName="Batch" Value="B-42" />
+      <Document Identifier="00000000-0000-0000-0000-000000000005" Name="Operation Report" FileName="OperationReport.pdf" Description="Summary for operation Operation/Example" />
+      <SequenceRun StartDate="2024-01-01T08:10:00-05:00" EndDate="2024-01-01T08:12:00-05:00" SequenceExecutionStatus="PASS" SequenceRunId="00000000-0000-0000-0000-000000000006" SequenceFullName="Sequence/Main" SequenceVersion="1.0" StationFullName="PythonLibrary/Station/simple_oprun_normal_order">
+        <StepRun StepExecutionStatus="PASS" StepRunId="00000000-0000-0000-0000-000000000010" StepName="Inspection" StartDate="2024-01-01T08:10:30-05:00" EndDate="2024-01-01T08:10:30-05:00">
+          <Measure MeasureId="00000000-0000-0000-0000-000000000008" MeasureTime="2024-01-01T08:10:30-05:00" Unit="Volt" Symbol="V" MeasureExecutionStatus="PASS">
+            <Value Type="REAL">1.23</Value>
+            <Limit LimitExpression="1.1 &lt;= X &lt; 1.25" />
+          </Measure>
+          <Characteristic FullName="Channel" Value="A" />
+          <Document Identifier="00000000-0000-0000-0000-000000000009" Name="Inspection Report" FileName="InspectionReport.pdf" Description="Results for the inspection step" />
+        </StepRun>
+        <StepRun StepExecutionStatus="PASS" StepRunId="00000000-0000-0000-0000-000000000012" StepName="CountCheck" StartDate="2024-01-01T08:10:45-05:00" EndDate="2024-01-01T08:10:45-05:00">
+          <Measure MeasureId="00000000-0000-0000-0000-000000000011" MeasureTime="2024-01-01T08:10:45-05:00" MeasureExecutionStatus="PASS">
+            <Value Type="INTEGER">42</Value>
+          </Measure>
+        </StepRun>
+        <StepRun StepExecutionStatus="PASS" StepRunId="00000000-0000-0000-0000-000000000014" StepName="VisualApproval" StartDate="2024-01-01T08:11:00-05:00" EndDate="2024-01-01T08:11:00-05:00">
+          <Measure MeasureId="00000000-0000-0000-0000-000000000013" MeasureTime="2024-01-01T08:11:00-05:00" MeasureExecutionStatus="PASS">
+            <Value Type="BOOL">True</Value>
+          </Measure>
+        </StepRun>
+        <StepRun StepExecutionStatus="PASS" StepRunId="00000000-0000-0000-0000-000000000016" StepName="CalibrationTimestamp" StartDate="2024-01-01T08:11:15-05:00" EndDate="2024-01-01T08:11:15-05:00">
+          <Measure MeasureId="00000000-0000-0000-0000-000000000015" MeasureTime="2024-01-01T08:11:15-05:00" Unit="Volt" Symbol="V" MeasureExecutionStatus="PASS">
+            <Value Type="DATETIME">2024-01-01 08:11:15-05:00</Value>
+          </Measure>
+        </StepRun>
+        <StepRun StepExecutionStatus="PASS" StepRunId="00000000-0000-0000-0000-000000000018" StepName="OperatorNotes" StartDate="2024-01-01T08:11:30-05:00" EndDate="2024-01-01T08:11:30-05:00">
+          <Measure MeasureId="00000000-0000-0000-0000-000000000017" MeasureTime="2024-01-01T08:11:30-05:00" MeasureExecutionStatus="PASS">
+            <Value Type="STRING">All checks passed</Value>
+          </Measure>
+        </StepRun>
+        <Characteristic FullName="SequenceType" Value="Main" />
+        <Document Identifier="00000000-0000-0000-0000-000000000007" Name="Sequence Checklist" FileName="SequenceChecklist.pdf" Description="Checklist completed before running the sequence" />
+      </SequenceRun>
+    </OperationRun>
+  </TopProcessRun>
+  <ProductUnit ProductUnitIdentifier="PU-001" ProductFullName="PythonLibrary/Product/simple_oprun_normal_order">
+    <Characteristic FullName="Serial" Value="PU-001" />
+    <Document Identifier="00000000-0000-0000-0000-000000000002" Name="Certificate of Conformance" FileName="ProductCertificate.pdf" Description="Certification for product PU-001" />
+  </ProductUnit>
+</Proligent.Datawarehouse>

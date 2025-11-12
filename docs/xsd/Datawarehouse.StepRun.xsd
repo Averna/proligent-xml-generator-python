@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+		   xmlns="http://www.averna.com/products/proligent/analytics/DIT/6.85"
+		   elementFormDefault="qualified" 
+		   targetNamespace="http://www.averna.com/products/proligent/analytics/DIT/6.85">
+
+  <xs:include schemaLocation="Datawarehouse.Model.xsd"/>
+  <xs:include schemaLocation="Datawarehouse.Measure.xsd"/>
+  <xs:include schemaLocation="Datawarehouse.Failure.xsd"/>
+
+
+  <xs:complexType name="StepRunType">
+    <xs:annotation>
+      <xs:documentation>
+        A step run is a time-bound logical container for a set of measures.
+        
+        A step run is uniquely identified by its StepRunId.
+        
+        A step run is not updatable.
+      </xs:documentation>
+    </xs:annotation>
+
+    <xs:sequence>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element name="Measure" type="MeasureType" />
+        <xs:element name="FailureReference" type="FailureReferenceType" />
+        <xs:element name="Characteristic" type="CharacteristicType"/>
+        <xs:element name="Document" type="DocumentType" />        
+      </xs:choice>
+      <xs:element name="CustomData" type="CustomDataType" minOccurs="0" maxOccurs="1" />
+    </xs:sequence>
+
+    <xs:attribute name="StepExecutionStatus" type="ExecutionStatusKind" use="required">
+      <xs:annotation>
+        <xs:documentation>Defines the latest status for the current step run.</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="StepRunId" type="Guid" use="optional">
+      <xs:annotation>
+        <xs:documentation>
+          Defines the step run unique identifier.
+          This ID must be unique across sequence runs.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="StepName" type="NonEmptyString_255" use="required">
+      <xs:annotation>
+        <xs:documentation>Defines the step name for the current step run.</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="StartDate" type="DateTime" use="required">
+      <xs:annotation>
+        <xs:documentation>Defines the actual date where the step run started.</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="EndDate" type="DateTime" use="required">
+      <xs:annotation>
+        <xs:documentation>
+          Defines the actual date where the step run ended.  If 'StepExecutionStatus' is equal 
+          to 'NOT_COMPLETED' this value must be ommited.  StepRunId must have been provided to 
+          allow step run updates through DIT increment.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:complexType>
+  
+</xs:schema>

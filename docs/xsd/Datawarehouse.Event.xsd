@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+		   xmlns="http://www.averna.com/products/proligent/analytics/DIT/6.85"
+		   elementFormDefault="qualified"
+		   targetNamespace="http://www.averna.com/products/proligent/analytics/DIT/6.85">
+
+  <xs:include schemaLocation="Datawarehouse.Model.xsd"/>
+
+  <xs:complexType name="EventContext">
+    <xs:annotation>
+      <xs:documentation>
+        Defines the context in which an event occured.
+
+        This fact cannot be updated.
+      </xs:documentation>
+    </xs:annotation>
+
+    <xs:sequence>
+      <xs:element name="CustomData" type="CustomDataType" minOccurs="0" maxOccurs="1" />
+    </xs:sequence>
+    
+    <xs:attribute name="Time" type="DateTime" use="required">
+      <xs:annotation>
+        <xs:documentation>The timestamp at which the event occured</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="StationFullName" type="FullName" use="optional">
+      <xs:annotation>
+        <xs:documentation>
+          Full name of the station where the event occured.
+          If a hierarchy exists, the full name must contain the fully qualified name, each level being separated by a forward slash ("/").
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="User" type="NonEmptyString_255" use="optional">
+      <xs:annotation>
+        <xs:documentation>Defines the user that generated the event.</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="HostName" type="NonEmptyString_255" use="optional">
+      <xs:annotation>
+        <xs:documentation>Defines the host name (computer name) where the event occured.</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="Application" type="NonEmptyString_255" use="optional">
+      <xs:annotation>
+        <xs:documentation>Defines the application that generated the event.</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+
+  </xs:complexType>
+
+
+  <xs:complexType name="EventTarget">
+
+    <xs:annotation>
+      <xs:documentation>
+        Defines the business entity (target) of an event.
+      </xs:documentation>
+    </xs:annotation>
+
+    <xs:choice minOccurs="1" maxOccurs ="1" >
+
+      <xs:element name="Sequence">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="CustomData" type="CustomDataType" minOccurs="0" maxOccurs="1" />
+          </xs:sequence>
+          <xs:attribute name="SequenceFullName" type="SequenceFullName" use ="required">
+            <xs:annotation>
+              <xs:documentation>
+                Full name of the target sequence affected by the event.
+                If a hierarchy exists, the full name must contain the fully qualified name, each level being separated by a forward slash ("/").
+              </xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="SequenceVersion" type="NonEmptyString_64" use="optional">
+            <xs:annotation>
+              <xs:documentation>
+                Defines the sequence's version for this sequence run. This field is optional to support non-versionable Sequences.
+                The version string must be string-comparable to support ordering by version.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+        </xs:complexType>
+      </xs:element>
+
+      <xs:element name="Operation">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="CustomData" type="CustomDataType" minOccurs="0" maxOccurs="1" />
+          </xs:sequence>
+          <xs:attribute name="OperationName" type="NonEmptyString_255" use ="required">
+            <xs:annotation>
+              <xs:documentation>Name of the target operation affected by the event.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+        </xs:complexType>
+      </xs:element>
+
+      <xs:element name="Process">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="CustomData" type="CustomDataType" minOccurs="0" maxOccurs="1" />
+          </xs:sequence>
+          <xs:attribute name="ProcessFullName" type="FullName" use ="required">
+            <xs:annotation>
+              <xs:documentation>
+                Full name of the target process affected by the event.
+                If a hierarchy exists, the full name must contain the fully qualified name, each level being separated by a forward slash ("/").
+              </xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="ProcessVersion" type="NonNullableString_65" use ="optional">
+            <xs:annotation>
+              <xs:documentation>Version of the target process of the event.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+        </xs:complexType>
+      </xs:element>
+
+      <xs:element name="Product">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="CustomData" type="CustomDataType" minOccurs="0" maxOccurs="1" />
+          </xs:sequence>
+          <xs:attribute name="ProductFullName" type="FullName" use ="required">
+            <xs:annotation>
+              <xs:documentation>
+                Full name of the target product affected by the event.
+                If a hierarchy exists, the full name must contain the fully qualified name, each level being separated by a forward slash ("/").
+              </xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+        </xs:complexType>
+      </xs:element>
+
+      <xs:element name="ProductUnit">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="CustomData" type="CustomDataType" minOccurs="0" maxOccurs="1" />
+          </xs:sequence>
+          <xs:attribute name="ProductFullName" type="FullName" use ="required">
+            <xs:annotation>
+              <xs:documentation>
+                Full name of the target product of the product unit affected by the event.
+                If a hierarchy exists, the full name must contain the fully qualified name, each level being separated by a forward slash ("/").
+              </xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="ProductUnitIdentifier" type="NonEmptyString_50" use ="required">
+            <xs:annotation>
+              <xs:documentation>
+                Defines the unique identifier for the product unit affected by the event.
+                The Serial Number is often used for this purpose.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+        </xs:complexType>
+      </xs:element>
+
+      <xs:element name="Station">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="CustomData" type="CustomDataType" minOccurs="0" maxOccurs="1" />
+          </xs:sequence>
+          <xs:attribute name="StationFullName" type="FullName" use ="required">
+            <xs:annotation>
+              <xs:documentation>
+                Full name of the target station affected by the event.
+                If a hierarchy exists, the full name must contain the fully qualified name, each level being separated by a forward slash ("/").
+              </xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+        </xs:complexType>
+      </xs:element>
+
+      <xs:element name="User">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="CustomData" type="CustomDataType" minOccurs="0" maxOccurs="1" />
+          </xs:sequence>
+          <xs:attribute name="UserName" type="NonEmptyString_255" use ="required">
+            <xs:annotation>
+              <xs:documentation>Name of the user affected by the event.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+        </xs:complexType>
+      </xs:element>
+
+      <xs:element name="Failure">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="CustomData" type="CustomDataType" minOccurs="0" maxOccurs="1" />
+          </xs:sequence>
+          <xs:attribute name="FailureId" type="Guid" use ="required"/>
+        </xs:complexType>
+      </xs:element>
+
+    </xs:choice>
+
+  </xs:complexType>
+
+  <xs:complexType name="EventType">
+    <xs:annotation>
+      <xs:documentation>
+        Defines an occurence of an event.
+      </xs:documentation>
+    </xs:annotation>
+
+    <xs:sequence>
+      <xs:element name="Context" type="EventContext" >
+        <xs:annotation>
+          <xs:documentation>Defines the contextual information about the event.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Target" type="EventTarget" >
+        <xs:annotation>
+          <xs:documentation>Defines the target (businness entity) of the event.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Detail" minOccurs="0" maxOccurs="unbounded">
+        <xs:complexType>
+          <xs:simpleContent>
+            <xs:extension base="NonEmptyString_4000">
+              <xs:attribute name="Property" type="NonEmptyString_30" use="required">
+                <xs:annotation>
+                  <xs:documentation>Defines an affected property on the target of the event. (e.g.: Name, Description, Characteristic, etc...)</xs:documentation>
+                </xs:annotation>
+              </xs:attribute>
+            </xs:extension>
+          </xs:simpleContent>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="CustomData" type="CustomDataType" minOccurs="0" maxOccurs="1" />
+    </xs:sequence>
+
+    <xs:attribute name="EventId" type="Guid" use="optional">
+      <xs:annotation>
+        <xs:documentation>Defines a globally unique identifier for the event. Any other events with the same EventId will be rejected.</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="Action" type="NonEmptyString_30" use="required">
+      <xs:annotation>
+        <xs:documentation>Defines the action applied to the target.</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="Comment" type="NonEmptyString_TruncateAt_255" use="optional">
+      <xs:annotation>
+        <xs:documentation>Defines the comment entered by the user when the event occured.</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+  </xs:complexType>
+
+</xs:schema>

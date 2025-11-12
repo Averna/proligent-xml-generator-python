@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+		   xmlns="http://www.averna.com/products/proligent/analytics/DIT/6.85"
+		   elementFormDefault="qualified"
+		   targetNamespace="http://www.averna.com/products/proligent/analytics/DIT/6.85">
+
+	<xs:include schemaLocation="Datawarehouse.Model.xsd" />
+
+
+	<xs:complexType name="OperationCycleType">
+		<xs:annotation>
+			<xs:documentation>
+					Defines the operation cycle, which maps the high-level movement (MES level) of a unit within a manufacturing process. 
+					It is used to provide more up-to-date information on WIP.
+					Operation Cycles are globaly unique by their OperationCycleId property.
+			</xs:documentation>
+		</xs:annotation>
+
+    <xs:sequence>
+      <xs:element name="CustomData" type="CustomDataType" minOccurs="0" maxOccurs="1" />
+    </xs:sequence>
+    
+		<xs:attribute name="ProcessFullName" type="ProcessFullName" use="required">
+			<xs:annotation>
+				<xs:documentation>
+					Defines the name of the current process in which this operation cycle is defined.  This may be different from the
+					'ProcessFullName' of the parent 'TopProcessRun' if the current operation is in a sub-process of the top parent.
+
+					This attribute cannot be updated.
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+
+		<xs:attribute name="ProcessVersion" type="NonEmptyString_64" use="optional">
+			<xs:annotation>
+				<xs:documentation>
+					Defines the process version of the process in which this operation run is defined. This field is optional to support
+					non-versionable processes. The version string must be string-comparable to support ordering by version.
+
+					This attribute cannot be updated.
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+
+		<xs:attribute name="OperationCycleId" type="Guid" use="optional">
+			<xs:annotation>
+				<xs:documentation>
+					Defines an ID for this operation cycle. This ID should be reused when providing results for an operation cycle spanned over multiple files.
+					If no OperationCycleId is provided, all the results of this operation cycle must be provided in the context of a single OperationCycle.
+					The OperationCycleId must be unique across process runs.
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="OperationName" type="NonEmptyString_65" use="required">
+			<xs:annotation>
+				<xs:documentation>
+					Defines the name of the operation for this operation cycle.
+					This attribute cannot be updated.
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="Location" type="FullName" use="required">
+			<xs:annotation>
+				<xs:documentation>
+					Defines the location where the operation cycle was executed.(node/category of the full station name (site where the station is located))
+					This attribute cannot be updated.
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="User" type="NonEmptyString_255" use="optional">
+			<xs:annotation>
+				<xs:documentation>
+					Defines the user that initiated the operation cycle.
+					This attribute cannot be updated.
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="OperationCycleStatus" type="ExecutionStatusKind" use="required">
+			<xs:annotation>
+				<xs:documentation>
+					Defines the last known status of the operation cycle.
+					This attribute can only be updated when closing the operation cycle (i.e. when providing a value for 'OperationCycleEndTime').
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="OperationCycleStartTime" type="DateTime" use="required">
+			<xs:annotation>
+				<xs:documentation>
+					Defines the start date of the operation cycle, i.e. when the unit was routed in the operation. 
+					This attribute cannot be updated.
+        </xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="OperationCycleEndTime" type="DateTime" use="optional">
+			<xs:annotation>
+				<xs:documentation>
+          Defines the end date of the operation cycle, i.e. when the unit was routed out of the operation.  If 'OperationCycleStatus' is equal to 'NOT_COMPLETED' this value must be ommited.
+          This value must be greater or equal than OperationCycleEndTime.
+
+          Note that the if the Data Warehouse already contains this operation cycle but it is not already
+          closed, the OperationCycleEndTime written in the Data Warehouse will be set according to the following rule: OperationCycleEndTime(in database) = OperationCycleStartTime(in database) + (OperationCycleEndTime(from xml) - OperationCycleStartTime(from xml)).
+
+          This attribute cannot be updated.
+        </xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+
+	</xs:complexType>
+</xs:schema>
