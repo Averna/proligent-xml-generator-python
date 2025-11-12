@@ -1,0 +1,502 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+		   xmlns="http://www.averna.com/products/proligent/analytics/DIT/6.85"
+		   elementFormDefault="qualified"
+		   targetNamespace="http://www.averna.com/products/proligent/analytics/DIT/6.85">
+
+  <xs:simpleType name="NonEmptyString">
+    <xs:annotation>
+      <xs:documentation>
+        Defines a restriction for strings where NonEmptyString attributes and elements can
+        - Either be optional or required.
+        - When optional, it can either be missing or specified with a non-empty value.  When missing,
+          it will be stored as 'null' in the database.
+        - When required, it must be specified with a non-empty value
+          
+        Note that whitespaces at the end of any strings will be discarded.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:minLength value="1"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="NonNullableString">
+    <xs:annotation>
+      <xs:documentation>
+        Defines a restriction for strings where NonNullableString attributes and elements can
+        - Either be optional or required.
+        - When optional, a missing value will be considered the same as an empty value.
+        - When required, it can take on any value, including the empty value.
+
+        Note that whitespaces at the end of any strings will be discarded.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string" />
+  </xs:simpleType>
+
+
+  <xs:simpleType name="DateTime">
+    <xs:annotation>
+      <xs:documentation>
+        Defines required restriction for datetimes attributes and datetimes elements used throughout the canonical format.
+        - datetimes attributes and datetimes elements can either be optional or required.
+        + Optional datetimes attributes and datetimes elements can either be "Not Specified" or specified with a Value
+        + Required datetimes attributes and datetimes elements must be specified with a value
+
+        DateTime values specifying no timezone are interpreted as utc values.
+        DateTime values specifying one of the utc timezones "-0:00", "+0:00" and "Z" are interpreted as utc values.
+        DateTime values specifying a timezone such as "-5:00" are interpreted as their specified timezone values.
+
+        The following DateTime are all equal: "2010-10-20T12:00:00.000", "2010-10-20T12:00:00.000Z", "2010-10-20T07:00:00.000-05:00"
+      
+        The DIT does not support empty datetimes in both Optional and Required attributes and elements.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:dateTime">
+      <xs:minInclusive value="1900-01-01T00:00:00Z"/>
+      <xs:maxExclusive value="2100-01-01T00:00:00Z"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="Guid">
+    <xs:restriction base="NonEmptyString">
+      <xs:pattern value="[A-Fa-f0-9]{8}-([A-Fa-f0-9]{4}-){3}[A-Fa-f0-9]{12}"/>
+      <xs:pattern value="\{[A-Fa-f0-9]{8}-([A-Fa-f0-9]{4}-){3}[A-Fa-f0-9]{12}\}"/>
+      <xs:pattern value="\([A-Fa-f0-9]{8}-([A-Fa-f0-9]{4}-){3}[A-Fa-f0-9]{12}\)"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="FullName">
+    <xs:annotation>
+      <xs:documentation>
+        Defines the input format for a FullName
+        "[Root Station/][[Path/]...]Name"
+        Each path strings and the name are limited to 64 characters and the total string provided is limited to 2000 characters.
+
+        WARNING:
+
+        Since the '/' character is the hierarchy delimiter, if a path string contains a '/' character it will be interpreted as
+        a new hierarchy.  It is therefore suggested to replace '/' by '-' in all your path components to keep the expected hierarchy.
+        For example, if you have a sequence named 'PASS/FAIL' and you don't substitude '/' by '-', the 'PASS' would be interpreted 
+        as a sequence category while 'FAIL' would be the name of a sequence.  If you do the suggested substitution, the name of 
+        the sequence would be interpreted as 'PASS-FAIL' without any category.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:union>
+      <xs:simpleType>
+        <xs:restriction base="NonEmptyString">
+          <xs:maxLength value="1950"/>
+          <xs:pattern value="([^/\s][^/]{0,64}){0,1}[^/\s](/([^/\s][^/]{0,64}){0,1}[^/\s])*" />
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:union>
+  </xs:simpleType>
+
+  <xs:simpleType name="ProcessFullName">
+    <xs:annotation>
+      <xs:documentation>
+        Defines the input format for a Process FullName
+        "[Root Process/][[Path/]...]Name"
+        Each path strings and the name are limited to 64 characters and the total string provided is limited to 1900 characters
+
+        WARNING:
+
+        Since the '/' character is the hierarchy delimiter, if a path string contains a '/' character it will be interpreted as
+        a new hierarchy.  It is therefore suggested to replace '/' by '-' in all your path components to keep the expected hierarchy.
+        For example, if you have a sequence named 'PASS/FAIL' and you don't substitude '/' by '-', the 'PASS' would be interpreted
+        as a sequence category while 'FAIL' would be the name of a sequence.  If you do the suggested substitution, the name of
+        the sequence would be interpreted as 'PASS-FAIL' without any category.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:union>
+      <xs:simpleType>
+        <xs:restriction base="NonEmptyString">
+          <xs:maxLength value="1900"/>
+          <xs:pattern value="([^/\s][^/]{0,64}){0,1}[^/\s](/([^/\s][^/]{0,64}){0,1}[^/\s])*" />
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:union>
+  </xs:simpleType>
+
+  <xs:simpleType name="SequenceFullName">
+    <xs:annotation>
+      <xs:documentation>
+        Defines the input format for a SequenctFullName
+        "[Root Sequence/][[Path/]...]SequenceName"
+        Each path strings and the sequence name are limited to 264 characters  and the total string provided is limited to 2000 characters
+
+        WARNING:
+
+        Since the '/' character is the hierarchy delimiter, if a path string contains a '/' character it will be interpreted as
+        a new hierarchy.  It is therefore suggested to replace '/' by '-' in all your path components to keep the expected hierarchy.
+        For example, if you have a sequence named 'PASS/FAIL' and you don't substitude '/' by '-', the 'PASS' would be interpreted
+        as a sequence category while 'FAIL' would be the name of a sequence.  If you do the suggested substitution, the name of
+        the sequence would be interpreted as 'PASS-FAIL' without any category.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:union>
+      <xs:simpleType>
+        <xs:restriction base="NonEmptyString">
+          <xs:maxLength value="2000"/>
+          <xs:pattern value="Root Sequence/([^/\s][^/]{0,263}){0,1}[^/\s](/([^/\s][^/]{0,263}){0,1}[^/\s])*" />
+        </xs:restriction>
+      </xs:simpleType>
+      <xs:simpleType>
+        <xs:restriction base="NonEmptyString">
+          <xs:pattern value="([^/\s][^/]{0,263}){0,1}[^/\s](/([^/\s][^/]{0,263}){0,1}[^/\s])*" />
+          <xs:maxLength value="1986"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:union>
+  </xs:simpleType>
+
+  <xs:simpleType name="NonEmptyString_7">
+    <xs:restriction base="NonEmptyString">
+      <xs:maxLength value="7"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="NonEmptyString_20">
+    <xs:restriction base="NonEmptyString">
+      <xs:maxLength value="20"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="NonEmptyString_30">
+    <xs:restriction base="NonEmptyString">
+      <xs:maxLength value="30"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="NonEmptyString_50">
+    <xs:restriction base="NonEmptyString">
+      <xs:maxLength value="50"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="NonEmptyString_64">
+    <xs:restriction base="NonEmptyString">
+      <xs:maxLength value="64"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="NonEmptyString_65">
+    <xs:restriction base="NonEmptyString">
+      <xs:maxLength value="65"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="NonEmptyString_100">
+    <xs:restriction base="NonEmptyString">
+      <xs:maxLength value="100"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="NonEmptyString_120">
+    <xs:restriction base="NonEmptyString">
+      <xs:maxLength value="120"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="NonEmptyString_128">
+    <xs:restriction base="NonEmptyString">
+      <xs:maxLength value="128"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="NonEmptyString_255">
+    <xs:restriction base="NonEmptyString">
+      <xs:maxLength value="255"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="NonEmptyString_TruncateAt_255">
+    <xs:restriction base="NonEmptyString">
+      <xs:maxLength value="4000"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="NonEmptyString_434">
+    <xs:restriction base="NonEmptyString">
+      <xs:maxLength value="434"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="NonEmptyString_448">
+    <xs:restriction base="NonEmptyString">
+      <xs:maxLength value="448"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="NonEmptyString_600">
+    <xs:restriction base="NonEmptyString">
+      <xs:maxLength value="600"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="NonEmptyString_1000">
+    <xs:restriction base="NonEmptyString">
+      <xs:maxLength value="1000"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="NonEmptyString_2000">
+    <xs:restriction base="NonEmptyString">
+      <xs:maxLength value="2000"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="NonEmptyString_4000">
+    <xs:restriction base="NonEmptyString">
+      <xs:maxLength value="4000"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="NonNullableString_7">
+    <xs:restriction base="NonNullableString">
+      <xs:maxLength value="7"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="NonNullableString_20">
+    <xs:restriction base="NonNullableString">
+      <xs:maxLength value="20"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="NonNullableString_30">
+    <xs:restriction base="NonNullableString">
+      <xs:maxLength value="30"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="NonNullableString_50">
+    <xs:restriction base="NonNullableString">
+      <xs:maxLength value="50"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="NonNullableString_65">
+    <xs:restriction base="NonNullableString">
+      <xs:maxLength value="65"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="NonNullableString_100">
+    <xs:restriction base="NonNullableString">
+      <xs:maxLength value="100"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="NonNullableString_120">
+    <xs:restriction base="NonNullableString">
+      <xs:maxLength value="120"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="NonNullableString_128">
+    <xs:restriction base="NonNullableString">
+      <xs:maxLength value="128"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="NonNullableString_255">
+    <xs:restriction base="NonNullableString">
+      <xs:maxLength value="255"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="NonNullableString_TruncateAt_255">
+    <xs:restriction base="NonNullableString"/>
+  </xs:simpleType>
+  <xs:simpleType name="NonNullableString_448">
+    <xs:restriction base="NonNullableString">
+      <xs:maxLength value="448"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="NonNullableString_600">
+    <xs:restriction base="NonNullableString">
+      <xs:maxLength value="600"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="NonNullableString_1000">
+    <xs:restriction base="NonNullableString">
+      <xs:maxLength value="1000"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="NonNullableString_2000">
+    <xs:restriction base="NonNullableString">
+      <xs:maxLength value="2000"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="NonNullableString_4000">
+    <xs:restriction base="NonNullableString">
+      <xs:maxLength value="4000"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+
+  <xs:simpleType name="String_2000">
+    <xs:restriction base="xs:string">
+      <xs:maxLength value="2000"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="String_4000">
+    <xs:restriction base="xs:string">
+      <xs:maxLength value="4000"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:complexType name="CharacteristicType">
+    <xs:annotation>
+      <xs:documentation>
+        A characteristic is a generic container of information that can be attached to many elements of the model.
+        Each characteristic is identified by a FullName that must be unique for its owner.
+        It stores its value in a Value element.
+        Characteristics are unique among siblings by their FullName property.
+        A characteristic is uniquely identified by the combination of its owner’s identifier and its FullName
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="CustomData" type="CustomDataType" minOccurs="0" maxOccurs="1" />
+    </xs:sequence>
+    <xs:attribute name="FullName" type="NonEmptyString_434" use="required"/>
+    <xs:attribute name="Value" type="String_2000" use="optional" />
+	</xs:complexType>
+
+  <xs:complexType name="DocumentType">
+    <xs:annotation>
+      <xs:documentation>
+        A document defines a link to an external file. This document is uniquely identified by its Identifier.
+        The document also has an optional Name attribute which is meant to contain a human-friendly identifier,
+        and a FileName attribute. The FileName is used to identify the type of document and should contain an
+        extension so that the appropriate application is launched when the user requests to view the document content.
+        An optional Description can also be specified.
+        
+        Documents are unique among siblings by their Identifier property.  This makes it possible for two 
+        different entities (ex: two different product units) to refer to the same document.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="CustomData" type="CustomDataType" minOccurs="0" maxOccurs="1" />
+    </xs:sequence>
+    <xs:attribute name="Identifier" type="Guid" use="required" />
+    <xs:attribute name="Name" type="NonEmptyString_255" use="optional"/>
+    <xs:attribute name="FileName" type="NonEmptyString_255" use="required"/>
+    <xs:attribute name="Description" type="NonNullableString_600" use="optional" />
+  </xs:complexType>
+
+  <xs:complexType name="UserCommentType">
+    <xs:annotation>
+      <xs:documentation>
+        Represents a comment made by a user at a given time.  Note that a user comment 
+        is considered unique when the comment, user and time are equal for a given
+        associated fact.  For example, if two failures have the same comment, user
+        and time, they will be considered as two different comments because they are 
+        not attached to the same failure.  But if two xmls are received by the DIT
+        and they contain the same comment, user and time for the same failure ID, then
+        they will be considered the same comment and the second comment will be 
+        discarded silently by the DIT.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="CustomData" type="CustomDataType" minOccurs="0" maxOccurs="1" />
+    </xs:sequence>
+    <xs:attribute name="Comment" type="NonNullableString_TruncateAt_255" use="required"/>
+    <xs:attribute name="User" type="NonEmptyString_255" use="optional"/>
+    <xs:attribute name="Time" type="DateTime" use="required"/>
+  </xs:complexType>
+  
+
+  <xs:complexType name="AddressType">
+
+    <xs:annotation>
+      <xs:documentation>
+        Represents a physical address.
+      </xs:documentation>
+    </xs:annotation>
+
+    <xs:sequence>
+      <xs:element name="CustomData" type="CustomDataType" minOccurs="0" maxOccurs="1" />
+    </xs:sequence>
+    
+    <xs:attribute name="Street" type="NonEmptyString_255" use="required" />
+    <xs:attribute name="City" type="NonEmptyString_50" use="required" />
+    <xs:attribute name="State" type="NonEmptyString_50" use="required" />
+    <xs:attribute name="Country" type="NonEmptyString_50" use="required" />
+    <xs:attribute name="Zip" type="NonEmptyString_50" use="required" />
+  </xs:complexType>
+  
+
+  <xs:complexType name="CustomerType">
+    <xs:annotation>
+      <xs:documentation>
+        Represents customer's informations.  A customer is uniquely identified by its CustomerId.
+      </xs:documentation>
+    </xs:annotation>
+    
+    <xs:sequence>
+      <xs:element name="Address" type="AddressType" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="CustomData" type="CustomDataType" minOccurs="0" maxOccurs="1" />
+    </xs:sequence>
+
+    <xs:attribute name="CustomerId" type="Guid" use="required" />
+    <xs:attribute name="FirstName" type="NonEmptyString_30" use="required" />
+    <xs:attribute name="LastName" type="NonEmptyString_30" use="required"/>
+    <xs:attribute name="PhoneNumber" type="NonEmptyString_30" use="optional" />
+    <xs:attribute name="EmailAddress" type="NonEmptyString_50" use="optional"  />
+    <xs:attribute name="CompanyName" type="NonEmptyString_50" use="optional"  />
+  </xs:complexType>
+
+  <xs:complexType name="ProductUnitUniqueIdentifierType">
+    
+    <xs:annotation>
+      <xs:documentation>
+        This type contains all the fields required to uniquely identify a product unit.
+      </xs:documentation>
+    </xs:annotation>
+
+    <xs:sequence>
+      <xs:element name="CustomData" type="CustomDataType" minOccurs="0" maxOccurs="1" />
+    </xs:sequence>
+  
+    <xs:attribute name="ProductFullName" type="FullName" use="required">
+      <xs:annotation>
+        <xs:documentation>
+          The product full name of the product unit.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="ProductUnitIdentifier" type="NonEmptyString_50" use="required">
+      <xs:annotation>
+        <xs:documentation>
+          The product unit identifier of the product unit.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    
+  </xs:complexType>
+
+  <xs:simpleType name="ExecutionStatusKind">
+		<xs:restriction base="xs:NMTOKEN">
+      <xs:enumeration value="PASS">
+        <xs:annotation>
+          <xs:documentation>The execution completed successfully.</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="FAIL">
+        <xs:annotation>
+          <xs:documentation>The execution completed and failures were detected.</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="NOT_COMPLETED">
+        <xs:annotation>
+          <xs:documentation>The execution is not completed.  It is still in progress.  In that situation, the end time of the execution must be ommited.</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="ABORTED">
+        <xs:annotation>
+          <xs:documentation>The execution was aborted.</xs:documentation> 
+        </xs:annotation>
+      </xs:enumeration>
+    </xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="MeasureKind">
+		<xs:restriction base="xs:NMTOKEN">
+			<xs:enumeration value="REAL"/>
+			<xs:enumeration value="BOOL"/>
+			<xs:enumeration value="INTEGER"/>
+			<xs:enumeration value="STRING"/>
+			<xs:enumeration value="DATETIME"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+  <xs:complexType name="CustomDataType">
+    <xs:annotation>
+      <xs:documentation>
+        The values defined under this element will not be interpreted by the DIT.  It can be used to store data that will be used by another system.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:any processContents="skip" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+</xs:schema>

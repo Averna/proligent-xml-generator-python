@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+		   xmlns="http://www.averna.com/products/proligent/analytics/DIT/6.85"
+		   elementFormDefault="qualified"
+		   targetNamespace="http://www.averna.com/products/proligent/analytics/DIT/6.85">
+	
+  <xs:include schemaLocation="Datawarehouse.Model.xsd"/>
+
+  <xs:complexType name="ShipmentType">
+    <xs:annotation>
+      <xs:documentation>
+        Defines a shipment of product units.
+
+        Shipments are globally unique by CustomerId, ProductFullName, ByManufacturer, ShippedDate and IsRefurbished
+
+        This fact cannot be updated.
+      </xs:documentation>
+    </xs:annotation>
+
+    <xs:sequence>
+      <xs:element name="Characteristic" type="CharacteristicType" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:element name="CustomData" type="CustomDataType" minOccurs="0" maxOccurs="1" />
+    </xs:sequence>
+    
+    <xs:attribute name="CustomerId" type="Guid" use="required">
+      <xs:annotation>
+        <xs:documentation>
+          Reference to the informations on the customer for which the RMA was issued.
+          The full customer's details must be provided in a separate xml entity (Customer...)
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    
+    <xs:attribute name="SalesOrderNumber" type="NonEmptyString_100" use="required">
+      <xs:annotation>
+        <xs:documentation>
+          The sales order number that this shipment is associated with.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="ByManufacturer" type="NonEmptyString_255" use="optional">
+      <xs:annotation>
+        <xs:documentation>
+          Name of the original EMS provider or manufacturing site.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="IsRefurbished" type="xs:boolean" use="required">
+      <xs:annotation>
+        <xs:documentation>
+          Defines whether the shipment contains new or refurbished units.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="ShippedDate" type="DateTime" use="required">
+      <xs:annotation>
+        <xs:documentation>
+          The original shipment time of the product unit to the customer.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="Quantity" type="xs:int" use="required">
+      <xs:annotation>
+        <xs:documentation>
+          Represents the number of items shipped.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="ProductFullName" type="FullName" use="required">
+      <xs:annotation>
+        <xs:documentation>
+          Full name of the product. If a hierarchy exists, the full name must contain the fully qualified name, each level being separated by a forward slash ("/").
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+  </xs:complexType>
+
+</xs:schema>

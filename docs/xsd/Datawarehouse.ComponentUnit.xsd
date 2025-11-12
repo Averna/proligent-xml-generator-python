@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+       xmlns="http://www.averna.com/products/proligent/analytics/DIT/6.85"
+       elementFormDefault="qualified"
+       targetNamespace="http://www.averna.com/products/proligent/analytics/DIT/6.85">
+  <xs:include schemaLocation="Datawarehouse.Model.xsd"/>
+
+  <xs:complexType name="ComponentUnitReferenceType">
+    <xs:annotation>
+      <xs:documentation>
+        This type groups all the fields that can participate in the identification of a component unit when referenced in another context (defect, assembly, etc.).
+
+        A component unit reference can be one of three things :
+        - A product unit
+        - A component unit to which a product unit was associated. In this case, any of the two identifiers can be provided
+        - A component unit that has no corresponding product unit.
+
+        Providing a product unit unique identifier to identify a component unit means that the referred component unit is a part produced in-house
+        or a tracked component unit (a component unit manufactured by a supplier to which a product full name and product unit identifier was given).
+
+        Providing a component unit identifier is necessary when the part is produced by an external manufacturer and when it has no in-house
+        product full name and product unit identifier associated.
+      </xs:documentation>
+    </xs:annotation>
+
+    <xs:sequence>
+      <xs:choice minOccurs="1" maxOccurs="1">
+        <xs:element name="ProductUnitUniqueIdentifier"   type="ProductUnitUniqueIdentifierType" />
+        <xs:element name="ComponentUnitIdentifier" type="ComponentUnitIdentifierType" />
+      </xs:choice>
+      <xs:element name="CustomData" type="CustomDataType" minOccurs="0" maxOccurs="1" />
+    </xs:sequence>
+  </xs:complexType>
+
+
+  <xs:complexType name="ComponentUnitIdentifierType">
+    <xs:annotation>
+      <xs:documentation>
+        This type groups all the fields that can participate in the identification of a component unit
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="CustomData" type="CustomDataType" minOccurs="0" maxOccurs="1" />
+    </xs:sequence>
+    <xs:attribute name="Manufacturer" type="FullName" use="required">
+      <xs:annotation>
+        <xs:documentation>
+          The name of the original manufacturer of the component without considering any intermediate distributor.
+          For example, if you buy a component manufactured by company X but distributed by company Y, the
+          manufacturer will be X.
+
+          This attribute can't be updated.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="ManufacturerPartNumber" type="NonEmptyString_128" use="required">
+      <xs:annotation>
+        <xs:documentation>
+          The part number of the component as defined by the supplier.
+
+          This attribute can't be updated.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="ManufacturerLot" type="NonEmptyString_255" use="optional">
+      <xs:annotation>
+        <xs:documentation>
+          The lot number in which the component unit was included as defined by the supplier.
+
+          This attribute can't be updated.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="ManufacturerSerialNumber" type="NonEmptyString_128" use="optional">
+      <xs:annotation>
+        <xs:documentation>
+          The serial number of the component unit as defined by the supplier.
+          This attribute is optional because not all components have a serial number.  For example, individual
+          resistors don't typically have a serial number.
+
+          This attribute can't be updated.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="ComponentFullName" type="FullName" use="required">
+      <xs:annotation>
+        <xs:documentation>
+          The component full name of the component as redefined by your manufacturing process on
+          top of the part number defined by the component manufacturer. If none exist,
+          the ManufacturerPartNumber can be provided.
+
+          This attribute can't be updated.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:complexType>
+
+
+  <xs:complexType name="ComponentUnitType">
+    <xs:annotation>
+      <xs:documentation>
+        A component unit is very similar to a product unit (see ProductUnitType) except that
+        it is a part that you don't manufacture yourself.
+
+        For example, if you buy microprocessors and assemble them in your products, then
+        each instance of a microprocessor that you assemble becomes a component unit that
+        has a part number and serial/lot number.
+
+        Note that if your manufacturing process generates assemblies (child assemblies) that
+        are packaged later in larger assemblies (parent assemblies), then the child assemblies
+        should not be sent to the DIT as component units.  They should be sent as product
+        units.
+
+        A Component Unit can be assigned a product full name and a product unit identifier
+        to be able to track it and run tests on it. This can be done when providing ProductUnit
+        information (see ProductUnitType).
+      </xs:documentation>
+    </xs:annotation>
+
+    <xs:sequence>
+      <xs:element name="Characteristic" type="CharacteristicType" minOccurs="0" maxOccurs="unbounded" />
+      <xs:element name="ComponentUnitIdentifier" type="ComponentUnitIdentifierType" minOccurs="1" maxOccurs="1" />
+      <xs:element name="CustomData" type="CustomDataType" minOccurs="0" maxOccurs="1" />
+    </xs:sequence>
+
+    <xs:attribute name="ManufacturingDate" type="DateTime" use="optional">
+      <xs:annotation>
+        <xs:documentation>
+          The manufacturing date of the component unit.
+
+          This attribute can't be updated after having been provided once.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="Distributor" type="NonEmptyString_128" use="optional">
+      <xs:annotation>
+        <xs:documentation>
+          The distributor of the component unit.
+
+          This attribute can't be updated after having been provided once.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+  </xs:complexType>
+
+</xs:schema>

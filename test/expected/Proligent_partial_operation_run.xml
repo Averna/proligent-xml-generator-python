@@ -1,0 +1,22 @@
+<?xml version='1.0' encoding='utf-8'?>
+<Proligent.Datawarehouse xmlns="http://www.averna.com/products/proligent/analytics/DIT/6.85" GenerationTime="2024-05-05T15:00:00-05:00" DataSourceFingerprint="00000000-0000-0000-0000-000000000001">
+  <TopProcessRun ProcessRunId="00000000-0000-0000-0000-000000000002" ProcessFullName="PythonLibrary/Process/partial_operation_flow" ProductUnitIdentifier="PU-PARTIAL-01" ProductFullName="PythonLibrary/Product/partial_operation_flow" ProcessRunStatus="NOT_COMPLETED" ProcessRunStartTime="2024-05-05T14:00:00-05:00" ProcessMode="AUTO">
+    <OperationRun OperationRunId="00000000-0000-0000-0000-000000000003" ProcessFullName="PythonLibrary/Process/partial_operation_flow" OperationName="Operation/Partial" StationFullName="PythonLibrary/Station/partial_operation_flow" User="in-progress.operator" OperationStatus="NOT_COMPLETED" OperationRunStartTime="2024-05-05T14:00:00-05:00">
+      <SequenceRun StartDate="2024-05-05T14:05:00-05:00" EndDate="2024-05-05T14:15:00-05:00" SequenceExecutionStatus="PASS" SequenceRunId="00000000-0000-0000-0000-000000000004" SequenceFullName="Sequence/Initial" SequenceVersion="INIT-1.0" StationFullName="PythonLibrary/Station/partial_operation_flow" User="in-progress.operator">
+        <StepRun StepExecutionStatus="PASS" StepRunId="00000000-0000-0000-0000-000000000006" StepName="InitialStep" StartDate="2024-05-05T14:07:00-05:00" EndDate="2024-05-05T14:07:00-05:00">
+          <Measure MeasureId="00000000-0000-0000-0000-000000000005" MeasureTime="2024-05-05T14:07:00-05:00" Unit="Volt" Symbol="V" MeasureExecutionStatus="PASS">
+            <Value Type="REAL">42.0</Value>
+          </Measure>
+        </StepRun>
+      </SequenceRun>
+      <SequenceRun StartDate="2024-05-05T14:35:00-05:00" SequenceExecutionStatus="NOT_COMPLETED" SequenceRunId="00000000-0000-0000-0000-000000000007" SequenceFullName="Sequence/Ongoing" SequenceVersion="ONGOING-1.0" StationFullName="PythonLibrary/Station/partial_operation_flow" User="in-progress.operator">
+        <StepRun StepExecutionStatus="PASS" StepRunId="00000000-0000-0000-0000-000000000009" StepName="OngoingMeasurement" StartDate="2024-05-05T14:36:00-05:00" EndDate="2024-05-05T14:36:00-05:00">
+          <Measure MeasureId="00000000-0000-0000-0000-000000000008" MeasureTime="2024-05-05T14:36:00-05:00" MeasureExecutionStatus="PASS">
+            <Value Type="STRING">Collecting data</Value>
+          </Measure>
+        </StepRun>
+      </SequenceRun>
+    </OperationRun>
+  </TopProcessRun>
+  <ProductUnit ProductUnitIdentifier="PU-PARTIAL-01" ProductFullName="PythonLibrary/Product/partial_operation_flow" />
+</Proligent.Datawarehouse>

@@ -1,0 +1,503 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+		   xmlns="http://www.averna.com/products/proligent/analytics/DIT/6.85"
+		   elementFormDefault="qualified"
+		   targetNamespace="http://www.averna.com/products/proligent/analytics/DIT/6.85">
+  <xs:include schemaLocation="Datawarehouse.Model.xsd"/>
+  <xs:include schemaLocation="Datawarehouse.ComponentUnit.xsd"/>
+
+
+  <xs:complexType name="DefectType">
+    <xs:annotation>
+      <xs:documentation>
+        A defect represents a physical problem with a UUT. When a defect exist on a UUT, the UUT
+        is considered defective and needs to be repaired.  A defect may be caused by a defective
+        component, or by other causes (ex: component missing, solder missing, etc).
+
+        A defect is uniquely identified by its DefectId.
+      </xs:documentation>
+    </xs:annotation>
+
+    <xs:sequence >
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element name="Characteristic" type="CharacteristicType" />
+        <xs:element name="Comment" type="UserCommentType" />
+      </xs:choice>
+	  
+      <xs:element name="FailedComponentUnit" type="ComponentUnitReferenceType"  minOccurs="0" maxOccurs="1">
+        <xs:annotation>
+          <xs:documentation>
+            Identifies the component unit that caused the defect.  Note that if the defect is not
+            caused by a defective component (ex: bad solder), there won't be any associated
+            failed component for the defect.
+
+            All the attributes of this element can't be updated.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+	  
+      <xs:element name="Repair" type="RepairType"  minOccurs="0" maxOccurs="1">
+        <xs:annotation>
+          <xs:documentation>
+            Identifies how the defect was repaired.  Once a defect is repaired, the defect is
+            considered closed and can't be updated anymore.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+
+      <xs:element name="CustomData" type="CustomDataType" minOccurs="0" maxOccurs="1" />
+    
+    </xs:sequence>
+
+    <xs:attribute name="FailureId" type="Guid" use="required">
+      <xs:annotation>
+        <xs:documentation>
+          A defect is always associated to a failure.  The current attribute identifies the related
+          failure.  This attribute cannot be updated.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="DefectId" type="Guid" use="required">
+      <xs:annotation>
+        <xs:documentation>
+          The ID of the current defect.  This attribute cannot be updated.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="DefectTypeName" type="NonEmptyString_128" use="required">
+      <xs:annotation>
+        <xs:documentation>
+          The exact type of defect on the UUT: defective component, missing component, inverted
+          component, missing solder, short circuit, etc.
+
+          This attribute cannot be updated.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="DefectCode" type="NonEmptyString_128" use="optional">
+      <xs:annotation>
+        <xs:documentation>
+          A detailed descriptor for the root cause of a defect, usually designated by standard code identifiers.
+
+          This attribute can be updated until the defect is repaired.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="State" type="NonEmptyString_50" use="optional">
+      <xs:annotation>
+        <xs:documentation>
+          The state of the defect. For example, it can be something like "New", "Open", "Fixed", "Rejected", "Cancelled"...
+
+          This attribute can be updated until the defect is repaired.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="DebugTechnician" type="NonEmptyString_255" use="optional">
+      <xs:annotation>
+        <xs:documentation>
+          The name of the debug technician that identified the failed component.
+
+          This attribute cannot be updated.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="ReferenceDesignator" type="NonEmptyString_50" use="optional">
+      <xs:annotation>
+        <xs:documentation>
+          A string that identifies the instance or location of the component that was defective on the product
+          unit identified in the failure.
+
+          For example, if you have two instances of a given component part number on your product,
+          then the reference designator can be used to associate a name with each of these instances.
+
+          This attribute cannot be updated.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="OpenTime" type="DateTime" use="required">
+      <xs:annotation>
+        <xs:documentation>
+          Defines the creation time of the defect.
+
+          This attribute cannot be updated.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="TroubleshootingDuration" type="xs:integer" use="optional">
+      <xs:annotation>
+        <xs:documentation>
+          Troubleshooting duration in seconds.
+
+          This attribute cannot be updated.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+  </xs:complexType>
+
+
+  <xs:complexType name="RepairType">
+    <xs:annotation>
+      <xs:documentation>
+        Defines how a defect was repaired.
+      </xs:documentation>
+    </xs:annotation>
+
+    <xs:sequence>
+      <xs:element name="CustomData" type="CustomDataType" minOccurs="0" maxOccurs="1" />
+    </xs:sequence>
+    
+    <xs:attribute name="RepairTechnician" type="NonEmptyString_255" use="optional">
+      <xs:annotation>
+        <xs:documentation>
+          The name of the technician that executed the reparation.
+
+          This attribute cannot be updated.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="RepairTypeName" type="NonEmptyString_30" use="required">
+      <xs:annotation>
+        <xs:documentation>
+          The exact type of reparation on the UUT (ex: replaced component, added solder, etc.)
+
+          This attribute cannot be updated.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="CloseTime" type="DateTime" use="required">
+      <xs:annotation>
+        <xs:documentation>
+          The time when the defect was repaired.  
+          
+          Note that the if the Data Warehouse already contains this defect but it is not already 
+          closed, the CloseTime written in the Data Warehouse will be set according to the following rule: CloseTime(in database) = OpenTime(in database) + (CloseTime(from xml) - OpenTime(from xml))
+
+          This attribute cannot be updated.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="RepairDuration" type="xs:integer" use="optional">
+      <xs:annotation>
+        <xs:documentation>
+          Repair duration in seconds.
+
+          This attribute cannot be updated.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="HasClosedFailure" type="xs:boolean" use="optional">
+      <xs:annotation>
+        <xs:documentation>
+          Identifies if repairing the current defect has closed the failure on the unit
+          under test.
+
+          This attribute can be updated.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+  </xs:complexType>
+
+  <xs:complexType name="MeasureFailureContextType">
+
+    <xs:sequence>
+      <xs:element name="CustomData" type="CustomDataType" minOccurs="0" maxOccurs="1" />
+    </xs:sequence>
+    
+    <xs:attribute name="Id" type="Guid" use="required">
+      <xs:annotation>
+        <xs:documentation>
+          The identifier of the measure that caused the failure to be detected.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+  </xs:complexType>
+
+  <xs:complexType name="StepRunFailureContextType">
+
+    <xs:sequence>
+      <xs:element name="CustomData" type="CustomDataType" minOccurs="0" maxOccurs="1" />
+    </xs:sequence>
+    
+    <xs:attribute name="Id" type="Guid" use="required">
+      <xs:annotation>
+        <xs:documentation>
+          The identifier of the step run that caused the failure to be detected.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+  </xs:complexType>
+
+  <xs:complexType name="SequenceRunFailureContextType">
+
+    <xs:sequence>
+      <xs:element name="CustomData" type="CustomDataType" minOccurs="0" maxOccurs="1" />
+    </xs:sequence>
+    
+    <xs:attribute name="Id" type="Guid" use="required">
+      <xs:annotation>
+        <xs:documentation>
+          The identifier of the sequence run that caused the failure to be detected.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+  </xs:complexType>
+
+  <xs:complexType name="OperationRunFailureContextType">
+
+    <xs:sequence>
+      <xs:element name="CustomData" type="CustomDataType" minOccurs="0" maxOccurs="1" />
+    </xs:sequence>
+    
+    <xs:attribute name="Id" type="Guid" use="required">
+      <xs:annotation>
+        <xs:documentation>
+          The identifier of the operation run that caused the failure to be detected.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+  </xs:complexType>
+
+  <xs:complexType name="TopProcessRunFailureContextType">
+
+    <xs:sequence>
+      <xs:element name="CustomData" type="CustomDataType" minOccurs="0" maxOccurs="1" />
+    </xs:sequence>
+    
+    <xs:attribute name="Id" type="Guid" use="required">
+      <xs:annotation>
+        <xs:documentation>
+          The identifier of the top process run that caused the failure to be detected.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+  </xs:complexType>
+
+  <xs:complexType name="FailureContextType">
+    <xs:annotation>
+      <xs:documentation>
+        When it is not possible to specify the failure context at the same time as execution result through
+        'FailureReferenceType', it is possible to set them with the failure through 'FailureContextType'.
+        Depending on the granularity of the information that you have, you may attach the failure to a
+        measure, step run, sequence run, operation run or top process run.
+
+        Note that all the fields in 'FailureContextType' are not updatable.
+      </xs:documentation>
+    </xs:annotation>
+
+    <xs:sequence>
+      <xs:choice minOccurs="1" maxOccurs="1">
+        <xs:element name="Measure" type="MeasureFailureContextType" />
+        <xs:element name="StepRun" type="StepRunFailureContextType" />
+        <xs:element name="SequenceRun" type="SequenceRunFailureContextType" />
+        <xs:element name="OperationRun" type="OperationRunFailureContextType" />
+        <xs:element name="TopProcessRun" type="TopProcessRunFailureContextType" />
+      </xs:choice>
+      <xs:element name="CustomData" type="CustomDataType" minOccurs="0" maxOccurs="1" />
+    </xs:sequence>
+
+  </xs:complexType>
+
+  <xs:complexType name="FailureType">
+    <xs:annotation>
+      <xs:documentation>
+        Defines a failure, a "yield event". A Failure indicates that a UUT was tested in production, and the test failed.
+
+        A failure is uniquely identified by its FailureId.
+      </xs:documentation>
+    </xs:annotation>
+
+    <xs:sequence>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element name="Characteristic" type="CharacteristicType" />
+        <xs:element name="Document" type="DocumentType" />
+        <xs:element name="Comment" type="UserCommentType" />
+      </xs:choice>
+      <xs:element name="Context"  type="FailureContextType"   minOccurs="0" maxOccurs="1"/>
+      <xs:element name="CustomData" type="CustomDataType" minOccurs="0" maxOccurs="1" />
+    </xs:sequence>
+
+    <xs:attribute name="FailureId" type="Guid" use="required">
+      <xs:annotation>
+        <xs:documentation>Defines the failure unique identifier.</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="OpenDate" type="DateTime" use="required">
+      <xs:annotation>
+        <xs:documentation>The date of when the failure was opened.  This attribute cannot be updated.</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="CloseDate" type="DateTime" use="optional">
+      <xs:annotation>
+        <xs:documentation>
+          The date of when the failure was closed.  Once this attribute is specified, the failure is considered closed
+          and it won't be updatable afterward.
+
+          Note that the if the Data Warehouse already contains this failure but it is not already
+          closed, the CloseDate written in the Data Warehouse will be set according to the following rule: CloseDate(in database) = OpenDate(in database) + (CloseDate(from xml) - OpenDate(from xml))
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="State" type="NonEmptyString_50" use="optional">
+      <xs:annotation>
+        <xs:documentation>
+          The state of the failure.  For example, it can be something like "Opened", "Assigned", "Closed", etc.
+          This property can be updated until the failure is closed (i.e. 'CloseDate' is specified).
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="TrackingId" type="NonEmptyString_128" use="optional">
+      <xs:annotation>
+        <xs:documentation>
+          Through this the failure can be associated to a tracking id coming from an external system, such as a work order id or incident id.
+          This attribute cannot be updated.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="ProductFullName" type="FullName" use="required">
+      <xs:annotation>
+        <xs:documentation>Defines the full name of the product for the current failure.  This attribute cannot be updated.</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="ProductUnitIdentifier" type="NonEmptyString_50" use="required">
+      <xs:annotation>
+        <xs:documentation>Defines the identifier of the product unit that had a failure.  This attribute cannot be updated.</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="StationFullName" type="FullName" use="optional">
+      <xs:annotation>
+        <xs:documentation>
+          The station where the failure was first detected.  This attribute is optional because it is possible to find
+          failures outside the context of a station.  This attribute of the failure can't be updated.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="OpeningUser" type="NonEmptyString_255" use="optional">
+      <xs:annotation>
+        <xs:documentation>
+          The user that detected the failure.  This attribute is optional because the failure can be opened automatically
+          by a tool.  This attribute cannot be updated.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="ClosingUser" type="NonEmptyString_255" use="optional">
+      <xs:annotation>
+        <xs:documentation>
+          The user that closed the failure.  This attribute is optional because the failure can be opened automatically
+          by a tool.
+
+          This attribute is not updatable and should only be set when 'CloseDate' is specified.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="FailureCause" type="NonEmptyString_255" use="optional">
+      <xs:annotation>
+        <xs:documentation>
+          A high-level descriptor for the root cause of a failure. This is used to broadly categorize failures. Examples
+          are "Product Defect", "Software Error", "Operator Error", "Station Not Calibrated".
+
+          This attribute is not updatable and should only be set when 'CloseDate' is specified.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="FailureCode" type="NonEmptyString_255" use="optional">
+      <xs:annotation>
+        <xs:documentation>
+          A detailed descriptor for the root cause of a failure, usually designated by standard code identifier, such
+          as "FSE001 - Software Error: User Interface Crash", "FSE002 - Boot-up Sequence Hang", "FOE003 - Operator
+          Error: optical cabling error".
+
+          This attribute is not updatable and should only be set when 'CloseDate' is specified.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="TopDefectId" type="Guid" use="optional">
+      <xs:annotation>
+        <xs:documentation>
+          When a failure is found on an assembly, it is possible that the defect comes from a sub-assembly.  In that
+          case, it is possible to open a new defect on the sub-assembly so that it can have it's own fail and repair
+          life cycle.  In that situation, if you want to have traceability between the failure on the sub-assembly and
+          the defect on the parent assembly, specify the identifier of the defect on the parent assembly in the
+          attribute 'TopDefectId' within the sub-assembly failure.
+
+          Note that if you have multiple level of assemblies and you open a failure at each level until you have found
+          the faulty sub-assembly, then all the failures opened on the sub assemblies should point to the identifier
+          of the defect on the top level assembly.  It should not point to the defect on it's direct parent assembly.
+
+          This attribute cannot be updated.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="RmaNumber" type="NonEmptyString_255" use="optional">
+      <xs:annotation>
+        <xs:documentation>
+          The public identifier for the RMA. This number is also used to link failures to the RMA event.
+
+          This attribute cannot be updated.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+  </xs:complexType>
+
+
+  <xs:complexType name="FailureReferenceType" >
+    <xs:annotation>
+      <xs:documentation>
+        A minimal set of information can be directly attached to a failure (see 'FailureType') when it is created.
+        For example, it is possible to specify the UUT that failed, the user that was testing it and the station
+        where the failure was found.  It is not possible to specify a more detailed failure context on the failure
+        itself.
+
+        If you need more context on the failure (ex: sequence, step, mesure, etc), you can attach this information
+        to the failure by adding a 'FailureReferenceType' to the execution element that detected the failure.
+        For example, if the failure was deteced on a sequence, then add a 'FailureReferenceType' on the sequence.
+
+        Note that this information is not required for a failure to be valid.  But if provided, it can't be updated.
+        If an XML tries to change the value already contained in the data warehouse, the XML will be rejected.
+      </xs:documentation>
+    </xs:annotation>
+
+    <xs:sequence>
+      <xs:element name="CustomData" type="CustomDataType" minOccurs="0" maxOccurs="1" />
+    </xs:sequence>
+    
+    <xs:attribute name="Id" type="Guid" use="required">
+      <xs:annotation>
+        <xs:documentation>The identifier of the related failure.</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:complexType>
+
+</xs:schema>

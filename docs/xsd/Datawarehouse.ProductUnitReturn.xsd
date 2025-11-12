@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+		   xmlns="http://www.averna.com/products/proligent/analytics/DIT/6.85"
+		   elementFormDefault="qualified"
+		   targetNamespace="http://www.averna.com/products/proligent/analytics/DIT/6.85">
+	
+  <xs:include schemaLocation="Datawarehouse.Model.xsd"/>
+
+  <xs:complexType name="ProductUnitReturnType">
+    <xs:annotation>
+      <xs:documentation>
+        Represents the event of a return merchandise authorization (RMA).
+        Product unit returns are globally unique by their ProductUnitReturnId
+      </xs:documentation>
+    </xs:annotation>
+    
+    <xs:sequence>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element name="Characteristic" type="CharacteristicType" />
+        <xs:element name="Document" type="DocumentType" />
+      </xs:choice>
+      
+      <xs:element name="Close" type="RMACloseType" minOccurs="0" maxOccurs="1">
+        <xs:annotation>
+          <xs:documentation>
+            When this attribute is not specified.  The RMA is considered opened.
+            Once specified, the RMA is considered closed and can't be updated
+            anymore.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+
+      <xs:element name="CustomData" type="CustomDataType" minOccurs="0" maxOccurs="1" />
+      
+    </xs:sequence>
+
+    <xs:attribute name="ProductUnitReturnId" type="Guid" use="required">
+      <xs:annotation>
+        <xs:documentation>
+          Globally unique id for identifying a RMA event.  Note that in a single RMA,
+          multiple product units can be returned.  So, there will be one RMA (identified
+          by 'RmaNumber') for multiple returns (identified by 'ProductUnitReturnId').
+
+          This attribute cannot be updated.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="ProductUnitIdentifier" type="NonEmptyString_50" use="required">
+      <xs:annotation>
+        <xs:documentation>
+          Defines the unique identifier for the product unit return.  The Serial Number is often used for this purpose.
+          Note that ProductUnitIdentifiers must be unique for each ProductFullName.
+
+          This attribute cannot be updated.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="ProductFullName" type="FullName" use="required">
+      <xs:annotation>
+        <xs:documentation>
+          Full name of the product. If a hierarchy exists, the full name must contain the fully qualified name, each level being separated by a forward slash ("/").
+          
+          This attribute cannot be updated.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="CustomerId" type="Guid" use="optional">
+      <xs:annotation>
+        <xs:documentation>
+          Reference to the information on the customer for which the RMA was issued. 
+          The full customer's details must be provided in a separate xml entity (Customer...)
+          
+          This attribute cannot be updated.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="ByManufacturer" type="NonEmptyString_255" use="optional">
+      <xs:annotation>
+        <xs:documentation>
+          Name of the original EMS provider or manufacturing site.
+
+          This attribute cannot be updated.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="IssuerUser" type="NonEmptyString_255" use="optional">
+      <xs:annotation>
+        <xs:documentation>
+          Customer support agent that issue the RMA.
+
+          This attribute cannot be updated.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="ReceiverUser" type="NonEmptyString_255" use="required">
+      <xs:annotation>
+        <xs:documentation>
+          The operator that received and registered the actual product unit after the RMA has been issued.
+
+          This attribute cannot be updated.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="RmaNumber" type="NonEmptyString_255" use="required">
+      <xs:annotation>
+        <xs:documentation>
+          
+          The public identifier for the RMA that contains the current product unit return.  A single RMA
+          can contain multiple product unit returns.
+          
+          Note that this number is also used to link failures to the RMA.
+
+          This attribute cannot be updated.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    
+    <xs:attribute name="ReturnReason" type="NonEmptyString_255" use="optional">
+      <xs:annotation>
+        <xs:documentation>
+          The reason for which the product unit was returned.
+          ex: Upgrade, Operation failure, ...
+
+          This attribute cannot be updated.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="ReturnComment" type="NonNullableString_TruncateAt_255" use="optional">
+      <xs:annotation>
+        <xs:documentation>
+          Free-text comment that complements the return reason.
+
+          This attribute cannot be updated.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="ShippedTime" type="DateTime" use="required">
+      <xs:annotation>
+        <xs:documentation>
+          The original shipment time of the product unit to the customer.
+
+          This attribute cannot be updated.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="ReceivedTime" type="DateTime" use="required">
+      <xs:annotation>
+        <xs:documentation>
+          The time at which the product unit was received for diagnostic after the RMA.
+
+          This attribute cannot be updated.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    
+    <xs:attribute name="IsWarranty" type="xs:boolean" use="optional">
+      <xs:annotation>
+        <xs:documentation>
+          Defines whether the unit is under warranty at the time of the RMA issue.
+          When not provided, default value is {Not available}.
+
+          This attribute cannot be updated.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="ProcessRunId" type="Guid" use="optional">
+      <xs:annotation>
+        <xs:documentation>
+          Defines the id of the execution of the RMA process of the product unit.
+
+          This attribute cannot be updated.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+  </xs:complexType>
+
+  <xs:complexType name="RMACloseType">
+    <xs:annotation>
+      <xs:documentation>
+        Represents the closing event of a return merchandise authorization (RMA).
+      </xs:documentation>
+    </xs:annotation>
+
+    <xs:sequence>
+      <xs:element name="CustomData" type="CustomDataType" minOccurs="0" maxOccurs="1" />
+    </xs:sequence>
+    
+    <xs:attribute name="Reason" type="NonEmptyString_255" use="optional">
+      <xs:annotation>
+        <xs:documentation>
+          The actual reason for closing the RMA.
+          Ex: Shipped Replacement, Upgrade Performed, Repaired, No Fault Found, ...
+
+          This attribute cannot be updated.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="Comment" type="NonNullableString_TruncateAt_255" use="optional">
+      <xs:annotation>
+        <xs:documentation>
+          Free-text comment that complements the closing reason.
+
+          This attribute cannot be updated.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="CloseTime" type="DateTime" use="required">
+      <xs:annotation>
+        <xs:documentation>
+          The time at which the RMA was closed.
+
+          Note that the if the Data Warehouse already contains this product unit return but it is not already
+          closed, the CloseTime written in the Data Warehouse will be set according to the following rule: CloseTime(in database) = ReceivedTime(in database) + (CloseTime(from xml) - ReceivedTime(from xml)).
+
+          This attribute cannot be updated.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+  </xs:complexType>
+  
+</xs:schema>

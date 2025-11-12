@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+		   xmlns="http://www.averna.com/products/proligent/analytics/DIT/6.85"
+		   elementFormDefault="qualified"
+		   targetNamespace="http://www.averna.com/products/proligent/analytics/DIT/6.85">
+
+  <!--
+    Schema changes history (starting at version 6.21)
+    
+    Date          Schema  Description
+    2013-04-16    6.21    (C104885) Support document in Operation Run
+    2019-03-12    6.85    (C109678) Support ComponentCount in assembled Component Unit
+  -->
+
+  <xs:include schemaLocation="Datawarehouse.Model.xsd"/>
+  <xs:include schemaLocation="Datawarehouse.Failure.xsd"/>
+  <xs:include schemaLocation="Datawarehouse.ProcessRun.xsd"/>
+  <xs:include schemaLocation="Datawarehouse.ProductUnit.xsd"/>
+  <xs:include schemaLocation="Datawarehouse.ProductUnitReturn.xsd"/>
+  <xs:include schemaLocation="Datawarehouse.ComponentUnit.xsd"/>
+  <xs:include schemaLocation="Datawarehouse.Assembly.xsd "/>
+  <xs:include schemaLocation="Datawarehouse.Event.xsd "/>
+  <xs:include schemaLocation="Datawarehouse.TrackedComponentUnit.xsd "/>
+  <xs:include schemaLocation="Datawarehouse.ApplicationConfig.xsd "/>
+
+  <xs:element name="Proligent.Datawarehouse">
+
+    <xs:complexType>
+
+      <xs:sequence>
+        <xs:choice minOccurs="0" maxOccurs="unbounded">
+          <xs:element name="Defect" type="DefectType" />
+          <xs:element name="Failure" type="FailureType" />
+          <xs:element name="TopProcessRun" type="ProcessRunType" />
+          <xs:element name="ProductUnit" type="ProductUnitType" />
+          <xs:element name="Customer" type="CustomerType" />
+          <xs:element name="ProductUnitReturn" type="ProductUnitReturnType" />
+          <xs:element name="ComponentUnit" type="ComponentUnitType" />
+          <xs:element name="Shipment" type="ShipmentType" />
+          <xs:element name="AssemblyTrace" type="AssemblyTraceType"/>
+          <xs:element name="AssemblyRule" type="AssemblyRuleType"/>
+          <xs:element name="Event" type="EventType" />
+          <xs:element name="SequenceRun" type="StandaloneSequenceRunType" />
+          <xs:element name="TrackedComponentUnit" type="TrackedComponentUnitType"/>
+          <xs:element name="ApplicationConfig" type="ApplicationConfigType"/>
+        </xs:choice>
+        <xs:element name="CustomData" type="CustomDataType" minOccurs="0" maxOccurs="1" />
+      </xs:sequence>
+            
+      <xs:attribute name="GenerationTime" type="DateTime" use="required">
+        <xs:annotation>
+          <xs:documentation>
+            Defines the time at which the data was generated.  The DIT uses this information to discard 
+            information if canonical files are processed or received out of order.  For example, if file A 
+            is generated before file B but B is processed before A, in case of conflicting information the
+            data coming from B is preserved.  A concrete example is a product unit characteristic that
+            would change in both files.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+
+      <xs:attribute name="DataSourceFingerprint" type ="NonEmptyString_448" use="optional">
+        <xs:annotation>
+          <xs:documentation>
+            The information contained in this attribute is used to protect the data warehouse from the
+            injection of the same file more than once.  The rule is that all files that contain the
+            same fingerprint as a file that has already been processed successfully by the DIT will
+            be rejected.
+
+            For example, if the file contains information about a product unit, a good value for the
+            fingerprint would be the product unit serial number followed by the generation date of the
+            XSD.
+
+            If the attribute is ommited, the DIT will generate a random fingerprint.  The result is
+            that it will now be possible to inject the same file more than once.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      
+      <xs:attribute name="IntegrationMetaData" type ="NonNullableString_2000" use="optional">
+        <xs:annotation>
+          <xs:documentation>
+              The information contained in this attribute is saved in the data warehouse as is.  It can
+              be used by the integrator to add some meta data that will help him later to troubleshoot his
+              integration.  This meta data is stored in the F_INTEGRATION_METADATA column of the T_FACT_DELIVERY_SOURCE
+              table.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+
+
+    </xs:complexType>
+
+  </xs:element>
+
+</xs:schema>

@@ -1,0 +1,4 @@
+pytest
+pytz>=2024.1
+xsdata>=24.5
+xmlschema>=3.4.3

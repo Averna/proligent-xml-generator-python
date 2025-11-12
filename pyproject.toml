@@ -1,0 +1,37 @@
+[build-system]
+requires = ["setuptools >= 61.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+include-package-data = false
+
+[project]
+name = "proligent"
+version = "1.0.0"
+requires-python = ">=3.11"
+authors = [
+  {name = "Ben Engelen", email = "ben.engelen@averna.com"},
+  {name = "Kevin Van de Kerckhove", email = "kevin.vandekerckhove@averna.com"},
+]
+maintainers = [
+  {name = "Ben Engelen", email = "ben.engelen@averna.com"},
+  {name = "Kevin Van de Kerckhove", email = "kevin.vandekerckhove@averna.com"},
+]
+description = "Toolkit to generate XML files that can be read by Proligent Quickview in Python."
+readme = "README.md"
+keywords = ["proligent", "quickview", "xml"]
+classifiers = [
+  "Programming Language :: Python"
+]
+dependencies = [
+"pytz==2024.1",
+"xsdata==24.5"
+]
+
+
+[project.urls]
+Homepage = "https://github.com/Averna/proligent-xml-generator-python"
+Documentation = "https://github.com/Averna/proligent-xml-generator-python/blob/main/README.md"
+Repository = "https://github.com/Averna/proligent-xml-generator-python.git"
+"Bug Tracker" = "https://github.com/Averna/proligent-xml-generator-python/issues"
+Changelog = "https://github.com/Averna/proligent-xml-generator-python/blob/main/README.md"
