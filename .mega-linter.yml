@@ -1,0 +1,13 @@
+---
+# MegaLinter configuration doc:
+# https://oxsecurity.github.io/megalinter/latest/configuration
+
+FLAVOR_SUGGESTIONS: false
+# Force warnings into errors
+FORMATTERS_DISABLE_ERRORS: false
+LINTER_RULES_PATH: /
+# cspell:ignore jsonlint
+# jsonlint arguments. Allow comments
+JSON_JSONLINT_ARGUMENTS: --comments
+# yamllint configuration file (To match yamllint name format)
+YAML_YAMLLINT_CONFIG_FILE: .yamllint.yml

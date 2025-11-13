@@ -8,6 +8,8 @@
     "davidanson.vscode-markdownlint",
     "esbenp.prettier-vscode",
     "foxundermoon.shell-format",
+    "github.vscode-github-actions",
+    "ms-python.python",
     "redhat.vscode-yaml",
     "stkb.rewrap",
     "streetsidesoftware.code-spell-checker",

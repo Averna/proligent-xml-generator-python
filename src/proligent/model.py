@@ -82,7 +82,7 @@ class Util:
         if isinstance(self.timezone, str):
             return pytz.timezone(self.timezone)
         return self.timezone
-    
+
     @staticmethod
     def uuid() -> str:
         return str(uuid.uuid4())
@@ -97,7 +97,7 @@ class Util:
         xml_path = Path(xml_file)
         schema = self._load_schema()
         schema.validate(xml_path)
-    
+
 
 # Create a Util instance for formatting datetime and generating UUIDs.
 # Can be overridden on module level if needed.
@@ -109,7 +109,7 @@ class Buildable:
     def build(self) -> Any:
         """Parent method without implementation."""
         return None
-    
+
     def to_xml(self) -> str:
         """Convert object to a xml string."""
         # Initialize the context, parser, and serializer
@@ -118,7 +118,7 @@ class Buildable:
 
         # Serialize the dataclass instance to an XML string
         return serializer.render(self.build())
-    
+
     def save_xml(self, destination: str = ''):
         """Save object to a xml file."""
         if destination == '':
@@ -166,7 +166,7 @@ class Limit:
     expression: LimitExpression
     lower_bound: Any = field(default='')
     higher_bound: Any = field(default='')
-    
+
     def __str__(self) -> str:
         return self.expression.value.replace('LOWERBOUND', str(self.lower_bound)).replace('HIGHERBOUND', str(self.higher_bound))
 
@@ -184,8 +184,8 @@ class Measure(Buildable):
     unit: str = field(default='')
     symbol: str = field(default='')
     status: ExecutionStatusKind | None = field(default=None)
-  
-    def _init_value(value: bool | str | int | float | 
+
+    def _init_value(value: bool | str | int | float |
                     datetime.datetime) -> MeasureType.Value:
         """
         Create a MeasureType.Value object based on the type of the input value.
@@ -203,11 +203,11 @@ class Measure(Buildable):
         else:
             raise ValueError('Incompatible value type.')
         return MeasureType.Value(str(value), kind)
-    
+
     def build(self) -> MeasureType:
         """Build the Measure instance into the Proligent MeasureType."""
-        measure_type = MeasureType(value=Measure._init_value(self.value), 
-                                   measure_id=self.id, 
+        measure_type = MeasureType(value=Measure._init_value(self.value),
+                                   measure_id=self.id,
                                    measure_time=UTIL.format_datetime(self.time))
         if self.limit is not None:
             measure_type.limit = MeasureType.Limit(limit_expression=str(self.limit))
@@ -220,7 +220,7 @@ class Measure(Buildable):
         if self.status is not None:
             measure_type.measure_execution_status = self.status
         return measure_type
-        
+
 
 @dataclass
 class Characteristic(Buildable):
@@ -386,7 +386,7 @@ class SequenceRun(VersionedManufacturingStep):
     AddStepRun = add_step_run
     AddCharacteristic = add_characteristic
     AddDocument = add_document
-    
+
 
 @dataclass
 class OperationRun(ManufacturingStep):

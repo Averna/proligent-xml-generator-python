@@ -33,5 +33,7 @@
   // Trim trailing whitespace to be compatible with linters
   "files.trimTrailingWhitespace": true,
   // Validate links in Markdown
-  "markdown.validate.enabled": true
+  "markdown.validate.enabled": true,
+  // Disable Red Hat extensions telemetry
+  "redhat.telemetry.enabled": false
 }

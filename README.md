@@ -1,17 +1,32 @@
 # Proligent XML Generator (for Python)
 
-[![License][license-badge]][eula]
+[![GitHub Actions][actions-shield]][actions]
 
-Python library for creating Proligent™ XML files.
+[actions-shield]: https://github.com/averna/proligent-xml-generator-python/actions/workflows/build.yml/badge.svg
+[actions]: https://github.com/averna/proligent-xml-generator-python/actions/workflows/build.yml
 
-[license-badge]: https://img.shields.io/badge/License-BSD%203--Clause-Clause
-[eula]: LICENSE
+Python library for creating Proligent™ XML files. These files are used to import
+test data in [Proligent™ Cloud][cloud] and [Proligent™ Analytics][analytics]. It
+provides a user-friendly, object-oriented wrapper for the [Proligent™
+Manufacturing Information Model][model].
 
-This package implements a XML file generator for import in Proligent Cloud
-or Analytics in Python. It provides a user-friendly, object-oriented wrapper for
-the Proligent data model.
+[cloud]: https://www.averna.com/en/products/smart-data-management/proligent-cloud
+[analytics]: https://www.averna.com/en/products/proligent-analytics
+[model]: docs/user/manucafturing-information-model.md
+
+Proligent™ software are designed for Operations Managers, Quality Engineers,
+Manufacturing Engineers and Test Engineers. This easy-to-use software solution
+monitors test stations and provides valuable insight into your product line.
+Ready-to-use with [Averna Launch][launch] or [NI TestStand][teststand],
+benefit from organized and detailed measurement information to make better
+business decisions.
+
+[launch]: https://www.averna.com/en/products/smart-data-management/launch
+[teststand]: https://www.ni.com/teststand
 
 ## Installation instructions
+
+<!-- cspell:ignore winget -->
 
 First install a compatible python version. This can be done in the command line
 with `winget install Python.Python.3.11`.
@@ -19,25 +34,18 @@ with `winget install Python.Python.3.11`.
 To install the package in your (virtual) environment, run the following command:
 
 ```cmd
-pip install git+https://github.com/Averna/proligent-xml-generator-python
-```
-
-Or, include it in your `requirements.txt` file as follows:
-
-```cmd
-proligent @ git+https://github.com/Averna/proligent-xml-generator-python
+pip install proligent-xml-generator
 ```
 
 ## Getting started
 
-Each layer of the Proligent data model is represented in the package by an
-equivalent class. Typing hints are used to indicate what data types are accepted
-by the objects.
-
-More information about the Proligent data model can be found
-[here](https://resultprocessor.proligent.com/reference/dataware-house-schema.html).
+Each layer of the [Proligent™ Manufacturing Information Model][model] is
+represented in the package by an equivalent class. Typing hints are used to
+indicate what data types are accepted by the objects.
 
 ### Example 1
+
+<!-- cspell:ignore LOWERBOUND -->
 
 ```python
 from proligent.datawarehouse.datawarehouse_model import ExecutionStatusKind
@@ -173,6 +181,8 @@ validate_xml(r'c:\path_to\Proligent_file_name.xml')
 
 A few parameters are configurable in the package through the use of the UTIL object.
 
+<!-- cspell:ignore datetimes pytz -->
+
 - `destination_dir`: Specify a different destination directory for the XML
   files, aside from the default `C:\Proligent\IntegrationService\Acquisition`.
 - `timezone`: Specify a different timezone for the provided datetimes (default
@@ -189,14 +199,6 @@ if __name__ == '__main__':
     UTIL.timezone = 'America/New_York'
 ```
 
-## Requirements
-
-- Python 3.11
-
-## License
-
-This library is covered by the [BSD 3-Clause License Agreement][eula].
-
 ## Developer guide
 
 Clone this repository locally:
@@ -210,3 +212,10 @@ only available if you have installed the python extension in VSCode.
 Finally, the required packages need to be installed in the virtual environment.
 Open a terminal in Visual Studio Code and execute `pip install -r
 requirements.txt` (VSCode activates the virtual environment automatically).
+
+## Trademarks
+
+Proligent is a registered trademark, and Averna is a trademark, of [Averna
+Technologies Inc.][web-site]
+
+[web-site]: https://www.averna.com
