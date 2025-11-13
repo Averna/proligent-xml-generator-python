@@ -1,4 +1,4 @@
-# Proligent XML Generator (for Python)
+# Proligent™ XML Generator for Python
 
 [![GitHub Actions][actions-shield]][actions]
 
@@ -12,7 +12,7 @@ Manufacturing Information Model][model].
 
 [cloud]: https://www.averna.com/en/products/smart-data-management/proligent-cloud
 [analytics]: https://www.averna.com/en/products/proligent-analytics
-[model]: docs/user/manucafturing-information-model.md
+[model]: docs/user/manufacturing-information-model.md
 
 Proligent™ software are designed for Operations Managers, Quality Engineers,
 Manufacturing Engineers and Test Engineers. This easy-to-use software solution
@@ -219,3 +219,7 @@ Proligent is a registered trademark, and Averna is a trademark, of [Averna
 Technologies Inc.][web-site]
 
 [web-site]: https://www.averna.com
+
+NI TestStand is a trademark of [National Instruments Corporation][ni].
+
+[ni]: https://www.ni.com

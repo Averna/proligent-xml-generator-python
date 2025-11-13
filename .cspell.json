@@ -20,8 +20,17 @@
     ".git",
     ".gitignore",
     ".vscode",
+    "*.xml",
+    "*.xsd",
     "requirements.txt"
   ],
   // Custom project dictionary
-  "words": ["Averna", "Datawarehouse", "Proligent"]
+  "words": [
+    "Averna",
+    "Datawarehouse",
+    "KICS",
+    "oprun",
+    "Proligent",
+    "sitecustomize"
+  ]
 }
