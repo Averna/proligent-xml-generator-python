@@ -25,5 +25,12 @@
     "requirements.txt"
   ],
   // Custom project dictionary
-  "words": ["Averna", "Datawarehouse", "KICS", "Proligent", "sitecustomize"]
+  "words": [
+    "Averna",
+    "Datawarehouse",
+    "KICS",
+    "oprun",
+    "Proligent",
+    "sitecustomize"
+  ]
 }
