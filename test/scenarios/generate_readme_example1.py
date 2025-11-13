@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import datetime
-from ctypes import DEFAULT_MODE
 from pathlib import Path
 
 from proligent.datawarehouse.datawarehouse_model import ExecutionStatusKind
@@ -31,23 +30,29 @@ def generate_readme_example1(
             value=15,
             status=ExecutionStatusKind.PASS,
             limit=limit,
-            time=datetime.datetime.now()
+            time=frozen_timestamp
         )
         step = StepRun(
             name='Step1',
             status=ExecutionStatusKind.PASS,
-            measure=measure
+            measure=measure,
+            start_time=frozen_timestamp,
+            end_time=frozen_timestamp
         )
         sequence = SequenceRun(
             name='Sequence1',
             station='Station/readme_example1',
             status=ExecutionStatusKind.PASS,
+            start_time=frozen_timestamp,
+            end_time=frozen_timestamp,
             steps=[step],
         )
         operation = OperationRun(
             name='Operation1',
             station='Station/readme_example1',
             status=ExecutionStatusKind.PASS,
+            start_time=frozen_timestamp,
+            end_time=frozen_timestamp,
             sequences=[sequence],
         )
         process = ProcessRun(
@@ -57,12 +62,18 @@ def generate_readme_example1(
             name='Process/readme_example1',
             process_mode='PROD',
             status=ExecutionStatusKind.PASS,
+            start_time=frozen_timestamp,
+            end_time=frozen_timestamp,
         )
         product = ProductUnit(
             product_unit_identifier='DutSerialNumber',
             product_full_name='Product/readme_example1',
             manufacturer='Averna'
         )
-        warehouse = DataWareHouse(top_process=process, product_unit=product)
+        warehouse = DataWareHouse(
+            top_process=process,
+            product_unit=product,
+            generation_time=frozen_timestamp,
+        )
         warehouse.save_xml(output_path)
     return output_path
