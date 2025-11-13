@@ -12,7 +12,7 @@
     "markdown",
     "pip-requirements",
     "properties",
-    "xml",
+    "!xml",
     "yaml"
   ],
   // Ignore file list
