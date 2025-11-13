@@ -50,3 +50,10 @@ jobs:
       - name: Test with pytest
         run: |
           pytest
+      - name: Upload generated XML artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-out-${{ matrix.python-version }}
+          path: test/out
+          if-no-files-found: ignore
