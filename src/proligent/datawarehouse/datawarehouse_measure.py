@@ -178,23 +178,23 @@ class MeasureType:
             patterns, the lower and higher limits will be extracted and
             stored in the datawarehouse for the reports that use limits.
             Limits not matching the types and patterns below will cause
-            a rejection to occur. 
-            1)  lower_bound &lt;= X &lt;= higher_bound 
-            2)  lower_bound &lt; X &lt;= higher_bound 
-            3) lower_bound &lt;= X &lt; higher_bound 
+            a rejection to occur.
+            1)  lower_bound &lt;= X &lt;= higher_bound
+            2)  lower_bound &lt; X &lt;= higher_bound
+            3) lower_bound &lt;= X &lt; higher_bound
             4)  lower_bound &lt; X
-            &lt; higher_bound 
-            5)  lower_bound &lt;= X 
-            6)  lower_bound &lt; X 
-            7)  X &lt;= higher_bound 
-            8)  X &lt; higher_bound 
-            9)  X == higher_bound 
-            10) X != higher_bound 
-            12) X &lt;= lower_bound OR higher_bound &lt;= X 
-            13) X &lt; lower_bound OR higher_bound &lt;= X 
-            14) X &lt;= lower_bound OR higher_bound &lt; X 
+            &lt; higher_bound
+            5)  lower_bound &lt;= X
+            6)  lower_bound &lt; X
+            7)  X &lt;= higher_bound
+            8)  X &lt; higher_bound
+            9)  X == higher_bound
+            10) X != higher_bound
+            12) X &lt;= lower_bound OR higher_bound &lt;= X
+            13) X &lt; lower_bound OR higher_bound &lt;= X
+            14) X &lt;= lower_bound OR higher_bound &lt; X
             15) X &lt; lower_bound OR higher_bound
-            
+
             &lt; X X can be an integer e.g. 3 X can be a real e.g. 3.5 X
             can be a real not a number e.g. NaN X can be a scientific
             int e.g. 2e3 X can be a scientific real e.g. 3.5e-3 X can be

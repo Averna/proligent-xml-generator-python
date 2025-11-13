@@ -1,0 +1,27 @@
+// cSpell Settings doc:
+// https://github.com/streetsidesoftware/cspell/tree/main/packages/cspell#customization
+{
+  "$schema": "https://raw.githubusercontent.com/streetsidesoftware/cspell/main/cspell.schema.json",
+  // Version of the setting file. Always 0.2
+  "version": "0.2",
+  // Active spelling language
+  "language": "en",
+  // Specify file types to spell check.
+  "enabledLanguageIds": [
+    "ignore",
+    "markdown",
+    "pip-requirements",
+    "properties",
+    "yaml"
+  ],
+  // Ignore file list
+  "ignorePaths": [
+    ".cspell.json",
+    ".git",
+    ".gitignore",
+    ".vscode",
+    "requirements.txt"
+  ],
+  // Custom project dictionary
+  "words": ["Averna", "Datawarehouse", "Proligent"]
+}

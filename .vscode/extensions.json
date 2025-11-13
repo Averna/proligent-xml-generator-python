@@ -1,0 +1,18 @@
+// Lists the recommended extensions for this workspace.
+// Extension identifier format: ${publisher}.${name} Example: vscode.csharp
+// Doc:
+// https://code.visualstudio.com/docs/editor/extension-marketplace#_workspace-recommended-extensions
+
+{
+  "recommendations": [
+    "davidanson.vscode-markdownlint",
+    "esbenp.prettier-vscode",
+    "foxundermoon.shell-format",
+    "github.vscode-github-actions",
+    "ms-python.python",
+    "redhat.vscode-yaml",
+    "stkb.rewrap",
+    "streetsidesoftware.code-spell-checker",
+    "tamasfe.even-better-toml"
+  ]
+}
