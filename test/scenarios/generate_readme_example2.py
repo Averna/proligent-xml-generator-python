@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import datetime
-from ctypes import DEFAULT_MODE
 from pathlib import Path
 
 from proligent.datawarehouse.datawarehouse_model import ExecutionStatusKind
@@ -26,7 +25,7 @@ def generate_readme_example2(
         start_timestamp: datetime.datetime | None = None) -> Path:
     frozen_timestamp = start_timestamp or DEFAULT_FROZEN_TIMESTAMP
     with mock_util_timezone("Europe/Paris"), mock_datetime_now(frozen_timestamp):
-        warehouse = DataWareHouse()
+        warehouse = DataWareHouse(generation_time=frozen_timestamp)
 
         product = warehouse.set_product_unit(ProductUnit(
             product_unit_identifier='DutSerialNumber',
@@ -39,24 +38,29 @@ def generate_readme_example2(
             process_mode='PROD',
             product_unit_identifier='DutSerialNumber',
             product_full_name='Product/readme_example2',
+            start_time=frozen_timestamp,
         ))
 
         operation = process.add_operation_run(OperationRun(
             name='Operation1',
             station='Station/readme_example2',
+            start_time=frozen_timestamp,
         ))
 
         sequence = operation.add_sequence_run(SequenceRun(
             name='Sequence1',
+            start_time=frozen_timestamp,
         ))
 
         sequence.add_step_run(
             StepRun(
                 name="Step1",
                 status=ExecutionStatusKind.PASS,
+                start_time=frozen_timestamp,
+                end_time=frozen_timestamp,
                 measure=Measure(
                     value=15,
-                    time=datetime.datetime.now(),
+                    time=frozen_timestamp,
                     status=ExecutionStatusKind.PASS,
                     limit=Limit(
                         LimitExpression.LOWERBOUND_LEQ_X_LE_HIGHER_BOUND,
@@ -67,9 +71,9 @@ def generate_readme_example2(
             )
         )
 
-        sequence.complete(status=ExecutionStatusKind.PASS, end_time=datetime.datetime.now())
-        operation.complete(status=ExecutionStatusKind.PASS, end_time=datetime.datetime.now())
-        process.complete(status=ExecutionStatusKind.PASS, end_time=datetime.datetime.now())
+        sequence.complete(status=ExecutionStatusKind.PASS, end_time=frozen_timestamp)
+        operation.complete(status=ExecutionStatusKind.PASS, end_time=frozen_timestamp)
+        process.complete(status=ExecutionStatusKind.PASS, end_time=frozen_timestamp)
 
         warehouse.save_xml(output_path)
     return output_path

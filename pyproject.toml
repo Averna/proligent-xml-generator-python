@@ -35,3 +35,10 @@ Documentation = "https://github.com/Averna/proligent-xml-generator-python/blob/m
 Repository = "https://github.com/Averna/proligent-xml-generator-python.git"
 "Bug Tracker" = "https://github.com/Averna/proligent-xml-generator-python/issues"
 Changelog = "https://github.com/Averna/proligent-xml-generator-python/blob/main/README.md"
+
+[tool.pytest.ini_options]
+pythonpath = [
+  ".",
+  "src",
+  "test"
+]
