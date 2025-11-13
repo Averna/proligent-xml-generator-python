@@ -12,7 +12,6 @@
     "markdown",
     "pip-requirements",
     "properties",
-    "!xml",
     "yaml"
   ],
   // Ignore file list
@@ -21,6 +20,8 @@
     ".git",
     ".gitignore",
     ".vscode",
+    "*.xml",
+    "*.xsd",
     "requirements.txt"
   ],
   // Custom project dictionary
