@@ -219,3 +219,7 @@ Proligent is a registered trademark, and Averna is a trademark, of [Averna
 Technologies Inc.][web-site]
 
 [web-site]: https://www.averna.com
+
+NI TestStand is a trademark of [National Instruments Corporation][ni].
+
+[ni]: https://www.ni.com
