@@ -25,7 +25,7 @@ classifiers = [
 ]
 dependencies = [
 "pytz==2024.1",
-"xsdata==24.5"
+"xsdata==25.7"
 ]
 
 
