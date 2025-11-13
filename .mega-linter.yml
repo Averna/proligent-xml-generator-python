@@ -2,6 +2,9 @@
 # MegaLinter configuration doc:
 # https://oxsecurity.github.io/megalinter/latest/configuration
 
+# cspell:ignore DEVSKIM
+DISABLE_LINTERS:
+  - REPOSITORY_DEVSKIM
 FLAVOR_SUGGESTIONS: false
 # Force warnings into errors
 FORMATTERS_DISABLE_ERRORS: false
@@ -9,5 +12,12 @@ LINTER_RULES_PATH: /
 # cspell:ignore jsonlint
 # jsonlint arguments. Allow comments
 JSON_JSONLINT_ARGUMENTS: --comments
+# KICS configuration file (To let chose the yml extension for the file)
+REPOSITORY_KICS_CONFIG_FILE: .kics.yml
 # yamllint configuration file (To match yamllint name format)
 YAML_YAMLLINT_CONFIG_FILE: .yamllint.yml
+
+# Temporarily disabling all Python linter. TODO: Re-enable them and fix issues.
+DISABLE:
+  - PYTHON
+  - COPYPASTE

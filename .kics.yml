@@ -1,0 +1,7 @@
+---
+# Linter rules doc:
+# https://docs.kics.io/latest/configuration-file
+
+exclude-queries:
+  # GitHub Actions pinned to versions instead of commit SHA
+  - 555ab8f9-2001-455e-a077-f2d0f41e2fb9
