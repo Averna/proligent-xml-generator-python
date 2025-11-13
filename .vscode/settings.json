@@ -1,0 +1,37 @@
+// VS Code settings file doc:
+// https://code.visualstudio.com/docs/configure/settings#_settings-json-file
+
+{
+  // Set default formatter
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  // Disable auto detect indentation to use the define value.
+  "editor.detectIndentation": false,
+  // Format on save
+  "editor.formatOnSave": true,
+  // Set ruler at 80 for readability
+  "editor.rulers": [80],
+  // Set tab size per file types
+  "editor.tabSize": 2,
+  "[ignore]": {
+    "editor.defaultFormatter": "foxundermoon.shell-format"
+  },
+  "[properties]": {
+    "editor.defaultFormatter": "foxundermoon.shell-format"
+  },
+  "[toml]": {
+    "editor.defaultFormatter": "tamasfe.even-better-toml"
+  },
+  // Force languages to not recognized files.
+  "files.associations": {
+    "LICENSE": "plaintext",
+    "renovate.json": "jsonc"
+  },
+  // Force final new line as required by some files and linters.
+  "files.insertFinalNewline": true,
+  // Force end of line
+  "files.eol": "\n",
+  // Trim trailing whitespace to be compatible with linters
+  "files.trimTrailingWhitespace": true,
+  // Validate links in Markdown
+  "markdown.validate.enabled": true
+}

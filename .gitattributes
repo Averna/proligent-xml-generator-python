@@ -1,0 +1,5 @@
+# gitignore file doc:
+# https://git-scm.com/docs/gitignore
+
+# Targeting Ubuntu, so use lf.
+* text eol=lf

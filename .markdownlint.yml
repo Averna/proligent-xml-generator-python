@@ -1,0 +1,40 @@
+---
+# Rules configurations for markdownlint extension for VSCode.
+# https://marketplace.visualstudio.com/items?itemName=DavidAnson.vscode-markdownlint
+
+# Set style of unordered lists
+MD004:
+  style: dash
+
+# Set indent to 4 in MD007 since MkDocs (or Material?) requires 4.
+MD007:
+  indent: 4
+
+# Exclude code_blocks from the 80 columns rule.
+MD013:
+  code_blocks: false
+  tables: false
+
+# Allow duplicated for non-sibling headings
+MD024:
+  siblings_only: true
+
+# Allow these HTML elements in Markdown
+MD033:
+  allowed_elements:
+    - a
+    - br
+    - code
+    - div
+    - em
+    - img
+    - p
+    - span
+
+# Disabling rule MD046. It causes issues with admonitions of MkDocs. It detects
+# them as indented code blocks when creating paragraphs.
+MD046: false
+
+# Disabling rule MD053. It causes issues with admonitions of MkDocs.
+# markdownlint does not detect correctly links in indented markdown.
+MD053: false
