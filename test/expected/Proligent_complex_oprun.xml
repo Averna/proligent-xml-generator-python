@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<Proligent.Datawarehouse xmlns="http://www.averna.com/products/proligent/analytics/DIT/6.85" GenerationTime="2024-04-01T09:00:00-05:00" DataSourceFingerprint="00000000-0000-0000-0000-000000000001">
+<Proligent.Datawarehouse xmlns="http://www.averna.com/products/proligent/analytics/DIT/6.85" GenerationTime="2024-04-01T08:00:00-05:00" DataSourceFingerprint="00000000-0000-0000-0000-000000000001">
   <TopProcessRun ProcessRunId="00000000-0000-0000-0000-000000000002" ProcessFullName="PythonLibrary/Process/complex_oprun" ProductUnitIdentifier="PU-COMP-999" ProductFullName="PythonLibrary/Product/complex_oprun" ProcessRunStatus="FAIL" ProcessRunStartTime="2024-04-01T07:00:00-05:00" ProcessRunEndTime="2024-04-01T07:50:00-05:00" ProcessMode="AUTO">
     <OperationRun OperationRunId="00000000-0000-0000-0000-000000000004" ProcessFullName="PythonLibrary/Process/complex_oprun" OperationName="Operation/Comprehensive" StationFullName="PythonLibrary/Station/complex_oprun" User="chief.operator" OperationStatus="FAIL" OperationRunStartTime="2024-04-01T07:00:00-05:00" OperationRunEndTime="2024-04-01T07:50:00-05:00">
       <Characteristic FullName="Shift" Value="Night" />
@@ -9,7 +9,7 @@
       <SequenceRun StartDate="2024-04-01T07:10:00-05:00" EndDate="2024-04-01T07:27:00-05:00" SequenceExecutionStatus="FAIL" SequenceRunId="00000000-0000-0000-0000-000000000006" SequenceFullName="Sequence/FunctionalTest" SequenceVersion="FT-3.2" StationFullName="PythonLibrary/Station/complex_oprun" User="chief.operator">
         <StepRun StepExecutionStatus="PASS" StepRunId="00000000-0000-0000-0000-000000000008" StepName="InitialPowerUp" StartDate="2024-04-01T07:11:00-05:00" EndDate="2024-04-01T07:11:00-05:00">
           <Measure MeasureId="00000000-0000-0000-0000-000000000007" MeasureTime="2024-04-01T07:11:00-05:00" MeasureExecutionStatus="PASS">
-            <Value Type="DATETIME">2024-04-01 07:11:00-05:00</Value>
+            <Value Type="DATETIME">2024-04-01 07:11:00</Value>
           </Measure>
           <Characteristic FullName="VoltageRange" Value="nominal" />
         </StepRun>
