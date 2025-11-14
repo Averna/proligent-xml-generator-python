@@ -48,20 +48,30 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           python -m pip install flake8 pytest
-          python -m pip install pytest pytest-cov
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+        # python -m pip install pytest pytest-cov
 
-      - name: Run tests with coverage
-        run: |
-          pytest --junitxml=pytest.xml --cov-report=term-missing:skip-covered --cov=src test/ | tee pytest-coverage.txt
+      # - name: Run tests with coverage
+      #   run: |
+      #     pytest --junitxml=pytest.xml --cov-report=term-missing:skip-covered --cov=src test/ | tee pytest-coverage.txt
 
-      - name: Pytest coverage comment
-        uses: MishaKav/pytest-coverage-comment@main
-        env:
-          GITHUB_TOKEN: ${{ secrets.github_token }}
+      - name: Run pytest
+        uses: pavelzw/pytest-action@v2
         with:
-          pytest-coverage-path: ./pytest-coverage.txt
-          junitxml-path: ./pytest.xml
+          verbose: true
+          emoji: false
+          job-summary: true
+          custom-arguments: '-q'
+          click-to-expand: true
+          report-title: 'Test Report'
+
+      # - name: Pytest coverage comment
+      #   uses: MishaKav/pytest-coverage-comment@main
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.github_token }}
+      #   with:
+      #     pytest-coverage-path: ./pytest-coverage.txt
+      #     junitxml-path: ./pytest.xml
 
       - name: Upload generated XML artifacts
         if: always()
