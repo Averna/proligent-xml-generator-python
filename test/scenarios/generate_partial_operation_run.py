@@ -6,9 +6,9 @@ from pathlib import Path
 import pytz
 
 from proligent import model
-from proligent.datawarehouse.datawarehouse_model import ExecutionStatusKind
 from proligent.model import (
     DataWareHouse,
+    ExecutionStatusKind,
     Measure,
     OperationRun,
     ProcessRun,
