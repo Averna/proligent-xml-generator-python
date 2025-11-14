@@ -14,7 +14,7 @@ version = "1.0.0"
 requires-python = ">=3.10"
 authors = [
   { name = "Ben Engelen", email = "ben.engelen@averna.com" },
-  { name = "Kevin Van de Kerckhove", email = "kevin.vandekerckhove@averna.com" },
+  { name = "Kaitlin Van de Kerckhove", email = "kaitlin.vandekerckhove@averna.com" },
   { name = "Philippe Gélinas", email = "philippe.gelinas@averna.com" },
   { name = "Mathieu Bélanger", email = "mathieu.belanger@averna.com" },
 ]
@@ -36,4 +36,4 @@ Repository = "https://github.com/Averna/proligent-xml-generator-python.git"
 Changelog = "https://github.com/Averna/proligent-xml-generator-python/blob/main/README.md"
 
 [tool.pytest.ini_options]
-pythonpath = [".", "src", "test"]
+pythonpath = [".", "src"]
