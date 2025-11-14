@@ -3,31 +3,30 @@ requires = ["setuptools >= 61.0"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools]
-include-package-data = false
+include-package-data = true
+
+[tool.setuptools.package-data]
+"proligent.xsd" = ["*.xsd"]
 
 [project]
-name = "proligent"
+name = "proligent-xml-generator"
 version = "1.0.0"
-requires-python = ">=3.11"
+requires-python = ">=3.10"
 authors = [
-  {name = "Ben Engelen", email = "ben.engelen@averna.com"},
-  {name = "Kevin Van de Kerckhove", email = "kevin.vandekerckhove@averna.com"},
+  { name = "Ben Engelen", email = "ben.engelen@averna.com" },
+  { name = "Kevin Van de Kerckhove", email = "kevin.vandekerckhove@averna.com" },
+  { name = "Philippe Gélinas", email = "philippe.gelinas@averna.com" },
+  { name = "Mathieu Bélanger", email = "mathieu.belanger@averna.com" },
 ]
 maintainers = [
-  {name = "Ben Engelen", email = "ben.engelen@averna.com"},
-  {name = "Kevin Van de Kerckhove", email = "kevin.vandekerckhove@averna.com"},
+  { name = "Philippe Gélinas", email = "philippe.gelinas@averna.com" },
+  { name = "Mathieu Bélanger", email = "mathieu.belanger@averna.com" },
 ]
-description = "Toolkit to generate XML files that can be read by Proligent Quickview in Python."
+description = "Toolkit to use Python to generate XML files that can be read by Proligent."
 readme = "README.md"
-keywords = ["proligent", "quickview", "xml"]
-classifiers = [
-  "Programming Language :: Python"
-]
-dependencies = [
-"pytz==2024.1",
-"xsdata==24.5"
-]
-
+keywords = ["averna", "proligent", "canonical", "xml", "generator"]
+classifiers = ["Programming Language :: Python"]
+dependencies = ["pytz>=2024.1", "xmlschema>=3.4.3", "xsdata>=24.5"]
 
 [project.urls]
 Homepage = "https://github.com/Averna/proligent-xml-generator-python"
@@ -37,8 +36,4 @@ Repository = "https://github.com/Averna/proligent-xml-generator-python.git"
 Changelog = "https://github.com/Averna/proligent-xml-generator-python/blob/main/README.md"
 
 [tool.pytest.ini_options]
-pythonpath = [
-  ".",
-  "src",
-  "test"
-]
+pythonpath = [".", "src", "test"]

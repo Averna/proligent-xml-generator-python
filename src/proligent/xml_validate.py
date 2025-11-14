@@ -24,5 +24,5 @@ def validate_xml(file_path: Path | str) -> None:
 
 @lru_cache(maxsize=1)
 def _load_schema() -> xmlschema.XMLSchema:
-    schema_path = Path(__file__).resolve().parents[2] / "docs" / "xsd" / "Datawarehouse.xsd"
+    schema_path = Path(__file__).resolve().parents[1] / "proligent" / "xsd" / "Datawarehouse.xsd"
     return xmlschema.XMLSchema(str(schema_path))
