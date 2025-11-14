@@ -51,7 +51,7 @@ $pathToPackage = "..\proligent-xml-generator-python\dist\proligent_xml_generator
 pip install --force-reinstall $pathToPackage
 ```
 
-This allows you to validate integration scenarios before publishing a official
+This allows you to validate integration scenarios before publishing an official
 release.
 
 ## Consume the Released Package from PyPI
@@ -68,3 +68,13 @@ Pin a version if you need a specific release:
 ```powershell
 pip install proligent-xml-generator==1.0.0
 ```
+
+## Validate XMLs Can be Integrated In Proligent
+
+You can ask the Proligent team to validate that your generated XMLs can be
+integrated in Proligent Analytics or Proligent Cloud.
+
+> [!note]
+> Even valid XMLs can be rejected. There are some validation that can't be done
+> in a XSD. Please make sure the DIT (Data Integration Toolkit) can process
+> your generated XMLs.
