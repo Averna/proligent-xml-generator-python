@@ -174,7 +174,12 @@ Generated XML can be validated for safety.
 
 ```python
 from proligent.xml_validate import validate_xml
+
+# this raises an exception if the XML is invalid
 validate_xml(r'c:\path_to\Proligent_file_name.xml')
+
+# this safe call returns the status and meta-data about a failure, if any
+is_valid, metadata = validate_xml_safe(r'c:\path_to\Proligent_file_name.xml')
 ```
 
 ### Configuration
