@@ -30,8 +30,10 @@
     "Datawarehouse",
     "KICS",
     "oprun",
-    "pytest",
     "Proligent",
+    "pyproject",
+    "pytest",
+    "setuptools",
     "sitecustomize",
     "xsdata"
   ]
