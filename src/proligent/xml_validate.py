@@ -38,6 +38,7 @@ def validate_xml(file_path: Path | str) -> None:
 def validate_xml_safe(file_path: Path | str) -> tuple[bool, ValidationFailureMetadata | None]:
     """
     Validate an XML document and return metadata instead of raising an exception.
+    If there are multiple problems, it only reports the first one it finds.
 
     Args:
         file_path: Path to the XML document to validate.
