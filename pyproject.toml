@@ -10,7 +10,7 @@ include-package-data = true
 
 [project]
 name = "proligent-xml-generator"
-version = "1.0.0"
+version = "0.1.0"
 requires-python = ">=3.10"
 authors = [
   { name = "Ben Engelen", email = "ben.engelen@averna.com" },
