@@ -11,19 +11,19 @@ from xsdata.formats.dataclass.context import XmlContext
 from xsdata.formats.dataclass.serializers import XmlSerializer
 from xsdata.models.datatype import XmlDateTime
 
-from datawarehouse.datawarehouse import ProligentDatawarehouse
-from datawarehouse.datawarehouse_process_run import ProcessRunType
-from datawarehouse.datawarehouse_operation_run import OperationRunType
-from datawarehouse.datawarehouse_sequence_run import SequenceRunType
-from datawarehouse.datawarehouse_step_run import StepRunType
-from datawarehouse.datawarehouse_measure import MeasureType
-from datawarehouse.datawarehouse_model import (
+from proligent.datawarehouse.datawarehouse import ProligentDatawarehouse
+from proligent.datawarehouse.datawarehouse_process_run import ProcessRunType
+from proligent.datawarehouse.datawarehouse_operation_run import OperationRunType
+from proligent.datawarehouse.datawarehouse_sequence_run import SequenceRunType
+from proligent.datawarehouse.datawarehouse_step_run import StepRunType
+from proligent.datawarehouse.datawarehouse_measure import MeasureType
+from proligent.datawarehouse.datawarehouse_model import (
     CharacteristicType,
     DocumentType,
     ExecutionStatusKind,
     MeasureKind,
 )
-from datawarehouse.datawarehouse_product_unit import ProductUnitType
+from proligent.datawarehouse.datawarehouse_product_unit import ProductUnitType
 
 
 class Util:

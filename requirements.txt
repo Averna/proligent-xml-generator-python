@@ -1,6 +1,7 @@
 # Python requirements file doc:
 # https://git-scm.com/docs/gitignore
 
+build
 pytest
 pytz>=2024.1
 xsdata>=24.5

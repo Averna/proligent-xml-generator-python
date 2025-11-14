@@ -1,4 +1,4 @@
-from proligent.model import UTIL, Limit, Measure, StepRun, SequenceRun, OperationRun, ProductUnit, DataWareHouse, ProcessRun, LimitExpression
+from proligent.model import Limit, Measure, StepRun, SequenceRun, OperationRun, ProductUnit, DataWareHouse, ProcessRun, LimitExpression
 from proligent.datawarehouse.datawarehouse_model import ExecutionStatusKind
 import datetime
 
