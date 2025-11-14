@@ -10,6 +10,7 @@ from proligent.model import (
     Characteristic,
     DataWareHouse,
     Document,
+    ExecutionStatusKind,
     Limit,
     LimitExpression,
     Measure,
@@ -20,7 +21,6 @@ from proligent.model import (
     StepRun,
     Util,
 )
-from proligent.datawarehouse.datawarehouse_model import ExecutionStatusKind
 
 
 def _default_tz_datetime(start_timestamp: datetime.datetime, hour: int, minute: int, second: int = 0) -> datetime.datetime:

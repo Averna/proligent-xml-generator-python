@@ -20,10 +20,14 @@ from proligent.datawarehouse.datawarehouse_measure import MeasureType
 from proligent.datawarehouse.datawarehouse_model import (
     CharacteristicType,
     DocumentType,
-    ExecutionStatusKind,
-    MeasureKind,
+    ExecutionStatusKind as _ExecutionStatusKind,
+    MeasureKind as _MeasureKind,
 )
 from proligent.datawarehouse.datawarehouse_product_unit import ProductUnitType
+
+# Re-export ExecutionStatusKind so callers can import it from this namespace.
+ExecutionStatusKind = _ExecutionStatusKind
+MeasureKind = _MeasureKind
 
 
 class Util:

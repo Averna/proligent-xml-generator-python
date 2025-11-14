@@ -45,8 +45,7 @@ indicate what data types are accepted by the objects.
 <!-- cspell:ignore LOWERBOUND -->
 
 ```python
-from proligent.datawarehouse.datawarehouse_model import ExecutionStatusKind
-from proligent.model import DataWareHouse, Limit, LimitExpression, Measure, OperationRun, \
+from proligent.model import DataWareHouse, ExecutionStatusKind, Limit, LimitExpression, Measure, OperationRun, \
     ProcessRun, ProductUnit, SequenceRun, StepRun
 import datetime
 
@@ -110,8 +109,7 @@ This example shows a second way of ordering calls and constructors, from top to
 bottom.
 
 ```python
-from proligent.datawarehouse.datawarehouse_model import ExecutionStatusKind
-from proligent.model import DataWareHouse, Limit, LimitExpression, Measure, OperationRun, \
+from proligent.model import DataWareHouse, ExecutionStatusKind, Limit, LimitExpression, Measure, OperationRun, \
     ProcessRun, ProductUnit, SequenceRun, StepRun
 import datetime
 

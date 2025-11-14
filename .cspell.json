@@ -32,6 +32,7 @@
     "oprun",
     "pytest",
     "Proligent",
-    "sitecustomize"
+    "sitecustomize",
+    "xsdata"
   ]
 }
