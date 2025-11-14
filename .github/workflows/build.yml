@@ -16,17 +16,17 @@ permissions:
   pull-requests: write
 
 jobs:
-  # lint:
-  #   name: Lint code
-  #   runs-on: ubuntu-24.04
-  #   steps:
-  #     - name: Checkout repository
-  #       uses: actions/checkout@v5.0.0
-  #     - name: Lint code
-  #       # cspell:ignore oxsecurity
-  #       uses: oxsecurity/megalinter@v9.1.0
-  #       env:
-  #         GITHUB_TOKEN: ${{ secrets.github_token }}
+  lint:
+    name: Lint code
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5.0.0
+      - name: Lint code
+        # cspell:ignore oxsecurity
+        uses: oxsecurity/megalinter@v9.1.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.github_token }}
 
   build:
     name: Build & Test
@@ -38,41 +38,18 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
-
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           python -m pip install flake8 pytest
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-        # python -m pip install pytest pytest-cov
-
-      # - name: Run tests with coverage
-      #   run: |
-      #     pytest --junitxml=pytest.xml --cov-report=term-missing:skip-covered --cov=src test/ | tee pytest-coverage.txt
-
-      - name: Run pytest
-        uses: pavelzw/pytest-action@v2
-        with:
-          verbose: true
-          emoji: false
-          job-summary: true
-          custom-arguments: '-q'
-          click-to-expand: true
-          report-title: 'Test Report'
-
-      # - name: Pytest coverage comment
-      #   uses: MishaKav/pytest-coverage-comment@main
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.github_token }}
-      #   with:
-      #     pytest-coverage-path: ./pytest-coverage.txt
-      #     junitxml-path: ./pytest.xml
-
+      - name: Test with pytest
+        run: |
+          pytest
       - name: Upload generated XML artifacts
         if: always()
         uses: actions/upload-artifact@v4
