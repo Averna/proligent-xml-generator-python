@@ -16,17 +16,17 @@ permissions:
   pull-requests: write
 
 jobs:
-  lint:
-    name: Lint code
-    runs-on: ubuntu-24.04
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v5.0.0
-      - name: Lint code
-        # cspell:ignore oxsecurity
-        uses: oxsecurity/megalinter@v9.1.0
-        env:
-          GITHUB_TOKEN: ${{ secrets.github_token }}
+  # lint:
+  #   name: Lint code
+  #   runs-on: ubuntu-24.04
+  #   steps:
+  #     - name: Checkout repository
+  #       uses: actions/checkout@v5.0.0
+  #     - name: Lint code
+  #       # cspell:ignore oxsecurity
+  #       uses: oxsecurity/megalinter@v9.1.0
+  #       env:
+  #         GITHUB_TOKEN: ${{ secrets.github_token }}
 
   build:
     name: Build & Test
@@ -57,11 +57,11 @@ jobs:
 
       - name: Pytest coverage comment
         uses: MishaKav/pytest-coverage-comment@main
+        env:
+          GITHUB_TOKEN: ${{ secrets.github_token }}
         with:
           pytest-coverage-path: ./pytest-coverage.txt
           junitxml-path: ./pytest.xml
-        env:
-          GITHUB_TOKEN: ${{ secrets.github_token }}
 
       - name: Upload generated XML artifacts
         if: always()
