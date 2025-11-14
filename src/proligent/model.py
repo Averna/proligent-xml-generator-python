@@ -189,8 +189,8 @@ class Measure(Buildable):
     symbol: str = field(default='')
     status: ExecutionStatusKind | None = field(default=None)
 
-    def _init_value(value: bool | str | int | float |
-                    datetime.datetime) -> MeasureType.Value:
+    @staticmethod
+    def _init_value(value: bool | str | int | float | datetime.datetime) -> MeasureType.Value:
         """
         Create a MeasureType.Value object based on the type of the input value.
         """
@@ -268,9 +268,10 @@ class ManufacturingStep(Buildable):
 
     def complete(self,
                  status: ExecutionStatusKind,
-                 end_time: datetime.datetime = datetime.datetime.now()):
+                 end_time: datetime.datetime | None = None) -> None:
+        """Mark the step as completed, stamping the end time if not provided."""
         self.status = status
-        self.end_time = end_time
+        self.end_time = end_time or datetime.datetime.now()
 
 
 @dataclass
