@@ -91,9 +91,10 @@ if __name__ == '__main__':
     warehouse.save_xml()
 ```
 
-Note: for simplicity this example omits the start and end times, so they default
-to datetime.now. It is highly recommended to set these values with real
-timestamps when used in the real world.
+> [!Note]
+> For simplicity this example omits the start and end times, so they default
+> to datetime.now. It is highly recommended to set these values with real
+> timestamps when used in the real world.
 
 You can also provide the output path for the XML:
 
