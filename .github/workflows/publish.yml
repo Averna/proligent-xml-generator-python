@@ -6,14 +6,14 @@ on:
       repository:
         description: "Publish target"
         type: choice
-        required: $true
+        required: true
         default: pypi
         options:
           - pypi
           - testpypi
       tag:
         description: "Tag or version being published (for audit)"
-        required: $false
+        required: false
         type: string
 
 permissions:
