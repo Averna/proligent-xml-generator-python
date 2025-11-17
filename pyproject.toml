@@ -12,29 +12,37 @@ license-files = ["LICENSE"]
 [project]
 name = "proligent-xml-generator"
 version = "0.1.0"
-requires-python = ">=3.10"
+requires-python = ">=3.10, <3.14"
 authors = [
-  { name = "Ben Engelen", email = "ben.engelen@averna.com" },
-  { name = "Kaitlin Van de Kerckhove", email = "kaitlin.vandekerckhove@averna.com" },
-  { name = "Philippe Gélinas", email = "philippe.gelinas@averna.com" },
-  { name = "Mathieu Bélanger", email = "mathieu.belanger@averna.com" },
+  { name = "Ben Engelen" },
+  { name = "Kaitlin Van de Kerckhove" },
+  { name = "Philippe Gélinas" },
+  { name = "Mathieu Bélanger" },
 ]
-maintainers = [
-  { name = "Philippe Gélinas", email = "philippe.gelinas@averna.com" },
-  { name = "Mathieu Bélanger", email = "mathieu.belanger@averna.com" },
-]
+maintainers = [{ name = "Philippe Gélinas" }, { name = "Mathieu Bélanger" }]
 description = "Python library for generating Proligent™ XML files."
 readme = "README.md"
-keywords = ["averna", "proligent", "canonical", "xml", "generator"]
-classifiers = ["Programming Language :: Python"]
-license = {text = "BSD-3-Clause"}
+keywords = ["averna", "proligent", "xml", "generator"]
+classifiers = [
+  "Intended Audience :: Developers",
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
+  "Topic :: Software Development :: Libraries",
+  "Topic :: Utilities",
+]
+license = "BSD-3-Clause"
+license-files = ["LICENSE"]
 dependencies = ["pytz>=2024.1", "xmlschema>=3.4.3", "xsdata>=24.5"]
 
 [project.urls]
 Homepage = "https://github.com/Averna/proligent-xml-generator-python"
 Documentation = "https://github.com/Averna/proligent-xml-generator-python/blob/main/README.md"
-Repository = "https://github.com/Averna/proligent-xml-generator-python.git"
-"Bug Tracker" = "https://github.com/Averna/proligent-xml-generator-python/issues"
+Repository = "https://github.com/Averna/proligent-xml-generator-python"
+Tracker = "https://github.com/Averna/proligent-xml-generator-python/issues"
 Changelog = "https://github.com/Averna/proligent-xml-generator-python/blob/main/README.md"
 
 [tool.pytest.ini_options]

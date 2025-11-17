@@ -20,11 +20,10 @@ ensuring consistent data formatting. These files are used to import data into
 [cloud]: https://www.averna.com/en/products/smart-data-management/proligent-cloud
 [analytics]: https://www.averna.com/en/products/proligent-analytics
 
-> [!TIP]
-> Refer to the [Proligent™ Manufacturing Information Model][model] to learn how
-> to structure and map your data in Proligent™.
+> **Tip:** Refer to the [Proligent™ Manufacturing Information Model][model] to
+> learn how to structure and map your data in Proligent™.
 
-[model]: docs/user/manufacturing-information-model.md
+[model]: https://github.com/Averna/proligent-xml-generator-python/blob/main/docs/user/manufacturing-information-model.md
 
 Proligent™ software are designed for Operations Managers, Quality Engineers,
 Manufacturing Engineers and Test Engineers. This easy-to-use software solution
@@ -125,10 +124,9 @@ if __name__ == "__main__":
     warehouse.save_xml()
 ```
 
-> [!NOTE]
-> For simplicity this example omits the start and end times, so they default to
-> datetime.now. It is highly recommended to set these values with real
-> timestamps when used in the real world.
+> **Note:** For simplicity this example omits the start and end times, so they
+> default to datetime.now. It is highly recommended to set these values with
+> real timestamps when used in the real world.
 
 You can also provide the output path for the XML:
 
