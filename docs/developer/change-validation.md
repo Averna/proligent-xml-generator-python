@@ -64,7 +64,7 @@ release.
 If you feel the need to publish to the TestPypi before publishing to the real
 Pypi...
 
-From your PR branch use the github `Publish` workflow to deploy to the TestPypi
+From *your PR branch* use the github `Publish` workflow to deploy to the TestPypi
 package manager.
 
 > [!IMPORTANT]
@@ -81,6 +81,10 @@ package manager.
 ## Publish And Consume The Released Package From Pypi
 
 Use the github `Publish` workflow to deploy to Pypi package manager.
+
+> [!IMPORTANT]
+> Merge first into main, and then publish to Pypi. \
+> Publishing should NEVER be done from a dev or PR branch.
 
 Once the release is live, downstream projects can simply rely on the official
 package:
