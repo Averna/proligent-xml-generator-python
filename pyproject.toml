@@ -23,7 +23,7 @@ maintainers = [
   { name = "Philippe Gélinas", email = "philippe.gelinas@averna.com" },
   { name = "Mathieu Bélanger", email = "mathieu.belanger@averna.com" },
 ]
-description = "A Python library for generating Proligent™ XML files."
+description = "Python library for generating Proligent™ XML files."
 readme = "README.md"
 keywords = ["averna", "proligent", "canonical", "xml", "generator"]
 classifiers = ["Programming Language :: Python"]
