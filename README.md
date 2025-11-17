@@ -32,7 +32,7 @@ monitors test stations and provides valuable insight into your product line.
 
 ## Installation instructions
 
-First install a compatible python version from [Python.org][python].
+First, install a compatible python version from [Python.org][python].
 
 [python]: https://www.python.org/downloads
 
