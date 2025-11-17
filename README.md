@@ -17,9 +17,6 @@ Manufacturing Information Model][model].
 Proligent™ software are designed for Operations Managers, Quality Engineers,
 Manufacturing Engineers and Test Engineers. This easy-to-use software solution
 monitors test stations and provides valuable insight into your product line.
-Ready-to-use with [Averna Launch][launch] or [NI TestStand][teststand],
-benefit from organized and detailed measurement information to make better
-business decisions.
 
 [launch]: https://www.averna.com/en/products/smart-data-management/launch
 [teststand]: https://www.ni.com/teststand
@@ -48,8 +45,7 @@ indicate what data types are accepted by the objects.
 <!-- cspell:ignore LOWERBOUND -->
 
 ```python
-from proligent.datawarehouse.datawarehouse_model import ExecutionStatusKind
-from proligent.model import DataWareHouse, Limit, LimitExpression, Measure, OperationRun, \
+from proligent.model import DataWareHouse, ExecutionStatusKind, Limit, LimitExpression, Measure, OperationRun, \
     ProcessRun, ProductUnit, SequenceRun, StepRun
 import datetime
 
@@ -94,9 +90,10 @@ if __name__ == '__main__':
     warehouse.save_xml()
 ```
 
-Note: for simplicity this example omits the start and end times, so they default
-to datetime.now. It is highly recommended to set these values with real
-timestamps when used in the real world.
+> [!Note]
+> For simplicity this example omits the start and end times, so they default
+> to datetime.now. It is highly recommended to set these values with real
+> timestamps when used in the real world.
 
 You can also provide the output path for the XML:
 
@@ -112,8 +109,7 @@ This example shows a second way of ordering calls and constructors, from top to
 bottom.
 
 ```python
-from proligent.datawarehouse.datawarehouse_model import ExecutionStatusKind
-from proligent.model import DataWareHouse, Limit, LimitExpression, Measure, OperationRun, \
+from proligent.model import DataWareHouse, ExecutionStatusKind, Limit, LimitExpression, Measure, OperationRun, \
     ProcessRun, ProductUnit, SequenceRun, StepRun
 import datetime
 
@@ -174,7 +170,15 @@ Generated XML can be validated for safety.
 
 ```python
 from proligent.xml_validate import validate_xml
+
+# this raises an exception if the XML is invalid
 validate_xml(r'c:\path_to\Proligent_file_name.xml')
+
+# this safe call returns the status and meta-data about a failure, if any
+is_valid, metadata = validate_xml_safe(r'c:\path_to\Proligent_file_name.xml')
+if not is_valid:
+    print(metadata.path)
+    print(metadata.reason)
 ```
 
 ### Configuration
@@ -199,27 +203,9 @@ if __name__ == '__main__':
     UTIL.timezone = 'America/New_York'
 ```
 
-## Developer guide
-
-Clone this repository locally:
-[Instructions](https://github.com/averna-reuse/.github-private/blob/main/profile/getting-started/repo-cloning.md).
-
-It is recommended to create a virtual environment. If you have the project open
-in Visual Studio Code, this can be done easily by opening the command palette
-(CTRL-SHIFT-P) and searching for _Python: Create Environment..._. This action is
-only available if you have installed the python extension in VSCode.
-
-Finally, the required packages need to be installed in the virtual environment.
-Open a terminal in Visual Studio Code and execute `pip install -r
-requirements.txt` (VSCode activates the virtual environment automatically).
-
 ## Trademarks
 
 Proligent is a registered trademark, and Averna is a trademark, of [Averna
 Technologies Inc.][web-site]
 
 [web-site]: https://www.averna.com
-
-NI TestStand is a trademark of [National Instruments Corporation][ni].
-
-[ni]: https://www.ni.com

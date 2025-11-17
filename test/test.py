@@ -1,5 +1,4 @@
-from proligent.model import UTIL, Limit, Measure, StepRun, SequenceRun, OperationRun, ProductUnit, DataWareHouse, ProcessRun, LimitExpression
-from proligent.datawarehouse.datawarehouse_model import ExecutionStatusKind
+from proligent.model import ExecutionStatusKind, Limit, Measure, StepRun, SequenceRun, OperationRun, ProductUnit, DataWareHouse, ProcessRun, LimitExpression
 import datetime
 
 if __name__ == '__main__':

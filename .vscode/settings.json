@@ -9,7 +9,7 @@
   // Format on save
   "editor.formatOnSave": true,
   // Set ruler at 80 for readability
-  "editor.rulers": [80],
+  "editor.rulers": [80, 120],
   // Set tab size per file types
   "editor.tabSize": 2,
   "[ignore]": {

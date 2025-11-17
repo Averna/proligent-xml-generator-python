@@ -3,9 +3,9 @@ from __future__ import annotations
 import datetime
 from pathlib import Path
 
-from proligent.datawarehouse.datawarehouse_model import ExecutionStatusKind
 from proligent.model import (
     DataWareHouse,
+    ExecutionStatusKind,
     Limit,
     LimitExpression,
     Measure,

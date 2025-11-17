@@ -11,19 +11,23 @@ from xsdata.formats.dataclass.context import XmlContext
 from xsdata.formats.dataclass.serializers import XmlSerializer
 from xsdata.models.datatype import XmlDateTime
 
-from datawarehouse.datawarehouse import ProligentDatawarehouse
-from datawarehouse.datawarehouse_process_run import ProcessRunType
-from datawarehouse.datawarehouse_operation_run import OperationRunType
-from datawarehouse.datawarehouse_sequence_run import SequenceRunType
-from datawarehouse.datawarehouse_step_run import StepRunType
-from datawarehouse.datawarehouse_measure import MeasureType
-from datawarehouse.datawarehouse_model import (
+from proligent.datawarehouse.datawarehouse import ProligentDatawarehouse
+from proligent.datawarehouse.datawarehouse_process_run import ProcessRunType
+from proligent.datawarehouse.datawarehouse_operation_run import OperationRunType
+from proligent.datawarehouse.datawarehouse_sequence_run import SequenceRunType
+from proligent.datawarehouse.datawarehouse_step_run import StepRunType
+from proligent.datawarehouse.datawarehouse_measure import MeasureType
+from proligent.datawarehouse.datawarehouse_model import (
     CharacteristicType,
     DocumentType,
-    ExecutionStatusKind,
-    MeasureKind,
+    ExecutionStatusKind as _ExecutionStatusKind,
+    MeasureKind as _MeasureKind,
 )
-from datawarehouse.datawarehouse_product_unit import ProductUnitType
+from proligent.datawarehouse.datawarehouse_product_unit import ProductUnitType
+
+# Re-export ExecutionStatusKind so callers can import it from this namespace.
+ExecutionStatusKind = _ExecutionStatusKind
+MeasureKind = _MeasureKind
 
 
 class Util:
@@ -185,8 +189,8 @@ class Measure(Buildable):
     symbol: str = field(default='')
     status: ExecutionStatusKind | None = field(default=None)
 
-    def _init_value(value: bool | str | int | float |
-                    datetime.datetime) -> MeasureType.Value:
+    @staticmethod
+    def _init_value(value: bool | str | int | float | datetime.datetime) -> MeasureType.Value:
         """
         Create a MeasureType.Value object based on the type of the input value.
         """
@@ -264,9 +268,10 @@ class ManufacturingStep(Buildable):
 
     def complete(self,
                  status: ExecutionStatusKind,
-                 end_time: datetime.datetime = datetime.datetime.now()):
+                 end_time: datetime.datetime | None = None) -> None:
+        """Mark the step as completed, stamping the end time if not provided."""
         self.status = status
-        self.end_time = end_time
+        self.end_time = end_time or datetime.datetime.now()
 
 
 @dataclass

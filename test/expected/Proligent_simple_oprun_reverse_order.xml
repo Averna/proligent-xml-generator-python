@@ -25,7 +25,7 @@
         </StepRun>
         <StepRun StepExecutionStatus="PASS" StepRunId="00000000-0000-0000-0000-000000000009" StepName="CalibrationTimestamp" StartDate="2024-01-01T08:11:15-05:00" EndDate="2024-01-01T08:11:15-05:00">
           <Measure MeasureId="00000000-0000-0000-0000-000000000008" MeasureTime="2024-01-01T08:11:15-05:00" Unit="Volt" Symbol="V" MeasureExecutionStatus="PASS">
-            <Value Type="DATETIME">2024-01-01 08:11:15-05:00</Value>
+            <Value Type="DATETIME">2024-01-01 08:11:15</Value>
           </Measure>
         </StepRun>
         <StepRun StepExecutionStatus="PASS" StepRunId="00000000-0000-0000-0000-000000000011" StepName="OperatorNotes" StartDate="2024-01-01T08:11:30-05:00" EndDate="2024-01-01T08:11:30-05:00">

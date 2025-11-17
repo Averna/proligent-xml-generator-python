@@ -6,11 +6,11 @@ from pathlib import Path
 import pytz
 
 from proligent import model
-from proligent.datawarehouse.datawarehouse_model import ExecutionStatusKind
 from proligent.model import (
     Characteristic,
     DataWareHouse,
     Document,
+    ExecutionStatusKind,
     Limit,
     LimitExpression,
     Measure,
@@ -30,24 +30,23 @@ def _default_tz_datetime(start_timestamp: datetime.datetime, hour: int, minute: 
 def generate_simple_oprun_normal_order(
         output_path: Path,
         start_timestamp: datetime.datetime | None = None) -> Path:
-    tz = pytz.timezone("America/New_York")
-    default_start_timestamp = start_timestamp or tz.localize(datetime.datetime(2024, 1, 1, 0, 0, 0))
-    generation_time = start_timestamp or _default_tz_datetime(default_start_timestamp, 9, 0)
+    default_start_timestamp = start_timestamp or datetime.datetime(2024, 1, 1, 8, 0, 0)
+    generation_time = start_timestamp or _default_tz_datetime(default_start_timestamp, 1, 0)
     start_timestamp = start_timestamp or default_start_timestamp
 
     util_original = model.UTIL
     model.UTIL = Util(timezone="America/New_York")
     try:
-        process_start = _default_tz_datetime(start_timestamp, 8, 0)
-        process_end = _default_tz_datetime(start_timestamp, 8, 20)
-        sequence_start = _default_tz_datetime(start_timestamp, 8, 10)
-        sequence_end = _default_tz_datetime(start_timestamp, 8, 12)
+        process_start = _default_tz_datetime(start_timestamp, 0, 0)
+        process_end = _default_tz_datetime(start_timestamp, 0, 20)
+        sequence_start = _default_tz_datetime(start_timestamp, 0, 10)
+        sequence_end = _default_tz_datetime(start_timestamp, 0, 12)
 
-        inspection_time = _default_tz_datetime(start_timestamp, 8, 10, 30)
-        count_time = _default_tz_datetime(start_timestamp, 8, 10, 45)
-        visual_time = _default_tz_datetime(start_timestamp, 8, 11, 0)
-        calibration_time = _default_tz_datetime(start_timestamp, 8, 11, 15)
-        notes_time = _default_tz_datetime(start_timestamp, 8, 11, 30)
+        inspection_time = _default_tz_datetime(start_timestamp, 0, 10, 30)
+        count_time = _default_tz_datetime(start_timestamp, 0, 10, 45)
+        visual_time = _default_tz_datetime(start_timestamp, 0, 11, 0)
+        calibration_time = _default_tz_datetime(start_timestamp, 0, 11, 15)
+        notes_time = _default_tz_datetime(start_timestamp, 0, 11, 30)
 
         warehouse = DataWareHouse(
             generation_time=generation_time,

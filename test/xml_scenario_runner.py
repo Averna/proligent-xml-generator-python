@@ -52,7 +52,7 @@ def run_xml_scenario(
 
     target_path = prefix.with_suffix(".actual.xml")
     with mock_uuid_sequence():
-        actual_path = Path(generator(target_path))
+        actual_path = Path(generator(target_path, None))
     if not actual_path.exists():
         raise AssertionError(f"Generated XML not found at {actual_path}")
 

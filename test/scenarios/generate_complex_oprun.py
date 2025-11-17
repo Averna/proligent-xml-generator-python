@@ -6,11 +6,11 @@ from pathlib import Path
 import pytz
 
 from proligent import model
-from proligent.datawarehouse.datawarehouse_model import ExecutionStatusKind
 from proligent.model import (
     Characteristic,
     DataWareHouse,
     Document,
+    ExecutionStatusKind,
     Limit,
     LimitExpression,
     Measure,
@@ -23,30 +23,29 @@ from proligent.model import (
 )
 
 
-def _default_tz_datetime(start_timestamp: datetime.datetime, hour: int, minute: int, second: int = 0) -> datetime.datetime:
+def _default_tz_datetime(start_timestamp: datetime.datetime, hour: int = 0, minute: int = 0, second: int = 0) -> datetime.datetime:
     return start_timestamp + datetime.timedelta(hours=hour, minutes=minute, seconds=second)
 
 
 def generate_complex_oprun(
         output_path: Path,
         start_timestamp: datetime.datetime | None = None) -> Path:
-    tz = pytz.timezone("America/Bogota")
-    default_start_timestamp = start_timestamp or tz.localize(datetime.datetime(2024, 4, 1, 0, 0, 0))
-    generation_time = start_timestamp or _default_tz_datetime(default_start_timestamp, 9, 0)
+    default_start_timestamp = start_timestamp or datetime.datetime(2024, 4, 1, 7, 0, 0)
+    generation_time = start_timestamp or _default_tz_datetime(default_start_timestamp, 1, 0)
     start_timestamp = start_timestamp or default_start_timestamp
 
     util_original = model.UTIL
     model.UTIL = Util(timezone="America/Bogota")
     try:
-        process_start = _default_tz_datetime(start_timestamp, 7, 0)
-        process_end = _default_tz_datetime(start_timestamp, 7, 50)
+        process_start = _default_tz_datetime(start_timestamp, 0, 0)
+        process_end = _default_tz_datetime(start_timestamp, 0, 50)
 
-        functional_start = _default_tz_datetime(start_timestamp, 7, 10)
-        functional_end = _default_tz_datetime(start_timestamp, 7, 27)
-        safety_start = _default_tz_datetime(start_timestamp, 7, 15)
-        safety_end = _default_tz_datetime(start_timestamp, 7, 23)
-        diagnostics_start = _default_tz_datetime(start_timestamp, 7, 32)
-        diagnostics_end = _default_tz_datetime(start_timestamp, 7, 47)
+        functional_start = _default_tz_datetime(start_timestamp, 0, 10)
+        functional_end = _default_tz_datetime(start_timestamp, 0, 27)
+        safety_start = _default_tz_datetime(start_timestamp, 0, 15)
+        safety_end = _default_tz_datetime(start_timestamp, 0, 23)
+        diagnostics_start = _default_tz_datetime(start_timestamp, 0, 32)
+        diagnostics_end = _default_tz_datetime(start_timestamp, 0, 47)
 
         warehouse = DataWareHouse(
             generation_time=generation_time,
@@ -110,15 +109,16 @@ def generate_complex_oprun(
             ],
         ))
 
+        step_run_time = _default_tz_datetime(functional_start, minute=1)
         functional_sequence.add_step_run(
             StepRun(
                 name="InitialPowerUp",
                 status=ExecutionStatusKind.PASS,
-                start_time=_default_tz_datetime(start_timestamp, 7, 11),
-                end_time=_default_tz_datetime(start_timestamp, 7, 11),
+                start_time=step_run_time,
+                end_time=step_run_time,
                 measure=Measure(
-                        value=_default_tz_datetime(start_timestamp, 7, 11),
-                        time=_default_tz_datetime(start_timestamp, 7, 11),
+                        value=step_run_time,
+                        time=step_run_time,
                         status=ExecutionStatusKind.PASS,
                     ),
                 characteristics=[
@@ -127,15 +127,16 @@ def generate_complex_oprun(
             )
         )
 
+        step_run_time = _default_tz_datetime(functional_start, minute=12)
         functional_sequence.add_step_run(
             StepRun(
                 name="FunctionalSummary",
                 status=ExecutionStatusKind.FAIL,
-                start_time=_default_tz_datetime(start_timestamp, 7, 22),
-                end_time=_default_tz_datetime(start_timestamp, 7, 22),
+                start_time=step_run_time,
+                end_time=step_run_time,
                 measure=Measure(
                         value="Errors Logged",
-                        time=_default_tz_datetime(start_timestamp, 7, 22),
+                        time=step_run_time,
                         status=ExecutionStatusKind.FAIL,
                     ),
                 characteristics=[
@@ -166,15 +167,16 @@ def generate_complex_oprun(
             ],
         ))
 
+        step_run_time = _default_tz_datetime(safety_start, minute=1)
         safety_sequence.add_step_run(
             StepRun(
                 name="GroundContinuity",
                 status=ExecutionStatusKind.FAIL,
-                start_time=_default_tz_datetime(start_timestamp, 7, 16),
-                end_time=_default_tz_datetime(start_timestamp, 7, 16),
+                start_time=step_run_time,
+                end_time=step_run_time,
                 measure=Measure(
                         value=False,
-                        time=_default_tz_datetime(start_timestamp, 7, 16),
+                        time=step_run_time,
                         status=ExecutionStatusKind.FAIL,
                     ),
                 characteristics=[
@@ -183,15 +185,16 @@ def generate_complex_oprun(
             )
         )
 
+        step_run_time = _default_tz_datetime(safety_start, minute=3)
         safety_sequence.add_step_run(
             StepRun(
                 name="OverCurrentDetection",
                 status=ExecutionStatusKind.FAIL,
-                start_time=_default_tz_datetime(start_timestamp, 7, 18),
-                end_time=_default_tz_datetime(start_timestamp, 7, 18),
+                start_time=step_run_time,
+                end_time=step_run_time,
                 measure=Measure(
                         value=12.5,
-                        time=_default_tz_datetime(start_timestamp, 7, 18),
+                        time=step_run_time,
                         unit="Amp",
                         symbol="A",
                         status=ExecutionStatusKind.FAIL,
@@ -211,15 +214,16 @@ def generate_complex_oprun(
             )
         )
 
+        step_run_time = _default_tz_datetime(safety_start, minute=5)
         safety_sequence.add_step_run(
             StepRun(
                 name="AlarmReset",
                 status=ExecutionStatusKind.FAIL,
-                start_time=_default_tz_datetime(start_timestamp, 7, 20),
-                end_time=_default_tz_datetime(start_timestamp, 7, 20),
+                start_time=step_run_time,
+                end_time=step_run_time,
                 measure=Measure(
                         value="Timeout",
-                        time=_default_tz_datetime(start_timestamp, 7, 20),
+                        time=step_run_time,
                         status=ExecutionStatusKind.FAIL,
                     ),
             )
@@ -247,15 +251,16 @@ def generate_complex_oprun(
             ],
         ))
 
+        step_run_time = _default_tz_datetime(diagnostics_start, minute=2)
         diagnostics_sequence.add_step_run(
             StepRun(
                 name="DiagnosticScanRange",
                 status=ExecutionStatusKind.PASS,
-                start_time=_default_tz_datetime(start_timestamp, 7, 34),
-                end_time=_default_tz_datetime(start_timestamp, 7, 34),
+                start_time=step_run_time,
+                end_time=step_run_time,
                 measure=Measure(
                         value="W01-W05",
-                        time=_default_tz_datetime(start_timestamp, 7, 34),
+                        time=step_run_time,
                         status=ExecutionStatusKind.PASS,
                     ),
                 characteristics=[
@@ -264,15 +269,16 @@ def generate_complex_oprun(
             )
         )
 
+        step_run_time = _default_tz_datetime(diagnostics_start, minute=2)
         diagnostics_sequence.add_step_run(
             StepRun(
                 name="DiagnosticScanValue",
                 status=ExecutionStatusKind.PASS,
-                start_time=_default_tz_datetime(start_timestamp, 7, 34),
-                end_time=_default_tz_datetime(start_timestamp, 7, 34),
+                start_time=step_run_time,
+                end_time=step_run_time,
                 measure=Measure(
                         value=3,
-                        time=_default_tz_datetime(start_timestamp, 7, 34),
+                        time=step_run_time,
                         status=ExecutionStatusKind.PASS,
                         limit=Limit(
                             LimitExpression.LOWERBOUND_LEQ_X_LE_HIGHER_BOUND,
@@ -283,29 +289,31 @@ def generate_complex_oprun(
             )
         )
 
+        step_run_time = _default_tz_datetime(diagnostics_start, minute=5)
         diagnostics_sequence.add_step_run(
             StepRun(
                 name="RepairNotes",
                 status=ExecutionStatusKind.PASS,
-                start_time=_default_tz_datetime(start_timestamp, 7, 37),
-                end_time=_default_tz_datetime(start_timestamp, 7, 37),
+                start_time=step_run_time,
+                end_time=step_run_time,
                 measure=Measure(
                         value="Replaced fuse F7",
-                        time=_default_tz_datetime(start_timestamp, 7, 37),
+                        time=step_run_time,
                         status=ExecutionStatusKind.PASS,
                     ),
             )
         )
 
+        step_run_time = _default_tz_datetime(diagnostics_start, minute=12)
         diagnostics_sequence.add_step_run(
             StepRun(
                 name="FinalVerification",
                 status=ExecutionStatusKind.PASS,
-                start_time=_default_tz_datetime(start_timestamp, 7, 44),
-                end_time=_default_tz_datetime(start_timestamp, 7, 44),
+                start_time=step_run_time,
+                end_time=step_run_time,
                 measure=Measure(
                         value=True,
-                        time=_default_tz_datetime(start_timestamp, 7, 44),
+                        time=step_run_time,
                         status=ExecutionStatusKind.PASS,
                     ),
             )
