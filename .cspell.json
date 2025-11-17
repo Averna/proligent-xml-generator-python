@@ -31,10 +31,12 @@
     "KICS",
     "oprun",
     "Proligent",
+    "pypi",
     "pyproject",
     "pytest",
     "setuptools",
     "sitecustomize",
+    "testpypi",
     "xsdata"
   ]
 }
