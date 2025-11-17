@@ -4,6 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [tool.setuptools]
 include-package-data = true
+license-files = ["LICENSE"]
 
 [tool.setuptools.package-data]
 "proligent.xsd" = ["*.xsd"]
@@ -22,10 +23,11 @@ maintainers = [
   { name = "Philippe Gélinas", email = "philippe.gelinas@averna.com" },
   { name = "Mathieu Bélanger", email = "mathieu.belanger@averna.com" },
 ]
-description = "Toolkit to use Python to generate XML files that can be read by Proligent."
+description = "A Python library for generating Proligent™ XML files."
 readme = "README.md"
 keywords = ["averna", "proligent", "canonical", "xml", "generator"]
 classifiers = ["Programming Language :: Python"]
+license = {text = "BSD-3-Clause"}
 dependencies = ["pytz>=2024.1", "xmlschema>=3.4.3", "xsdata>=24.5"]
 
 [project.urls]
