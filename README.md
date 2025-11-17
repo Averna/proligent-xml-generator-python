@@ -9,7 +9,7 @@
 [actions-shield]: https://github.com/averna/proligent-xml-generator-python/actions/workflows/build.yml/badge.svg
 [actions]: https://github.com/averna/proligent-xml-generator-python/actions/workflows/build.yml
 [pypi-version]: https://img.shields.io/pypi/v/proligent-xml-generator.svg
-[pypi-page]: https://pypi.org/project/pytest
+[pypi-page]: https://pypi.org/project/proligent-xml-generator
 [python-versions]: https://img.shields.io/pypi/pyversions/proligent-xml-generator.svg
 
 Python™ library for generating Proligent™ XML files. It provides a simple,
