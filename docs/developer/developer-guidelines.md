@@ -16,3 +16,14 @@ When you change the library, follow
 [`docs/developer/change-validation.md`](change-validation.md) to
 run the tests, build local packages, and validate them from downstream
 projects.
+
+## How To Generate Help Docs
+
+Render HTML help from the package docstrings:
+
+```bash
+PYTHONPATH=src python scripts/generate_help.py
+```
+
+The files are written to `build/help`; the CI build publishes them as workflow
+artifacts.
