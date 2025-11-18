@@ -11,7 +11,7 @@ license-files = ["LICENSE"]
 
 [project]
 name = "proligent-xml-generator"
-version = "0.1.0"
+version = "0.1.1"
 requires-python = ">=3.10"
 authors = [
   { name = "Ben Engelen", email = "ben.engelen@averna.com" },
