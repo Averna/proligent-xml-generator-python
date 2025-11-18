@@ -35,6 +35,7 @@
     "pypi",
     "pyproject",
     "pytest",
+    "pytz",
     "setuptools",
     "sitecustomize",
     "testpypi",

@@ -54,19 +54,49 @@ pip install --force-reinstall $pathToPackage
 This allows you to validate integration scenarios before publishing an official
 release.
 
-## Consume the Released Package from PyPI
+## Increment Library Version
+
+> [!IMPORTANT]
+> Remember to update the library version in `pyproject.toml`.
+
+## Publish And Consume From TestPypi (OPTIONAL)
+
+If you feel the need to publish to the TestPypi before publishing to the real
+Pypi...
+
+From *your PR branch* use the github `Publish` workflow to deploy to the TestPypi
+package manager.
+
+> [!IMPORTANT]
+> If you install the pre-release from TestPyPI, add the main PyPI index as a
+> fallback so dependencies such as `pytz` resolve correctly:
+>
+> ```cmd
+> pip install \
+>     --index-url https://test.pypi.org/simple/ \
+>     --extra-index-url https://pypi.org/simple \
+>     proligent-xml-generator
+> ```
+
+## Publish And Consume The Released Package From Pypi
+
+Use the github `Publish` workflow to deploy to Pypi package manager.
+
+> [!IMPORTANT]
+> Merge first into main, and then publish to Pypi. \
+> Publishing should NEVER be done from a dev or PR branch.
 
 Once the release is live, downstream projects can simply rely on the official
 package:
 
-```powershell
+```cmd
 pip install --upgrade proligent-xml-generator
 ```
 
 Pin a version if you need a specific release:
 
-```powershell
-pip install proligent-xml-generator==1.0.0
+```cmd
+pip install proligent-xml-generator
 ```
 
 ## Validate XMLs Can be Integrated In Proligent
@@ -74,7 +104,7 @@ pip install proligent-xml-generator==1.0.0
 You can ask the Proligent team to validate that your generated XMLs can be
 integrated in Proligent Analytics or Proligent Cloud.
 
-> [!note]
+> [!NOTE]
 > Even valid XMLs can be rejected. There are some validation that can't be done
 > in a XSD. Please make sure the DIT (Data Integration Toolkit) can process
 > your generated XMLs.
