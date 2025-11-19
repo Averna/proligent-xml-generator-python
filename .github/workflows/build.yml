@@ -50,10 +50,6 @@ jobs:
       - name: Test with pytest
         run: |
           pytest
-      - name: Generate help docs from docstrings
-        run: |
-          export PYTHONPATH=src${PYTHONPATH:+:$PYTHONPATH}
-          python scripts/generate_help.py
       - name: Upload generated XML artifacts
         if: always()
         uses: actions/upload-artifact@v5
@@ -61,6 +57,15 @@ jobs:
           name: test-out-${{ matrix.python-version }}
           path: test/out
           if-no-files-found: ignore
+
+  documentation:
+    name: Lint code
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Generate help docs from docstrings
+        run: |
+          export PYTHONPATH=src${PYTHONPATH:+:$PYTHONPATH}
+          python scripts/generate_help.py
       - name: Upload help docs
         if: always()
         uses: actions/upload-artifact@v5
