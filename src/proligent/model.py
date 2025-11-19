@@ -344,7 +344,10 @@ class ManufacturingStep(Buildable):
     argument.
     """
     id: str = field(default_factory=UTIL.uuid)
-    """Identifier persisted to the relevant ``*_Id`` attribute."""
+    """
+    Identifier persisted to the relevant ``*_Id`` attribute. 
+    Auto-generated with random value if omitted (recommended).
+    """
 
     name: str = field(default='')
     """Display name serialized to ``StepName``/``SequenceFullName``/etc."""
