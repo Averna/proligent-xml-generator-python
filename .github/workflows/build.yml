@@ -46,11 +46,15 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          python -m pip install flake8 pytest
-          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+          python -m pip install pytest
+          pip install -r requirements.txt
       - name: Test with pytest
         run: |
           pytest
+      - name: Generate help docs from docstrings
+        run: |
+          export PYTHONPATH=src${PYTHONPATH:+:$PYTHONPATH}
+          python scripts/generate_help.py
       - name: Upload generated XML artifacts
         if: always()
         uses: actions/upload-artifact@v5
@@ -58,19 +62,8 @@ jobs:
           name: test-out-${{ matrix.python-version }}
           path: test/out
           if-no-files-found: ignore
-
-  documentation:
-    name: Generate Documentation
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v5
-      - name: Generate help docs from docstrings
-        run: |
-          export PYTHONPATH=src${PYTHONPATH:+:$PYTHONPATH}
-          python scripts/generate_help.py
       - name: Upload help docs
-        if: always()
+        if: always() && matrix.python-version == '3.13'
         uses: actions/upload-artifact@v5
         with:
           name: help-docs-${{ matrix.python-version }}

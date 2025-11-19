@@ -9,10 +9,19 @@ class ValidationFailureMetadata:
     """Metadata describing why XML schema validation failed."""
 
     message: str
+    """Human-readable validation error message."""
+
     reason: str | None = None
+    """Specific reason if provided by xmlschema."""
+
     path: str | None = None
+    """XPath to the failing element when available."""
+
     line: int | None = None
+    """Line number extracted from the validator (1-based)."""
+
     column: int | None = None
+    """Column number extracted from the validator (1-based)."""
 
 
 # ------------------------------------------------------------------

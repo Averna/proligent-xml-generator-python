@@ -202,12 +202,16 @@ class Limit:
     """
     Numeric boundaries that accompany a measurement in the Datawarehouse model.
 
-    The provided ``expression`` determines how ``lower_bound`` and
-    ``higher_bound`` are compared against the measured value.
+    Field-level docstrings explain each constructor parameter.
     """
     expression: LimitExpression
+    """String expression stored as the Measure ``LimitExpression`` attribute."""
+
     lower_bound: Any = field(default='')
+    """Value substituted for the ``LOWERBOUND`` token when present in expression."""
+
     higher_bound: Any = field(default='')
+    """Value substituted for the ``HIGHERBOUND`` token when present in expression."""
 
     def __str__(self) -> str:
         """Render the expression string with the current bounds inserted."""
@@ -217,30 +221,34 @@ class Limit:
 @dataclass
 class Measure(Buildable):
     """
-    Measurement captured during a step run, mapped to the
-    ``Measure`` element in the Datawarehouse schema.
+    Measurement captured during a step run, mapped to the ``Measure`` element
+    described in ``Datawarehouse.Measure.xsd``.
 
-    Args:
-        value: Recorded measurement value; type determines the emitted
-            ``MeasureKind``.
-        id: Unique identifier written to ``measure_id``.
-        limit: Optional boundary information serialized to the ``limit`` element.
-        time: Timestamp applied to ``measure_time``.
-        comments: Free-text note stored in ``comments``.
-        unit: Engineering unit label stored in ``unit``.
-        symbol: Symbol for the measurement (for example `%`), stored in
-            ``symbol``.
-        status: Execution status for the measurement stored in
-            ``measure_execution_status``.
+    Field-level docstrings describe each constructor parameter.
     """
     value: bool | str | int | float | datetime.datetime
+    """Recorded value stored in the ``Value`` element."""
+
     id: str = field(default_factory=UTIL.uuid)
+    """Unique identifier written to ``MeasureId`` (unique per step run)."""
+
     limit: Limit | None = field(default=None)
+    """Optional ``Limit`` block honoring supported expressions."""
+
     time: datetime.datetime = field(default_factory=datetime.datetime.now)
+    """Timestamp mapped to ``MeasureTime`` describing when the value was acquired."""
+
     comments: str = field(default='')
+    """Free-form note written to the ``Comments`` attribute."""
+
     unit: str = field(default='')
+    """Engineering unit name persisted to ``Unit`` (required when ``symbol`` is set)."""
+
     symbol: str = field(default='')
+    """Unit symbol stored in ``Symbol`` (required when ``unit`` is set)."""
+
     status: ExecutionStatusKind | None = field(default=None)
+    """Execution status emitted as ``MeasureExecutionStatus``."""
 
     @staticmethod
     def _init_value(value: bool | str | int | float | datetime.datetime) -> MeasureType.Value:
@@ -285,13 +293,12 @@ class Characteristic(Buildable):
     """
     Arbitrary key/value metadata serialized to ``Characteristic`` elements in
     the Datawarehouse model.
-
-    Args:
-        full_name: Name of the characteristic (``full_name`` in XML).
-        value: Optional value for the characteristic.
     """
     full_name: str
+    """``FullName`` attribute; must be unique per owning element."""
+
     value: str = field(default='')
+    """Optional ``Value`` attribute (up to 2000 characters)."""
 
     def build(self) -> CharacteristicType:
         characteristic = CharacteristicType(full_name=self.full_name)
@@ -305,17 +312,19 @@ class Document(Buildable):
     """
     Reference to a document attached to a run or product unit.
 
-    Args:
-        file_name: Path or filename written to ``file_name`` for downstream
-            retrieval.
-        identifier: Unique ID stored in ``identifier``.
-        name: Human-readable label for the document stored in ``name``.
-        description: Optional details stored in ``description``.
+    Field docstrings detail the constructor parameters.
     """
     file_name: str
+    """Path or filename stored in the ``FileName`` attribute."""
+
     identifier: str = field(default_factory=UTIL.uuid)
+    """GUID stored in ``Identifier`` (unique among sibling documents)."""
+
     name: str = field(default='')
+    """Optional human-readable identifier stored in ``Name``."""
+
     description: str = field(default='')
+    """Optional description persisted to ``Description``."""
 
     def build(self) -> DocumentType:
         """Build the Document instance into the Proligent DocumentType."""
@@ -331,20 +340,23 @@ class Document(Buildable):
 class ManufacturingStep(Buildable):
     """
     Common attributes shared by the process/operation/sequence/step run types in
-    the Datawarehouse model.
-
-    Args:
-        id: Identifier applied to the corresponding ``*_id`` element.
-        name: Display name for the step (``*_name`` field).
-        status: Execution status written to the step-specific status field.
-        start_time: Timestamp when the run started.
-        end_time: Timestamp when the run ended; filled when marked complete.
+    the Datawarehouse model. Field docstrings document each constructor
+    argument.
     """
     id: str = field(default_factory=UTIL.uuid)
+    """Identifier persisted to the relevant ``*_Id`` attribute."""
+
     name: str = field(default='')
+    """Display name serialized to ``StepName``/``SequenceFullName``/etc."""
+
     status: ExecutionStatusKind = field(default=ExecutionStatusKind.NOT_COMPLETED)
+    """Execution status value stored in the respective ``*_Status`` attribute."""
+
     start_time: datetime.datetime = field(default_factory=datetime.datetime.now)
+    """Start timestamp persisted to ``StartDate`` or ``*_StartTime``."""
+
     end_time: datetime.datetime = field(default_factory=datetime.datetime.now)
+    """Completion timestamp persisted to ``EndDate`` or ``*_EndTime``."""
 
     def complete(self,
                  status: ExecutionStatusKind,
@@ -361,26 +373,31 @@ class ManufacturingStep(Buildable):
 class VersionedManufacturingStep(ManufacturingStep):
     """
     Extension of ``ManufacturingStep`` that carries the process/sequence version
-    number written to the ``*_version`` field.
+    number written to the ``*_Version`` attribute. Field docstrings describe
+    both the inherited parameters and the ``version`` attribute.
     """
     version: str = field(default='')
+    """Version string written to ``SequenceVersion`` or ``ProcessVersion``."""
 
 
 @dataclass
 class StepRun(ManufacturingStep):
     """
     Execution of a single manufacturing step, serialized to ``StepRun`` with
-    measures, characteristics, and attached documents.
-
-    Args:
-        measure: Optional initial measurement for the step run.
-        characteristics: Metadata records serialized under ``characteristic``.
-        documents: Document references serialized under ``document``.
+    measures, characteristics, and attached documents. Field docstrings describe
+    each constructor parameter.
     """
     measure: Measure | None = field(default=None, repr=False)
+    """Optional initial measurement seeded into the ``Measure`` collection."""
+
     characteristics: List[Characteristic] = field(default_factory=list)
+    """Metadata entries serialized under ``Characteristic``."""
+
     documents: List[Document] = field(default_factory=list)
+    """Document references serialized under ``Document``."""
+
     _measures: List[Measure] = field(default_factory=list, init=False)
+    """Internal accumulator of measurements attached to the run."""
 
     def __post_init__(self):
         # Initialize the internal list and seed it with the provided measure (if any).
@@ -442,20 +459,23 @@ class StepRun(ManufacturingStep):
 class SequenceRun(VersionedManufacturingStep):
     """
     Ordered collection of step runs executed on a station/user, mapped to the
-    ``SequenceRun`` element in the Datawarehouse model.
-
-    Args:
-        steps: Step runs executed in order for this sequence.
-        station: Station where the sequence ran (``station_full_name``).
-        user: Operator who executed the sequence.
-        characteristics: Metadata serialized under ``characteristic``.
-        documents: Document references serialized under ``document``.
+    ``SequenceRun`` element in the Datawarehouse model. Field docstrings describe
+    every constructor parameter.
     """
     steps: List[StepRun] = field(default_factory=list)
+    """Step runs executed within this sequence (``StepRun`` children)."""
+
     station: str = field(default='')
+    """Station context stored in ``StationFullName`` (non-updatable)."""
+
     user: str = field(default='')
+    """Operator stored in the ``User`` attribute (non-updatable)."""
+
     characteristics: List[Characteristic] = field(default_factory=list)
+    """Metadata entries serialized under ``Characteristic``."""
+
     documents: List[Document] = field(default_factory=list)
+    """Document references serialized under ``Document``."""
 
     def build(self) -> SequenceRunType:
         """
@@ -510,23 +530,25 @@ class SequenceRun(VersionedManufacturingStep):
 class OperationRun(ManufacturingStep):
     """
     Group of sequence runs executed within a process operation, mapped to the
-    ``OperationRun`` element.
-
-    Args:
-        sequences: Sequence runs belonging to the operation.
-        station: Station context written to ``station_full_name``.
-        user: Operator who executed the operation.
-        process_name: Parent process name; defaults to the owning ``ProcessRun``
-            when omitted.
-        characteristics: Metadata serialized under ``characteristic``.
-        documents: Document references serialized under ``document``.
+    ``OperationRun`` element. Field-level docstrings describe every parameter.
     """
     sequences: List[SequenceRun] = field(default_factory=list)
+    """Sequence runs executed within the operation and emitted as ``SequenceRun``."""
+
     station: str = field(default='')
+    """Station context stored in ``StationFullName`` (non-updatable)."""
+
     user: str = field(default='')
+    """Operator stored in the ``User`` attribute (non-updatable)."""
+
     process_name: str = field(default='')
+    """Parent process name serialized as ``ProcessFullName``."""
+
     characteristics: List[Characteristic] = field(default_factory=list)
+    """Metadata entries serialized under ``Characteristic``."""
+
     documents: List[Document] = field(default_factory=list)
+    """Document references serialized under ``Document``."""
 
     def build(self) -> OperationRunType:
         """
@@ -583,20 +605,19 @@ class OperationRun(ManufacturingStep):
 class ProcessRun(VersionedManufacturingStep):
     """
     Top-level execution of a process, mapped to ``ProcessRun`` with nested
-    operation runs.
-
-    Args:
-        product_unit_identifier: Identifier linking the process to a product
-            unit in ``product_unit_identifier``.
-        product_full_name: Display name for the product, persisted to
-            ``product_full_name``.
-        operations: Operation runs executed within the process.
-        process_mode: Optional mode string written to ``process_mode``.
+    operation runs. Field docstrings describe the constructor parameters.
     """
     product_unit_identifier: str = field(default_factory=UTIL.uuid)
+    """Identifier stored in ``ProductUnitIdentifier`` (immutable once set)."""
+
     product_full_name: str = field(default='DUT')
+    """Product name stored in ``ProductFullName`` (immutable)."""
+
     operations: List[OperationRun] = field(default_factory=list)
+    """Operation runs serialized inside ``OperationRun``."""
+
     process_mode: str = field(default='')
+    """Optional process mode string persisted to ``ProcessMode`` (e.g., Production)."""
 
     def build(self) -> ProcessRunType:
         """
@@ -637,28 +658,35 @@ class ProcessRun(VersionedManufacturingStep):
 class ProductUnit(Buildable):
     """
     Description of the product unit involved in a process, mapped to the
-    ``ProductUnit`` element.
-
-    Args:
-        product_unit_identifier: Unique identifier for the unit.
-        product_full_name: Display name written to ``product_full_name``.
-        characteristics: Metadata serialized under ``characteristic``.
-        documents: Document references serialized under ``document``.
-        manufacturer: Manufacturer name written to ``by_manufacturer``.
-        creation_time: Timestamp for when the unit was created.
-        manufacturing_time: Timestamp for when the unit was manufactured.
-        scrapped: Flag indicating the unit was scrapped.
-        scrap_time: Time when scrapping occurred.
+    ``ProductUnit`` element. Field docstrings describe each constructor
+    parameter.
     """
     product_unit_identifier: str = field(default_factory=UTIL.uuid)
+    """Unique identifier stored in ``ProductUnitIdentifier`` (per product name)."""
+
     product_full_name: str = field(default='')
+    """Fully qualified product name written to ``ProductFullName``."""
+
     characteristics: List[Characteristic] = field(default_factory=list)
+    """Metadata entries serialized under ``Characteristic``."""
+
     documents: List[Document] = field(default_factory=list)
+    """Document references serialized under ``Document``."""
+
     manufacturer: str = field(default=None)
+    """Manufacturer/site stored in ``ByManufacturer`` (immutable once sent)."""
+
     creation_time: datetime.datetime = field(default=None)
+    """Creation timestamp emitted as ``CreationTime`` (immutable once sent)."""
+
     manufacturing_time: datetime.datetime = field(default=None)
+    """Manufacturing timestamp emitted as ``ManufacturingTime`` (immutable once sent)."""
+
     scrapped: bool = field(default=None)
+    """Flag stored in ``Scrapped``; omitted implies ``False``."""
+
     scrap_time: datetime.datetime = field(default=None)
+    """Timestamp stored in ``ScrappedTime``; required when ``scrapped`` is true."""
 
     def build(self) -> ProductUnitType:
         """
@@ -705,19 +733,20 @@ class ProductUnit(Buildable):
 class DataWareHouse(Buildable):
     """
     Container for the full Datawarehouse payload, including the top process run
-    and optional product unit details.
-
-    Args:
-        top_process: The process run serialized to ``top_process_run``.
-        product_unit: Optional product unit serialized to ``product_unit``.
-        generation_time: Timestamp written to ``generation_time`` for the export.
-        source_fingerprint: Identifier for the data source, stored in
-            ``data_source_fingerprint``.
+    and optional product unit details. Field docstrings describe constructor
+    parameters.
     """
     top_process: ProcessRun | None = field(default=None)
+    """Primary ``ProcessRun`` serialized to ``TopProcessRun``."""
+
     product_unit: ProductUnit | None = field(default=None)
+    """Optional ``ProductUnit`` serialized to ``ProductUnit``."""
+
     generation_time: datetime.datetime = field(default_factory=datetime.datetime.now)
+    """Timestamp emitted as ``GenerationTime`` for ordering/conflict resolution."""
+
     source_fingerprint: str = field(default_factory=UTIL.uuid)
+    """Identifier stored in ``DataSourceFingerprint`` to prevent replays."""
 
     def build(self) -> ProligentDatawarehouse:
         """
