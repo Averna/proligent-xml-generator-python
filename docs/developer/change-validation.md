@@ -72,9 +72,10 @@ package manager.
 > fallback so dependencies such as `pytz` resolve correctly:
 >
 > ```cmd
-> pip install \
->     --index-url https://test.pypi.org/simple/ \
->     --extra-index-url https://pypi.org/simple \
+> pip install `
+>     --index-url https://test.pypi.org/simple/ `
+>     --extra-index-url https://pypi.org/simple `
+>     --force-reinstall `
 >     proligent-xml-generator
 > ```
 
