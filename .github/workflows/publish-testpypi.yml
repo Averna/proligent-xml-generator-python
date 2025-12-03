@@ -1,5 +1,5 @@
 ---
-name: Publish to PyPI
+name: Publish to TestPyPI
 
 on:
   workflow_dispatch:
@@ -15,11 +15,11 @@ permissions:
 
 jobs:
   publish:
-    name: Build and publish to PyPI
+    name: Build and publish to TestPyPI
     runs-on: ubuntu-latest
     environment:
-      name: pypi
-      url: https://pypi.org/p/proligent-xml-generator
+      name: testpypi
+      url: https://test.pypi.org/p/proligent-xml-generator
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
@@ -33,12 +33,12 @@ jobs:
           python -m pip install build -r requirements.txt
       - name: Build distributions
         run: python -m build
-      - name: Publish to PyPI
+      - name: Publish to TestPyPI
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
           user: __token__
-          password: ${{ secrets.PYPI_API_TOKEN }}
-          repository-url: https://upload.pypi.org/legacy/
+          password: ${{ secrets.TEST_PYPI_API_TOKEN }}
+          repository-url: https://test.pypi.org/legacy/
       - name: Upload built distributions
         if: always()
         uses: actions/upload-artifact@v5
