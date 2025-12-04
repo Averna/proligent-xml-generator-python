@@ -85,16 +85,15 @@ if __name__ == "__main__":
         measure=measure
     )
 
-    # Create sequence run: remember to keep start and end time
+    # Create sequence run: remember to keep track of start and end time
 
     sequence = SequenceRun(
         name="Sequence1",
-        station="Station/readme_example",
         status=ExecutionStatusKind.PASS,
         steps=[step],
     )
 
-    # Create operation run: remember to keep start and end time
+    # Create operation run: remember to keep track of start and end time
 
     operation = OperationRun(
         name="Operation1",
@@ -103,7 +102,7 @@ if __name__ == "__main__":
         sequences=[sequence],
     )
 
-    # Create process run: remember to keep start and end time
+    # Create process run: remember to keep track of start and end time
 
     process = ProcessRun(
         product_unit_identifier="DutSerialNumber",

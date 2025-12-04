@@ -14,10 +14,10 @@ if __name__ == '__main__':
     sequence = SequenceRun(
         steps=[step],
         name='Sequence1',
-        station='Station1',
         start_time=start_time,
         end_time=end_time)
     operation = OperationRun(
+        station='Station1',
         sequences=[sequence],
         name='Operation1',
         start_time=start_time,

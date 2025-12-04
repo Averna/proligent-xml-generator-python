@@ -129,7 +129,6 @@ def generate_simple_oprun_reverse_order(
         sequence = SequenceRun(
             name="Sequence/Main",
             version="1.0",
-            station="PythonLibrary/Station/simple_oprun_reverse_order",
             user="operator",
             status=ExecutionStatusKind.PASS,
             start_time=sequence_start,
