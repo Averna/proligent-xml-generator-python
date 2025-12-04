@@ -78,6 +78,7 @@ def generate_complex_oprun(
             station="PythonLibrary/Station/complex_oprun",
             user="chief.operator",
             start_time=process_start,
+            test_position_name="UUT1",
             characteristics=[
                 Characteristic(full_name="Shift", value="Night"),
                 Characteristic(full_name="Technician", value="Charlie"),

@@ -571,6 +571,12 @@ class OperationRun(ManufacturingStep):
     documents: List[Document] = field(default_factory=list)
     """Document references serialized under ``Document``."""
 
+    test_position_name: str = field(default='')
+    """
+    Optional test position identifier serialized as the
+    ``Proligent.TestPositionName`` characteristic when provided.
+    """
+
     def __post_init__(self) -> None:
         if self.station == '':
             raise ValueError("OperationRun.station is required and cannot be empty.")
@@ -601,9 +607,15 @@ class OperationRun(ManufacturingStep):
             operation_run.user = self.user
         if self.process_name != '':
             operation_run.process_full_name = self.process_name
-        if self.characteristics:
+        characteristics = list(self.characteristics)
+        if self.test_position_name != '':
+            characteristics.append(Characteristic(
+                full_name="Proligent.TestPositionName",
+                value=self.test_position_name,
+            ))
+        if characteristics:
             operation_run.characteristic = [
-                characteristic.build() for characteristic in self.characteristics
+                characteristic.build() for characteristic in characteristics
             ]
         if self.documents:
             operation_run.document = [document.build() for document in self.documents]

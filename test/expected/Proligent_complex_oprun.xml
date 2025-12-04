@@ -5,6 +5,7 @@
       <Characteristic FullName="Shift" Value="Night" />
       <Characteristic FullName="Technician" Value="Charlie" />
       <Characteristic FullName="FinalStatus" Value="Repaired" />
+      <Characteristic FullName="Proligent.TestPositionName" Value="UUT1" />
       <Document Identifier="00000000-0000-0000-0000-000000000003" Name="Operation Log" FileName="ComprehensiveOperationLog.pdf" Description="Aggregated log for Operation/Comprehensive failure event." />
       <SequenceRun StartDate="2024-04-01T07:10:00-05:00" EndDate="2024-04-01T07:27:00-05:00" SequenceExecutionStatus="FAIL" SequenceRunId="00000000-0000-0000-0000-000000000006" SequenceFullName="Sequence/FunctionalTest" SequenceVersion="FT-3.2" StationFullName="PythonLibrary/Station/complex_oprun" User="chief.operator">
         <StepRun StepExecutionStatus="PASS" StepRunId="00000000-0000-0000-0000-000000000008" StepName="InitialPowerUp" StartDate="2024-04-01T07:11:00-05:00" EndDate="2024-04-01T07:11:00-05:00">
