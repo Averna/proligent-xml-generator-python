@@ -3,7 +3,7 @@ from enum import Enum
 from pathlib import Path
 from dataclasses import dataclass, field
 import pytz
-from typing import Any, List
+from typing import Any, Iterable, List
 import uuid
 from xml.etree import ElementTree as ET
 import xmlschema
@@ -28,6 +28,12 @@ from proligent.datawarehouse.datawarehouse_product_unit import ProductUnitType
 # Re-export ExecutionStatusKind so callers can import it from this namespace.
 ExecutionStatusKind = _ExecutionStatusKind
 MeasureKind = _MeasureKind
+
+_RESERVED_CHARACTERISTIC_PREFIX = "Proligent."
+_RESERVED_CHARACTERISTIC_ERROR = (
+    f"Characteristic names starting with '{_RESERVED_CHARACTERISTIC_PREFIX}' "
+    "are reserved for internal use."
+)
 
 
 class Util:
@@ -307,6 +313,16 @@ class Characteristic(Buildable):
         return characteristic
 
 
+def _ensure_characteristic_allowed(characteristic: Characteristic) -> None:
+    if characteristic.full_name.startswith(_RESERVED_CHARACTERISTIC_PREFIX):
+        raise ValueError(_RESERVED_CHARACTERISTIC_ERROR)
+
+
+def _ensure_characteristics_allowed(characteristics: Iterable[Characteristic]) -> None:
+    for characteristic in characteristics:
+        _ensure_characteristic_allowed(characteristic)
+
+
 @dataclass
 class Document(Buildable):
     """
@@ -409,6 +425,7 @@ class StepRun(ManufacturingStep):
             self._measures.append(self.measure)
         # Drop the constructor-only attribute to discourage direct access later on.
         self.measure = None
+        _ensure_characteristics_allowed(self.characteristics)
 
     def build(self) -> StepRunType:
         """
@@ -445,6 +462,7 @@ class StepRun(ManufacturingStep):
 
     def add_characteristic(self, characteristic: Characteristic) -> Characteristic:
         """Attach metadata that will be serialized under this step run."""
+        _ensure_characteristic_allowed(characteristic)
         self.characteristics.append(characteristic)
         return characteristic
 
@@ -468,9 +486,6 @@ class SequenceRun(VersionedManufacturingStep):
     steps: List[StepRun] = field(default_factory=list)
     """Step runs executed within this sequence (``StepRun`` children)."""
 
-    station: str = field(default='')
-    """Station context stored in ``StationFullName`` (non-updatable)."""
-
     user: str = field(default='')
     """Operator stored in the ``User`` attribute (non-updatable)."""
 
@@ -479,6 +494,29 @@ class SequenceRun(VersionedManufacturingStep):
 
     documents: List[Document] = field(default_factory=list)
     """Document references serialized under ``Document``."""
+
+    _station: str = field(default='', init=False, repr=False)
+    """Station context applied internally from the owning ``OperationRun``."""
+
+    def __post_init__(self) -> None:
+        _ensure_characteristics_allowed(self.characteristics)
+
+    @property
+    def station(self) -> str:
+        """Return the station assigned by the enclosing ``OperationRun``."""
+        return self._station
+
+    @station.setter
+    def station(self, value: str) -> None:
+        raise AttributeError("SequenceRun.station is managed by the parent OperationRun; set station on OperationRun instead.")
+
+    def _assign_station(self, station: str) -> None:
+        """Internal helper used by OperationRun to propagate its station."""
+        if station == '':
+            raise ValueError("Station cannot be empty when applied to SequenceRun.")
+        if self._station not in ('', station):
+            raise ValueError("SequenceRun is already associated with a different station.")
+        self._station = station
 
     def build(self) -> SequenceRunType:
         """
@@ -497,8 +535,9 @@ class SequenceRun(VersionedManufacturingStep):
             seq_run.sequence_execution_status = self.status
         if self.version != '':
             seq_run.sequence_version = self.version
-        if self.station != '':
-            seq_run.station_full_name = self.station
+        if self._station == '':
+            raise ValueError("SequenceRun must be added to an OperationRun with a station before building.")
+        seq_run.station_full_name = self._station
         if self.user != '':
             seq_run.user = self.user
         if self.characteristics:
@@ -516,6 +555,7 @@ class SequenceRun(VersionedManufacturingStep):
 
     def add_characteristic(self, characteristic: Characteristic) -> Characteristic:
         """Attach metadata that will be serialized under this sequence run."""
+        _ensure_characteristic_allowed(characteristic)
         self.characteristics.append(characteristic)
         return characteristic
 
@@ -535,11 +575,11 @@ class OperationRun(ManufacturingStep):
     Group of sequence runs executed within a process operation, mapped to the
     ``OperationRun`` element. Field-level docstrings describe every parameter.
     """
-    sequences: List[SequenceRun] = field(default_factory=list)
-    """Sequence runs executed within the operation and emitted as ``SequenceRun``."""
-
     station: str = field(default='')
     """Station context stored in ``StationFullName`` (non-updatable)."""
+
+    sequences: List[SequenceRun] = field(default_factory=list)
+    """Sequence runs executed within the operation and emitted as ``SequenceRun``."""
 
     user: str = field(default='')
     """Operator stored in the ``User`` attribute (non-updatable)."""
@@ -553,12 +593,29 @@ class OperationRun(ManufacturingStep):
     documents: List[Document] = field(default_factory=list)
     """Document references serialized under ``Document``."""
 
+    test_position_name: str = field(default='')
+    """
+    Optional test position identifier serialized as the
+    ``Proligent.TestPositionName`` characteristic when provided.
+    """
+
+    def __post_init__(self) -> None:
+        if self.station == '':
+            raise ValueError("OperationRun.station is required and cannot be empty.")
+        _ensure_characteristics_allowed(self.characteristics)
+        self._propagate_station_to_sequences()
+
+    def _propagate_station_to_sequences(self) -> None:
+        for sequence in self.sequences:
+            sequence._assign_station(self.station)
+
     def build(self) -> OperationRunType:
         """
         Build the operation run into ``OperationRunType`` with timing, execution
         status, process name, station/user context, characteristics, documents,
         and nested sequence runs.
         """
+        self._propagate_station_to_sequences()
         operation_run = OperationRunType(operation_run_id=self.id)
         operation_run.sequence_run = [sequence.build() for sequence in self.sequences]
         operation_run.operation_run_start_time = UTIL.format_datetime(self.start_time)
@@ -568,15 +625,20 @@ class OperationRun(ManufacturingStep):
             operation_run.operation_name = self.name
         if self.status is not None:
             operation_run.operation_status = self.status
-        if self.station != '':
-            operation_run.station_full_name = self.station
+        operation_run.station_full_name = self.station
         if self.user != '':
             operation_run.user = self.user
         if self.process_name != '':
             operation_run.process_full_name = self.process_name
-        if self.characteristics:
+        characteristics = list(self.characteristics)
+        if self.test_position_name != '':
+            characteristics.append(Characteristic(
+                full_name="Proligent.TestPositionName",
+                value=self.test_position_name,
+            ))
+        if characteristics:
             operation_run.characteristic = [
-                characteristic.build() for characteristic in self.characteristics
+                characteristic.build() for characteristic in characteristics
             ]
         if self.documents:
             operation_run.document = [document.build() for document in self.documents]
@@ -584,13 +646,13 @@ class OperationRun(ManufacturingStep):
 
     def add_sequence_run(self, sequence_run: SequenceRun) -> SequenceRun:
         """Append a sequence run that will be serialized within ``operation_run``."""
-        if not sequence_run.station:
-            sequence_run.station = self.station
+        sequence_run._assign_station(self.station)
         self.sequences.append(sequence_run)
         return sequence_run
 
     def add_characteristic(self, characteristic: Characteristic) -> Characteristic:
         """Attach metadata that will be serialized under this operation run."""
+        _ensure_characteristic_allowed(characteristic)
         self.characteristics.append(characteristic)
         return characteristic
 
@@ -691,6 +753,9 @@ class ProductUnit(Buildable):
     scrap_time: datetime.datetime = field(default=None)
     """Timestamp stored in ``ScrappedTime``; required when ``scrapped`` is true."""
 
+    def __post_init__(self) -> None:
+        _ensure_characteristics_allowed(self.characteristics)
+
     def build(self) -> ProductUnitType:
         """
         Build the product unit into ``ProductUnitType`` with identifiers,
@@ -720,6 +785,7 @@ class ProductUnit(Buildable):
 
     def add_characteristic(self, characteristic: Characteristic) -> Characteristic:
         """Attach metadata that will be serialized under this product unit."""
+        _ensure_characteristic_allowed(characteristic)
         self.characteristics.append(characteristic)
         return characteristic
 

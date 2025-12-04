@@ -41,7 +41,6 @@ def generate_readme_example1(
         )
         sequence = SequenceRun(
             name='Sequence1',
-            station='Station/readme_example1',
             status=ExecutionStatusKind.PASS,
             start_time=frozen_timestamp,
             end_time=frozen_timestamp,
