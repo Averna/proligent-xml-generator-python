@@ -3,7 +3,7 @@ from enum import Enum
 from pathlib import Path
 from dataclasses import dataclass, field
 import pytz
-from typing import Any, List
+from typing import Any, Iterable, List
 import uuid
 from xml.etree import ElementTree as ET
 import xmlschema
@@ -28,6 +28,12 @@ from proligent.datawarehouse.datawarehouse_product_unit import ProductUnitType
 # Re-export ExecutionStatusKind so callers can import it from this namespace.
 ExecutionStatusKind = _ExecutionStatusKind
 MeasureKind = _MeasureKind
+
+_RESERVED_CHARACTERISTIC_PREFIX = "Proligent."
+_RESERVED_CHARACTERISTIC_ERROR = (
+    f"Characteristic names starting with '{_RESERVED_CHARACTERISTIC_PREFIX}' "
+    "are reserved for internal use."
+)
 
 
 class Util:
@@ -307,6 +313,16 @@ class Characteristic(Buildable):
         return characteristic
 
 
+def _ensure_characteristic_allowed(characteristic: Characteristic) -> None:
+    if characteristic.full_name.startswith(_RESERVED_CHARACTERISTIC_PREFIX):
+        raise ValueError(_RESERVED_CHARACTERISTIC_ERROR)
+
+
+def _ensure_characteristics_allowed(characteristics: Iterable[Characteristic]) -> None:
+    for characteristic in characteristics:
+        _ensure_characteristic_allowed(characteristic)
+
+
 @dataclass
 class Document(Buildable):
     """
@@ -409,6 +425,7 @@ class StepRun(ManufacturingStep):
             self._measures.append(self.measure)
         # Drop the constructor-only attribute to discourage direct access later on.
         self.measure = None
+        _ensure_characteristics_allowed(self.characteristics)
 
     def build(self) -> StepRunType:
         """
@@ -445,6 +462,7 @@ class StepRun(ManufacturingStep):
 
     def add_characteristic(self, characteristic: Characteristic) -> Characteristic:
         """Attach metadata that will be serialized under this step run."""
+        _ensure_characteristic_allowed(characteristic)
         self.characteristics.append(characteristic)
         return characteristic
 
@@ -479,6 +497,9 @@ class SequenceRun(VersionedManufacturingStep):
 
     _station: str = field(default='', init=False, repr=False)
     """Station context applied internally from the owning ``OperationRun``."""
+
+    def __post_init__(self) -> None:
+        _ensure_characteristics_allowed(self.characteristics)
 
     @property
     def station(self) -> str:
@@ -534,6 +555,7 @@ class SequenceRun(VersionedManufacturingStep):
 
     def add_characteristic(self, characteristic: Characteristic) -> Characteristic:
         """Attach metadata that will be serialized under this sequence run."""
+        _ensure_characteristic_allowed(characteristic)
         self.characteristics.append(characteristic)
         return characteristic
 
@@ -580,6 +602,7 @@ class OperationRun(ManufacturingStep):
     def __post_init__(self) -> None:
         if self.station == '':
             raise ValueError("OperationRun.station is required and cannot be empty.")
+        _ensure_characteristics_allowed(self.characteristics)
         self._propagate_station_to_sequences()
 
     def _propagate_station_to_sequences(self) -> None:
@@ -629,6 +652,7 @@ class OperationRun(ManufacturingStep):
 
     def add_characteristic(self, characteristic: Characteristic) -> Characteristic:
         """Attach metadata that will be serialized under this operation run."""
+        _ensure_characteristic_allowed(characteristic)
         self.characteristics.append(characteristic)
         return characteristic
 
@@ -729,6 +753,9 @@ class ProductUnit(Buildable):
     scrap_time: datetime.datetime = field(default=None)
     """Timestamp stored in ``ScrappedTime``; required when ``scrapped`` is true."""
 
+    def __post_init__(self) -> None:
+        _ensure_characteristics_allowed(self.characteristics)
+
     def build(self) -> ProductUnitType:
         """
         Build the product unit into ``ProductUnitType`` with identifiers,
@@ -758,6 +785,7 @@ class ProductUnit(Buildable):
 
     def add_characteristic(self, characteristic: Characteristic) -> Characteristic:
         """Attach metadata that will be serialized under this product unit."""
+        _ensure_characteristic_allowed(characteristic)
         self.characteristics.append(characteristic)
         return characteristic
 
