@@ -57,14 +57,14 @@ jobs:
           python scripts/generate_help.py
       - name: Upload generated XML artifacts
         if: always()
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: test-out-${{ matrix.python-version }}
           path: test/out
           if-no-files-found: ignore
       - name: Upload help docs
         if: always() && matrix.python-version == '3.13'
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: help-docs-${{ matrix.python-version }}
           path: build/help
