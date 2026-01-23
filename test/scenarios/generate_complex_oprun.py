@@ -86,7 +86,8 @@ def generate_complex_oprun(
             ],
             documents=[
                 Document(
-                    file_name="ComprehensiveOperationLog.pdf",
+                    identifier='D0C0601D-0000-0000-0000-000000001111',
+                    file_name="Document_D0C0601D-0000-0000-0000-000000001111_ComprehensiveOperationLog.pdf",
                     name="Operation Log",
                     description="Aggregated log for Operation/Comprehensive failure event.",
                 )
@@ -103,7 +104,8 @@ def generate_complex_oprun(
             ],
             documents=[
                 Document(
-                    file_name="FunctionalProcedure.pdf",
+                    identifier='D0C0601D-0000-0000-0000-000000002222',
+                    file_name="Document_D0C0601D-0000-0000-0000-000000002222_FunctionalProcedure.pdf",
                     name="Functional Test Procedure",
                     description="Checklist reviewed before running functional test.",
                 )
@@ -161,7 +163,8 @@ def generate_complex_oprun(
             ],
             documents=[
                 Document(
-                    file_name="SafetyChecklist.pdf",
+                    identifier='D0C0601D-0000-0000-0000-000000004444',
+                    file_name="Document_D0C0601D-0000-0000-0000-000000004444_SafetyChecklist.pdf",
                     name="Safety Checklist",
                     description="QA inspector notes for safety evaluation.",
                 )
@@ -207,7 +210,8 @@ def generate_complex_oprun(
                     ),
                 documents=[
                     Document(
-                        file_name="OverCurrentTrace.png",
+                        identifier='D0C0601D-0000-0000-0000-000000003333',
+                        file_name="Document_D0C0601D-0000-0000-0000-000000003333_OverCurrentTrace.png",
                         name="Oscilloscope Capture",
                         description="Trace captured during over-current failure.",
                     )
@@ -245,7 +249,8 @@ def generate_complex_oprun(
             ],
             documents=[
                 Document(
-                    file_name="DiagnosticsMatrix.xlsx",
+                    identifier='D0C0601D-0000-0000-0000-000000005555',
+                    file_name="Document_D0C0601D-0000-0000-0000-000000005555_DiagnosticsMatrix.xlsx",
                     name="Diagnostics Matrix",
                     description="Manual routing instructions for diagnostics sequence.",
                 )

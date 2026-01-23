@@ -30,6 +30,7 @@
     "Datawarehouse",
     "docstrings",
     "kics",
+    "lowerbound",
     "oprun",
     "Proligent",
     "pypa",

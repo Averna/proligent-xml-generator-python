@@ -164,6 +164,8 @@ class Buildable:
 
         If ``destination`` is not provided, the file is placed in the default
         Integration Service pickup directory with a generated name.
+
+        The file name must start with prefix "Proligent_", and end with extension ".xml".
         """
         if destination == '':
             folder = Path(UTIL.destination_dir)
@@ -331,10 +333,13 @@ class Document(Buildable):
     Field docstrings detail the constructor parameters.
     """
     file_name: str
-    """Path or filename stored in the ``FileName`` attribute."""
+    """
+    Path or filename of the document. The format must start with 'Document_' followed by the document's identifier 
+    (GUID).
+    """
 
-    identifier: str = field(default_factory=UTIL.uuid)
-    """GUID stored in ``Identifier`` (unique among sibling documents)."""
+    identifier: str = field(default='')
+    """The document's ID (GUID). This GUID must be in the document's file name."""
 
     name: str = field(default='')
     """Optional human-readable identifier stored in ``Name``."""
@@ -576,7 +581,7 @@ class OperationRun(ManufacturingStep):
     ``OperationRun`` element. Field-level docstrings describe every parameter.
     """
     station: str = field(default='')
-    """Station context stored in ``StationFullName`` (non-updatable)."""
+    """Full Station Name, ideally in a hierarchy that allows meaningful grouping. e.g. Country/ManufacturerName/ProductionLine/StationName"""
 
     sequences: List[SequenceRun] = field(default_factory=list)
     """Sequence runs executed within the operation and emitted as ``SequenceRun``."""
@@ -597,6 +602,8 @@ class OperationRun(ManufacturingStep):
     """
     Optional test position identifier serialized as the
     ``Proligent.TestPositionName`` characteristic when provided.
+    For stations that can test multiple units in parallel. It is not good 
+    practice to save this information as part of the station full name.
     """
 
     def __post_init__(self) -> None:
@@ -676,13 +683,13 @@ class ProcessRun(VersionedManufacturingStep):
     """Identifier stored in ``ProductUnitIdentifier`` (immutable once set)."""
 
     product_full_name: str = field(default='DUT')
-    """Product name stored in ``ProductFullName`` (immutable)."""
+    """Full Product Name, ideally in a hierarchy that allows meaningful grouping. e.g. ProductFamily/ProductName/PartNumber"""
 
     operations: List[OperationRun] = field(default_factory=list)
     """Operation runs serialized inside ``OperationRun``."""
 
     process_mode: str = field(default='')
-    """Optional process mode string persisted to ``ProcessMode`` (e.g., Production)."""
+    """Optional process mode string persisted to ``ProcessMode`` (e.g. Production, RMA, Debug, GageRNR)."""
 
     def build(self) -> ProcessRunType:
         """
@@ -730,7 +737,7 @@ class ProductUnit(Buildable):
     """Unique identifier stored in ``ProductUnitIdentifier`` (per product name)."""
 
     product_full_name: str = field(default='')
-    """Fully qualified product name written to ``ProductFullName``."""
+    """Full Product Name, ideally in a hierarchy that allows meaningful grouping. e.g. ProductFamily/ProductName/PartNumber"""
 
     characteristics: List[Characteristic] = field(default_factory=list)
     """Metadata entries serialized under ``Characteristic``."""
