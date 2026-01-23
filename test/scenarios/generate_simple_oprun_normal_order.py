@@ -59,7 +59,8 @@ def generate_simple_oprun_normal_order(
         product_unit.add_characteristic(Characteristic(full_name="Serial", value="PU-001"))
         product_unit.add_document(
             Document(
-                file_name="ProductCertificate.pdf",
+                identifier='D0C0601D-0000-0000-0000-000000000001',
+                file_name="Document_D0C0601D-0000-0000-0000-000000000001_ProductCertificate.pdf",
                 name="Certificate of Conformance",
                 description="Certification for product PU-001",
             )
@@ -82,7 +83,8 @@ def generate_simple_oprun_normal_order(
         operation.add_characteristic(Characteristic(full_name="Batch", value="B-42"))
         operation.add_document(
             Document(
-                file_name="OperationReport.pdf",
+                identifier='D0C0601D-0000-0000-0000-000000000002',
+                file_name="Document_D0C0601D-0000-0000-0000-000000000002_OperationReport.pdf",
                 name="Operation Report",
                 description="Summary for operation Operation/Example",
             )
@@ -96,7 +98,8 @@ def generate_simple_oprun_normal_order(
         sequence.add_characteristic(Characteristic(full_name="SequenceType", value="Main"))
         sequence.add_document(
             Document(
-                file_name="SequenceChecklist.pdf",
+                identifier='D0C0601D-0000-0000-0000-000000000003',
+                file_name="Document_D0C0601D-0000-0000-0000-000000000003_SequenceChecklist.pdf",
                 name="Sequence Checklist",
                 description="Checklist completed before running the sequence",
             )
@@ -123,7 +126,8 @@ def generate_simple_oprun_normal_order(
                 characteristics=[Characteristic(full_name="Channel", value="A")],
                 documents=[
                     Document(
-                        file_name="InspectionReport.pdf",
+                        identifier='D0C0601D-0000-0000-0000-000000000004',
+                        file_name="Document_D0C0601D-0000-0000-0000-000000000004_InspectionReport.pdf",
                         name="Inspection Report",
                         description="Results for the inspection step",
                     )

@@ -72,7 +72,8 @@ def generate_simple_oprun_reverse_order(
                 ],
                 documents=[
                     Document(
-                        file_name="InspectionReport.pdf",
+                        identifier='D0C0601D-0000-0000-0000-000000000001',
+                        file_name="Document_D0C0601D-0000-0000-0000-000000000001_InspectionReport.pdf",
                         name="Inspection Report",
                         description="Results for the inspection step",
                     )
@@ -139,7 +140,8 @@ def generate_simple_oprun_reverse_order(
             ],
             documents=[
                 Document(
-                    file_name="SequenceChecklist.pdf",
+                    identifier='D0C0601D-0000-0000-0000-000000000002',
+                    file_name="Document_D0C0601D-0000-0000-0000-000000000002_SequenceChecklist.pdf",
                     name="Sequence Checklist",
                     description="Checklist completed before running the sequence",
                 )
@@ -160,7 +162,8 @@ def generate_simple_oprun_reverse_order(
             ],
             documents=[
                 Document(
-                    file_name="OperationReport.pdf",
+                    identifier='D0C0601D-0000-0000-0000-000000000003',
+                    file_name="Document_D0C0601D-0000-0000-0000-000000000003_OperationReport.pdf",
                     name="Operation Report",
                     description="Summary for operation Operation/Example",
                 )
@@ -186,7 +189,8 @@ def generate_simple_oprun_reverse_order(
             ],
             documents=[
                 Document(
-                    file_name="ProductCertificate.pdf",
+                    identifier='D0C0601D-0000-0000-0000-000000000004',
+                    file_name="Document_D0C0601D-0000-0000-0000-000000000004_ProductCertificate.pdf",
                     name="Certificate of Conformance",
                     description="Certification for product PU-001",
                 )
