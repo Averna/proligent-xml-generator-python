@@ -166,6 +166,9 @@ class Buildable:
         Integration Service pickup directory with a generated name.
 
         The file name must start with prefix "Proligent_", and end with extension ".xml".
+
+        Raises:
+            ValueError: If the provided file name does not start with "Proligent_" or does not end with ".xml".
         """
         if destination == '':
             folder = Path(UTIL.destination_dir)
@@ -173,6 +176,12 @@ class Buildable:
             destination: Path = folder / name
         else:
             destination = Path(destination)
+            # Validate file name when caller provides it
+            file_name = destination.name
+            if not file_name.startswith('Proligent_'):
+                raise ValueError(f"File name must start with 'Proligent_': {file_name}")
+            if not file_name.endswith('.xml'):
+                raise ValueError(f"File name must end with '.xml': {file_name}")
         xml_string = self.to_xml()
         root = ET.fromstring(xml_string)
         if root.tag.startswith("{"):
@@ -334,7 +343,7 @@ class Document(Buildable):
     """
     file_name: str
     """
-    Path or filename of the document. The format must start with 'Document_' followed by the document's identifier 
+    Path or filename of the document. The format must start with 'Document_' followed by the document's identifier
     (GUID).
     """
 
@@ -366,7 +375,7 @@ class ManufacturingStep(Buildable):
     """
     id: str = field(default_factory=UTIL.uuid)
     """
-    Identifier persisted to the relevant ``*_Id`` attribute. 
+    Identifier persisted to the relevant ``*_Id`` attribute.
     Auto-generated with random value if omitted (recommended).
     """
 
@@ -602,7 +611,7 @@ class OperationRun(ManufacturingStep):
     """
     Optional test position identifier serialized as the
     ``Proligent.TestPositionName`` characteristic when provided.
-    For stations that can test multiple units in parallel. It is not good 
+    For stations that can test multiple units in parallel. It is not good
     practice to save this information as part of the station full name.
     """
 
