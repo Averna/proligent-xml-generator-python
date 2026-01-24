@@ -5,7 +5,25 @@ This module contains validation functions used across the data model
 to ensure data integrity and compliance with Proligent requirements.
 """
 
-from pathlib import Path
+import os
+
+
+def _extract_filename(file_path: str) -> str:
+    """
+    Extract the filename from a path, handling both Windows and Unix separators.
+
+    This is needed because Path.name on Unix doesn't parse Windows paths correctly.
+
+    Args:
+        file_path: The file path (can use / or \\ as separator).
+
+    Returns:
+        The filename without directory path.
+    """
+    # Replace backslashes with forward slashes to normalize
+    normalized = file_path.replace("\\", "/")
+    # Extract the last component (filename)
+    return normalized.split("/")[-1]
 
 
 class DocumentValidator:
@@ -40,7 +58,8 @@ class DocumentValidator:
             ... )
         """
         # Extract just the filename without directory path
-        file_name_only = Path(file_name).name
+        # Use custom function to handle both Windows and Unix paths
+        file_name_only = _extract_filename(file_name)
 
         # Expected prefixes for document files
         expected_prefixes = ["Document_", "CompressedDocument_"]
@@ -92,7 +111,8 @@ class FileNameValidator:
             >>> FileNameValidator.validate_xml_file_name("C:\\\\Temp\\\\Proligent_output.xml")
         """
         # Extract just the filename without directory path
-        file_name_only = Path(file_name).name
+        # Use custom function to handle both Windows and Unix paths
+        file_name_only = _extract_filename(file_name)
 
         if not file_name_only.startswith("Proligent_"):
             raise ValueError(f"File name must start with 'Proligent_': {file_name_only}")
