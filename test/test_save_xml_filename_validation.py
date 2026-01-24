@@ -6,6 +6,7 @@ import tempfile
 import pytest
 
 from proligent.model import DataWareHouse
+from proligent.validators import FileNameValidator
 
 
 def test_save_xml_with_valid_filename(tmp_path: Path) -> None:
@@ -106,6 +107,27 @@ def test_save_xml_with_path_and_valid_filename(tmp_path: Path) -> None:
 
     # Verify file was created
     assert valid_file.exists()
+
+
+# Direct validator tests
+def test_filename_validator_accepts_valid_xml_filename() -> None:
+    """Test that FileNameValidator.validate_xml_file_name accepts valid filenames."""
+    # Should not raise for valid filenames
+    FileNameValidator.validate_xml_file_name("Proligent_test.xml")
+    FileNameValidator.validate_xml_file_name("Proligent_complex_name_123.xml")
+    FileNameValidator.validate_xml_file_name("C:\\Temp\\Proligent_output.xml")
+
+
+def test_filename_validator_rejects_invalid_prefix() -> None:
+    """Test that FileNameValidator.validate_xml_file_name rejects invalid prefix."""
+    with pytest.raises(ValueError, match="File name must start with 'Proligent_'"):
+        FileNameValidator.validate_xml_file_name("Invalid_test.xml")
+
+
+def test_filename_validator_rejects_invalid_extension() -> None:
+    """Test that FileNameValidator.validate_xml_file_name rejects invalid extension."""
+    with pytest.raises(ValueError, match="File name must end with '.xml'"):
+        FileNameValidator.validate_xml_file_name("Proligent_test.txt")
 
 
 if __name__ == "__main__":

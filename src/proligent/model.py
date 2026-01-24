@@ -24,6 +24,7 @@ from proligent.datawarehouse.datawarehouse_model import (
     MeasureKind as _MeasureKind,
 )
 from proligent.datawarehouse.datawarehouse_product_unit import ProductUnitType
+from proligent.validators import DocumentValidator, FileNameValidator
 
 # Re-export ExecutionStatusKind so callers can import it from this namespace.
 ExecutionStatusKind = _ExecutionStatusKind
@@ -177,11 +178,7 @@ class Buildable:
         else:
             destination = Path(destination)
             # Validate file name when caller provides it
-            file_name = destination.name
-            if not file_name.startswith('Proligent_'):
-                raise ValueError(f"File name must start with 'Proligent_': {file_name}")
-            if not file_name.endswith('.xml'):
-                raise ValueError(f"File name must end with '.xml': {file_name}")
+            FileNameValidator.validate_xml_file_name(str(destination))
         xml_string = self.to_xml()
         root = ET.fromstring(xml_string)
         if root.tag.startswith("{"):
@@ -357,7 +354,17 @@ class Document(Buildable):
     """Optional description persisted to ``Description``."""
 
     def build(self) -> DocumentType:
-        """Build the Document instance into the Proligent DocumentType."""
+        """
+        Build the Document instance into the Proligent DocumentType.
+
+        Raises:
+            ValueError: If the file_name format is invalid. It must start with 'Document_' or
+                       'CompressedDocument_', followed by the document's identifier, then any
+                       characters, and end with a file extension.
+        """
+        # Validate file_name format
+        DocumentValidator.validate_file_name(self.file_name, self.identifier)
+
         document_type = DocumentType(identifier=self.identifier, file_name=self.file_name)
         if self.name != '':
             document_type.name = self.name
