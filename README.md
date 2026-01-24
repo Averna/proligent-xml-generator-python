@@ -215,7 +215,7 @@ The goal is to allow grouping of items in meaningful categories, which can be us
 reporting.
 
 Note that the last item in the full name (the "leaf" of the tree) must be meaningful: some reports display
-only the leaf, for simplicity and brevity. In most cases the full names is also available, but may be less visible 
+only the leaf, for simplicity and brevity. In most cases the full names is also available, but may be less visible
 (tooltips).
 
 #### Example: Stations
@@ -230,7 +230,7 @@ For stations that can test multiple units in parallel: see `test_position_name`.
 
 `ProductFamily/ProductName/PartNumber`
 
-We don't recommend having a version or revision as the leaf of the full product name. This is best recorded as a 
+We don't recommend having a version or revision as the leaf of the full product name. This is best recorded as a
 characteristic, either on the product unit or the operation.
 
 ### Sequence "Tree"
@@ -247,7 +247,7 @@ MainSequence2
     etc.
 ```
 
-To keep the sequences organized in trees like the example above, the sequences names need to include all nodes of the 
+To keep the sequences organized in trees like the example above, the sequences names need to include all nodes of the
 tree, separated by "/".
 
 ```python
