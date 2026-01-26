@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import datetime
 from pathlib import Path
+from typing import Callable
 
 import pytz
 
@@ -29,7 +30,8 @@ def _default_tz_datetime(start_timestamp: datetime.datetime, hour: int = 0, minu
 
 def generate_complex_oprun(
         output_path: Path,
-        start_timestamp: datetime.datetime | None = None) -> Path:
+        start_timestamp: datetime.datetime | None = None,
+        make_document_filename: Callable[[str, str], str] = None) -> Path:
     default_start_timestamp = start_timestamp or datetime.datetime(2024, 4, 1, 7, 0, 0)
     generation_time = start_timestamp or _default_tz_datetime(default_start_timestamp, 1, 0)
     start_timestamp = start_timestamp or default_start_timestamp
@@ -86,7 +88,10 @@ def generate_complex_oprun(
             ],
             documents=[
                 Document(
-                    file_name="Document_D0C0601D-0000-0000-0000-000000001111_ComprehensiveOperationLog.pdf",
+                    file_name=make_document_filename(
+                        "D0C0601D-0000-0000-0000-000000001111",
+                        "_ComprehensiveOperationLog.pdf"
+                    ),
                     name="Operation Log",
                     description="Aggregated log for Operation/Comprehensive failure event.",
                 )
@@ -103,7 +108,10 @@ def generate_complex_oprun(
             ],
             documents=[
                 Document(
-                    file_name="Document_D0C0601D-0000-0000-0000-000000002222_FunctionalProcedure.pdf",
+                    file_name=make_document_filename(
+                        "D0C0601D-0000-0000-0000-000000002222",
+                        "_FunctionalProcedure.pdf"
+                    ),
                     name="Functional Test Procedure",
                     description="Checklist reviewed before running functional test.",
                 )
@@ -161,7 +169,10 @@ def generate_complex_oprun(
             ],
             documents=[
                 Document(
-                    file_name="Document_D0C0601D-0000-0000-0000-000000004444_SafetyChecklist.pdf",
+                    file_name=make_document_filename(
+                        "D0C0601D-0000-0000-0000-000000004444",
+                        "_SafetyChecklist.pdf"
+                    ),
                     name="Safety Checklist",
                     description="QA inspector notes for safety evaluation.",
                 )
@@ -207,7 +218,10 @@ def generate_complex_oprun(
                     ),
                 documents=[
                     Document(
-                        file_name="Document_D0C0601D-0000-0000-0000-000000003333_OverCurrentTrace.png",
+                        file_name=make_document_filename(
+                            "D0C0601D-0000-0000-0000-000000003333",
+                            "_OverCurrentTrace.png"
+                        ),
                         name="Oscilloscope Capture",
                         description="Trace captured during over-current failure.",
                     )
@@ -245,7 +259,10 @@ def generate_complex_oprun(
             ],
             documents=[
                 Document(
-                    file_name="Document_D0C0601D-0000-0000-0000-000000005555_DiagnosticsMatrix.xlsx",
+                    file_name=make_document_filename(
+                        "D0C0601D-0000-0000-0000-000000005555",
+                        "_DiagnosticsMatrix.xlsx"
+                    ),
                     name="Diagnostics Matrix",
                     description="Manual routing instructions for diagnostics sequence.",
                 )

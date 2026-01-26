@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import datetime
 from pathlib import Path
+from typing import Callable
 
 import pytz
 
@@ -29,7 +30,8 @@ def _default_tz_datetime(start_timestamp: datetime.datetime, hour: int, minute: 
 
 def generate_simple_oprun_reverse_order(
         output_path: Path,
-        start_timestamp: datetime.datetime | None = None) -> Path:
+        start_timestamp: datetime.datetime | None = None,
+        make_document_filename: Callable[[str, str], str] = None) -> Path:
 
     default_start_timestamp = start_timestamp or datetime.datetime(2024, 1, 1, 8, 0, 0)
     generation_time = start_timestamp or _default_tz_datetime(default_start_timestamp, 1, 0)
@@ -72,7 +74,7 @@ def generate_simple_oprun_reverse_order(
                 ],
                 documents=[
                     Document(
-                        file_name="Document_D0C0601D-0000-0000-0000-000000000001_InspectionReport.pdf",
+                        file_name=make_document_filename("D0C0601D-0000-0000-0000-000000000001", "_InspectionReport.pdf"),
                         name="Inspection Report",
                         description="Results for the inspection step",
                     )
@@ -139,7 +141,7 @@ def generate_simple_oprun_reverse_order(
             ],
             documents=[
                 Document(
-                    file_name="Document_D0C0601D-0000-0000-0000-000000000002_SequenceChecklist.pdf",
+                    file_name=make_document_filename("D0C0601D-0000-0000-0000-000000000002", "_SequenceChecklist.pdf"),
                     name="Sequence Checklist",
                     description="Checklist completed before running the sequence",
                 )
@@ -160,7 +162,7 @@ def generate_simple_oprun_reverse_order(
             ],
             documents=[
                 Document(
-                    file_name="Document_D0C0601D-0000-0000-0000-000000000003_OperationReport.pdf",
+                    file_name=make_document_filename("D0C0601D-0000-0000-0000-000000000003", "_OperationReport.pdf"),
                     name="Operation Report",
                     description="Summary for operation Operation/Example",
                 )
@@ -186,7 +188,7 @@ def generate_simple_oprun_reverse_order(
             ],
             documents=[
                 Document(
-                    file_name="Document_D0C0601D-0000-0000-0000-000000000004_ProductCertificate.pdf",
+                    file_name=make_document_filename("D0C0601D-0000-0000-0000-000000000004", "_ProductCertificate.pdf"),
                     name="Certificate of Conformance",
                     description="Certification for product PU-001",
                 )

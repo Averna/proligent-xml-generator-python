@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import datetime
 from pathlib import Path
+from typing import Callable
 
 from proligent.model import (
     DataWareHouse,
@@ -22,7 +23,8 @@ DEFAULT_FROZEN_TIMESTAMP = datetime.datetime(2024, 1, 1, 12, 0, 0)
 
 def generate_readme_example1(
         output_path: Path,
-        start_timestamp: datetime.datetime | None = None) -> Path:
+        start_timestamp: datetime.datetime | None = None,
+        make_document_filename: Callable[[str, str], str] | None = None) -> Path:
     frozen_timestamp = start_timestamp or DEFAULT_FROZEN_TIMESTAMP
     with mock_util_timezone("Europe/Paris"), mock_datetime_now(frozen_timestamp):
         limit = Limit(LimitExpression.LOWERBOUND_LEQ_X_LE_HIGHER_BOUND, lower_bound=10, higher_bound=25)
