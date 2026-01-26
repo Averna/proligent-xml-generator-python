@@ -3,8 +3,6 @@ from __future__ import annotations
 import datetime
 from pathlib import Path
 
-import pytz
-
 from proligent import model
 from proligent.model import (
     Characteristic,

@@ -24,6 +24,7 @@ from proligent.datawarehouse.datawarehouse_model import (
     MeasureKind as _MeasureKind,
 )
 from proligent.datawarehouse.datawarehouse_product_unit import ProductUnitType
+from proligent.validators import FileNameValidator
 
 # Re-export ExecutionStatusKind so callers can import it from this namespace.
 ExecutionStatusKind = _ExecutionStatusKind
@@ -164,6 +165,11 @@ class Buildable:
 
         If ``destination`` is not provided, the file is placed in the default
         Integration Service pickup directory with a generated name.
+
+        The file name must start with prefix "Proligent_", and end with extension ".xml".
+
+        Raises:
+            ValueError: If the provided file name does not start with "Proligent_" or does not end with ".xml".
         """
         if destination == '':
             folder = Path(UTIL.destination_dir)
@@ -171,6 +177,8 @@ class Buildable:
             destination: Path = folder / name
         else:
             destination = Path(destination)
+            # Validate file name when caller provides it
+            FileNameValidator.validate_xml_file_name(str(destination))
         xml_string = self.to_xml()
         root = ET.fromstring(xml_string)
         if root.tag.startswith("{"):
@@ -329,12 +337,22 @@ class Document(Buildable):
     Reference to a document attached to a run or product unit.
 
     Field docstrings detail the constructor parameters.
+
+    IMPORTANT: the document referenced by this item needs to be renamed to
+    include the valid prefix and the file's identifier.
+
+    See property `suggested_document_file_name` for details.
     """
+
     file_name: str
-    """Path or filename stored in the ``FileName`` attribute."""
+    """
+    Filename of the document. Can be any filename.
+    """
 
     identifier: str = field(default_factory=UTIL.uuid)
-    """GUID stored in ``Identifier`` (unique among sibling documents)."""
+    """
+    Optional GUID identifier. If not provided, a UUID will be auto-generated.
+    """
 
     name: str = field(default='')
     """Optional human-readable identifier stored in ``Name``."""
@@ -342,8 +360,23 @@ class Document(Buildable):
     description: str = field(default='')
     """Optional description persisted to ``Description``."""
 
+    @property
+    def suggested_document_file_name(self) -> str:
+        """
+        Generate a suggested full document filename by concatenating
+        'Document_' + identifier + file_name.
+
+        Returns:
+            A suggested filename in the format: Document_<guid>_<file_name>
+        """
+        return f"Document_{self.identifier}_{self.file_name}"
+
     def build(self) -> DocumentType:
-        """Build the Document instance into the Proligent DocumentType."""
+        """
+        Build the Document instance into the Proligent DocumentType.
+
+        If identifier is not provided, a UUID will be auto-generated.
+        """
         document_type = DocumentType(identifier=self.identifier, file_name=self.file_name)
         if self.name != '':
             document_type.name = self.name
@@ -361,7 +394,7 @@ class ManufacturingStep(Buildable):
     """
     id: str = field(default_factory=UTIL.uuid)
     """
-    Identifier persisted to the relevant ``*_Id`` attribute. 
+    Identifier persisted to the relevant ``*_Id`` attribute.
     Auto-generated with random value if omitted (recommended).
     """
 
@@ -576,7 +609,7 @@ class OperationRun(ManufacturingStep):
     ``OperationRun`` element. Field-level docstrings describe every parameter.
     """
     station: str = field(default='')
-    """Station context stored in ``StationFullName`` (non-updatable)."""
+    """Full Station Name, ideally in a hierarchy that allows meaningful grouping. e.g. Country/ManufacturerName/ProductionLine/StationName"""
 
     sequences: List[SequenceRun] = field(default_factory=list)
     """Sequence runs executed within the operation and emitted as ``SequenceRun``."""
@@ -597,6 +630,8 @@ class OperationRun(ManufacturingStep):
     """
     Optional test position identifier serialized as the
     ``Proligent.TestPositionName`` characteristic when provided.
+    For stations that can test multiple units in parallel. It is not good
+    practice to save this information as part of the station full name.
     """
 
     def __post_init__(self) -> None:
@@ -676,13 +711,13 @@ class ProcessRun(VersionedManufacturingStep):
     """Identifier stored in ``ProductUnitIdentifier`` (immutable once set)."""
 
     product_full_name: str = field(default='DUT')
-    """Product name stored in ``ProductFullName`` (immutable)."""
+    """Full Product Name, ideally in a hierarchy that allows meaningful grouping. e.g. ProductFamily/ProductName/PartNumber"""
 
     operations: List[OperationRun] = field(default_factory=list)
     """Operation runs serialized inside ``OperationRun``."""
 
     process_mode: str = field(default='')
-    """Optional process mode string persisted to ``ProcessMode`` (e.g., Production)."""
+    """Optional process mode string persisted to ``ProcessMode`` (e.g. Production, RMA, Debug, GageRNR)."""
 
     def build(self) -> ProcessRunType:
         """
@@ -730,7 +765,7 @@ class ProductUnit(Buildable):
     """Unique identifier stored in ``ProductUnitIdentifier`` (per product name)."""
 
     product_full_name: str = field(default='')
-    """Fully qualified product name written to ``ProductFullName``."""
+    """Full Product Name, ideally in a hierarchy that allows meaningful grouping. e.g. ProductFamily/ProductName/PartNumber"""
 
     characteristics: List[Characteristic] = field(default_factory=list)
     """Metadata entries serialized under ``Characteristic``."""

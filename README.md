@@ -1,7 +1,5 @@
 # Proligent™ XML Generator for Python™
 
-<!--- cspell:ignore Pypi --->
-
 [![Build][actions-shield]][actions]
 [![Python Package Index][pypi-version]][pypi-page]
 [![Python Versions][python-versions]][pypi-page]
@@ -49,8 +47,6 @@ represented in the package by an equivalent class. Typing hints are used to
 indicate what data types are accepted by the objects.
 
 ### Example 1
-
-<!-- cspell:ignore LOWERBOUND -->
 
 ```python
 from proligent.model import (
@@ -210,6 +206,70 @@ if __name__ == "__main__":
     process.complete(status=ExecutionStatusKind.PASS)
     warehouse.save_xml()
 ```
+
+### About Names
+
+Most of the "names" (product, station, etc.) in the model can be simple strings, or can be built in hierarchies.
+
+The goal is to allow grouping of items in meaningful categories, which can be useful when selecting items for display or
+reporting.
+
+Note that the last item in the full name (the "leaf" of the tree) must be meaningful: some reports display
+only the leaf, for simplicity and brevity. In most cases the full names is also available, but may be less visible
+(tooltips).
+
+#### Example: Stations
+
+`Country/ManufacturerName/ProductionLine/StationName`
+
+Other items in the full station names could be: city, station type, etc.
+
+For stations that can test multiple units in parallel: see `test_position_name`.
+
+#### Example: Products
+
+`ProductFamily/ProductName/PartNumber`
+
+We don't recommend having a version or revision as the leaf of the full product name. This is best recorded as a
+characteristic, either on the product unit or the operation.
+
+### Sequence "Tree"
+
+All sequences are added to the operation. However, typically sequences are organized in "trees".
+
+```text
+MainSequence1
+    SubSequence1
+        SubSubSeq1
+        SubSubSeq2
+    SubSequence2
+MainSequence2
+    etc.
+```
+
+To keep the sequences organized in trees like the example above, the sequences names need to include all nodes of the
+tree, separated by "/".
+
+```python
+    sequence = operation.add_sequence_run(SequenceRun(name="MainSequence1/SubSequence1/SubSubSeq1"))
+    sequence = operation.add_sequence_run(SequenceRun(name="MainSequence1/SubSequence1/SubSubSeq2"))
+    sequence = operation.add_sequence_run(SequenceRun(name="MainSequence1/SubSequence2"))
+    sequence = operation.add_sequence_run(SequenceRun(name="MainSequence2"))
+    # etc.
+```
+
+It is not necessary to create all nodes (e.g. `MainSequence1` and `MainSequence1/SubSequence1`). However, they can also
+be created if they need to old steps, characteristics or documents.
+
+Also note that the full sequence name is limited to 2000 characters, and each part to 64 characters.
+
+### File Names
+
+The XML files must have the prefix "Proligent_".
+
+The documents attached must have the prefix "Document_".
+
+In case of compressed documents, "CompressedDocument_".
 
 ### XML Validation
 

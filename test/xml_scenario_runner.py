@@ -1,11 +1,14 @@
 from __future__ import annotations
 
 import difflib
+import re
 import shutil
 import sys
+import uuid
+import xml.etree.ElementTree as ET
 from datetime import datetime
 from pathlib import Path
-from typing import Callable
+from typing import Callable, List, Tuple
 
 from test_mocks import mock_uuid_sequence
 
@@ -28,6 +31,91 @@ def _ensure_run_dir() -> Path:
     return RUN_DIR
 
 
+def _extract_documents_from_xml(xml_path: Path) -> List[Tuple[str, str]]:
+    """
+    Extract document information from an XML file.
+
+    Args:
+        xml_path: Path to the XML file
+
+    Returns:
+        List of tuples (identifier, file_name) for each document found in the XML
+    """
+    documents = []
+
+    try:
+        tree = ET.parse(xml_path)
+        root = tree.getroot()
+
+        # Define the namespace
+        namespace = {'ns': 'http://www.averna.com/products/proligent/analytics/DIT/6.85'}
+
+        # Find all Document elements (they can be at various levels in the XML)
+        for doc_elem in root.findall('.//ns:Document', namespace):
+            identifier = doc_elem.get('Identifier')
+            file_name = doc_elem.get('FileName')
+
+            if identifier and file_name:
+                documents.append((identifier, file_name))
+
+    except Exception as e:
+        print(f"Warning: Could not extract documents from {xml_path}: {e}")
+
+    return documents
+
+
+def _create_dummy_document(output_folder: Path, identifier: str, file_name: str) -> None:
+    """
+    Create a dummy document file with the suggested filename format.
+
+    Args:
+        output_folder: Folder where the document should be created
+        identifier: Document identifier (GUID)
+        file_name: Original filename from the XML
+    """
+    # Build the suggested filename using the format from Document.suggested_document_file_name
+    suggested_filename = f"Document_{identifier}_{file_name}"
+    file_path = output_folder / suggested_filename
+
+    # Create a simple dummy file with some content
+    # The content identifies what document this is
+    content = f"""Dummy Document File
+===================
+
+This is a placeholder document generated for testing purposes.
+
+Document ID: {identifier}
+Original Filename: {file_name}
+Suggested Filename: {suggested_filename}
+Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
+
+This file would normally contain the actual document content.
+"""
+
+    file_path.write_text(content, encoding='utf-8')
+
+
+def _generate_dummy_documents_for_xml(xml_path: Path, output_folder: Path) -> None:
+    """
+    Extract all documents from an XML file and generate dummy document files.
+
+    Args:
+        xml_path: Path to the XML file to parse
+        output_folder: Folder where dummy documents should be created
+    """
+    documents = _extract_documents_from_xml(xml_path)
+
+    if not documents:
+        return
+
+    # Ensure output folder exists
+    output_folder.mkdir(parents=True, exist_ok=True)
+
+    # Create dummy files for each document
+    for identifier, file_name in documents:
+        _create_dummy_document(output_folder, identifier, file_name)
+
+
 def run_xml_scenario(
     *,
     test_name: str,
@@ -40,7 +128,8 @@ def run_xml_scenario(
 
     Args:
         test_name: Name of the calling test, used to create the output folder.
-        generator: Callable that receives the path where the XML should be written and returns the actual path.
+        generator: Callable that receives the path where the XML should be written and timestamp,
+                  then returns the actual path.
         expected_filename: File name of the expected XML stored under tests/expected.
         validator: Callable used to validate the generated XML against the schema.
     """
@@ -73,18 +162,27 @@ def run_xml_scenario(
         diff_path.write_text("\n".join(diff), encoding="utf-8")
         raise AssertionError(
             f"Generated XML does not match expected fixture '{expected_filename}'. "
-            f"See {diff_path} for the generated output."
+            f"See diff at {diff_path}"
         )
 
-    # generate a 'real' canonical file with actual random GUIDs
-    # the purpose is to generate files that can be integrated in Proligent
+    # Generate a "real" XML with random GUIDs for actual use
     start_timestamp = datetime.now()
     start_timestamp_str = start_timestamp.strftime("%Y%m%d_%H%M%S")
-    real_xml_target_path = prefix.with_suffix(f".real.{start_timestamp_str}.xml")
+
+    # Create "real" subfolder
+    real_folder = run_root / "real"
+    real_folder.mkdir(parents=True, exist_ok=True)
+
+    # Generate real XML in the "real" subfolder
+    real_xml_filename = f"Proligent_{test_name}.real.{start_timestamp_str}.xml"
+    real_xml_target_path = real_folder / real_xml_filename
     real_xml_path = Path(generator(real_xml_target_path, start_timestamp))
     if not real_xml_path.exists():
         raise AssertionError(f"Generated XML not found at {real_xml_path}")
     validator(real_xml_path)
+
+    # Generate dummy documents for the real XML
+    _generate_dummy_documents_for_xml(real_xml_path, real_folder)
 
     # return the test's 'actual' file path
     return actual_path
@@ -98,3 +196,4 @@ def copy_expected_file_to_out_folder(expected_filename: str, prefix: Path) -> Pa
     expected_copy = prefix.with_suffix(".expected.xml")
     shutil.copy(expected_path, expected_copy)
     return expected_path
+
