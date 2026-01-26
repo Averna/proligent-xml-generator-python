@@ -2,9 +2,6 @@ from __future__ import annotations
 
 import datetime
 from pathlib import Path
-from typing import Callable
-
-import pytz
 
 from proligent import model
 from proligent.model import (
@@ -30,8 +27,7 @@ def _default_tz_datetime(start_timestamp: datetime.datetime, hour: int, minute: 
 
 def generate_simple_oprun_normal_order(
         output_path: Path,
-        start_timestamp: datetime.datetime | None = None,
-        make_document_filename: Callable[[str, str], str] = None) -> Path:
+        start_timestamp: datetime.datetime | None = None) -> Path:
     default_start_timestamp = start_timestamp or datetime.datetime(2024, 1, 1, 8, 0, 0)
     generation_time = start_timestamp or _default_tz_datetime(default_start_timestamp, 1, 0)
     start_timestamp = start_timestamp or default_start_timestamp
@@ -61,7 +57,7 @@ def generate_simple_oprun_normal_order(
         product_unit.add_characteristic(Characteristic(full_name="Serial", value="PU-001"))
         product_unit.add_document(
             Document(
-                file_name=make_document_filename("D0C0601D-0000-0000-0000-000000000001", "_ProductCertificate.pdf"),
+                file_name="ProductCertificate.pdf",
                 name="Certificate of Conformance",
                 description="Certification for product PU-001",
             )
@@ -84,7 +80,7 @@ def generate_simple_oprun_normal_order(
         operation.add_characteristic(Characteristic(full_name="Batch", value="B-42"))
         operation.add_document(
             Document(
-                file_name=make_document_filename("D0C0601D-0000-0000-0000-000000000002", "_OperationReport.pdf"),
+                file_name="OperationReport.pdf",
                 name="Operation Report",
                 description="Summary for operation Operation/Example",
             )
@@ -98,7 +94,7 @@ def generate_simple_oprun_normal_order(
         sequence.add_characteristic(Characteristic(full_name="SequenceType", value="Main"))
         sequence.add_document(
             Document(
-                file_name=make_document_filename("D0C0601D-0000-0000-0000-000000000003", "_SequenceChecklist.pdf"),
+                file_name="SequenceChecklist.pdf",
                 name="Sequence Checklist",
                 description="Checklist completed before running the sequence",
             )
@@ -125,7 +121,7 @@ def generate_simple_oprun_normal_order(
                 characteristics=[Characteristic(full_name="Channel", value="A")],
                 documents=[
                     Document(
-                        file_name=make_document_filename("D0C0601D-0000-0000-0000-000000000004", "_InspectionReport.pdf"),
+                        file_name="InspectionReport.pdf",
                         name="Inspection Report",
                         description="Results for the inspection step",
                     )

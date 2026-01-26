@@ -5,9 +5,10 @@ import re
 import shutil
 import sys
 import uuid
+import xml.etree.ElementTree as ET
 from datetime import datetime
 from pathlib import Path
-from typing import Callable
+from typing import Callable, List, Tuple
 
 from test_mocks import mock_uuid_sequence
 
@@ -30,10 +31,95 @@ def _ensure_run_dir() -> Path:
     return RUN_DIR
 
 
+def _extract_documents_from_xml(xml_path: Path) -> List[Tuple[str, str]]:
+    """
+    Extract document information from an XML file.
+
+    Args:
+        xml_path: Path to the XML file
+
+    Returns:
+        List of tuples (identifier, file_name) for each document found in the XML
+    """
+    documents = []
+
+    try:
+        tree = ET.parse(xml_path)
+        root = tree.getroot()
+
+        # Define the namespace
+        namespace = {'ns': 'http://www.averna.com/products/proligent/analytics/DIT/6.85'}
+
+        # Find all Document elements (they can be at various levels in the XML)
+        for doc_elem in root.findall('.//ns:Document', namespace):
+            identifier = doc_elem.get('Identifier')
+            file_name = doc_elem.get('FileName')
+
+            if identifier and file_name:
+                documents.append((identifier, file_name))
+
+    except Exception as e:
+        print(f"Warning: Could not extract documents from {xml_path}: {e}")
+
+    return documents
+
+
+def _create_dummy_document(output_folder: Path, identifier: str, file_name: str) -> None:
+    """
+    Create a dummy document file with the suggested filename format.
+
+    Args:
+        output_folder: Folder where the document should be created
+        identifier: Document identifier (GUID)
+        file_name: Original filename from the XML
+    """
+    # Build the suggested filename using the format from Document.suggested_document_file_name
+    suggested_filename = f"Document_{identifier}_{file_name}"
+    file_path = output_folder / suggested_filename
+
+    # Create a simple dummy file with some content
+    # The content identifies what document this is
+    content = f"""Dummy Document File
+===================
+
+This is a placeholder document generated for testing purposes.
+
+Document ID: {identifier}
+Original Filename: {file_name}
+Suggested Filename: {suggested_filename}
+Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
+
+This file would normally contain the actual document content.
+"""
+
+    file_path.write_text(content, encoding='utf-8')
+
+
+def _generate_dummy_documents_for_xml(xml_path: Path, output_folder: Path) -> None:
+    """
+    Extract all documents from an XML file and generate dummy document files.
+
+    Args:
+        xml_path: Path to the XML file to parse
+        output_folder: Folder where dummy documents should be created
+    """
+    documents = _extract_documents_from_xml(xml_path)
+
+    if not documents:
+        return
+
+    # Ensure output folder exists
+    output_folder.mkdir(parents=True, exist_ok=True)
+
+    # Create dummy files for each document
+    for identifier, file_name in documents:
+        _create_dummy_document(output_folder, identifier, file_name)
+
+
 def run_xml_scenario(
     *,
     test_name: str,
-    generator: Callable[[Path, datetime | None, Callable[[str, str], str]], Path],
+    generator: Callable[[Path, datetime | None], Path],
     expected_filename: str,
     validator: Callable[[Path], None],
 ) -> Path:
@@ -42,8 +128,8 @@ def run_xml_scenario(
 
     Args:
         test_name: Name of the calling test, used to create the output folder.
-        generator: Callable that receives the path where the XML should be written, timestamp, and
-                  a make_document_filename function, then returns the actual path.
+        generator: Callable that receives the path where the XML should be written and timestamp,
+                  then returns the actual path.
         expected_filename: File name of the expected XML stored under tests/expected.
         validator: Callable used to validate the generated XML against the schema.
     """
@@ -53,13 +139,9 @@ def run_xml_scenario(
 
     expected_path = copy_expected_file_to_out_folder(expected_filename, prefix)
 
-    # For test mode: use static GUID from parameter
-    def make_test_document_filename(static_guid: str, suffix: str) -> str:
-        return f"Document_{static_guid}{suffix}"
-
     target_path = prefix.with_suffix(".actual.xml")
     with mock_uuid_sequence():
-        actual_path = Path(generator(target_path, None, make_test_document_filename))
+        actual_path = Path(generator(target_path, None))
     if not actual_path.exists():
         raise AssertionError(f"Generated XML not found at {actual_path}")
 
@@ -84,10 +166,6 @@ def run_xml_scenario(
         )
 
     # Generate a "real" XML with random GUIDs for actual use
-    # For real mode: ignore static GUID parameter and generate random GUID
-    def make_real_document_filename(static_guid: str, suffix: str) -> str:
-        return f"Document_{uuid.uuid4()!s}{suffix}"
-
     start_timestamp = datetime.now()
     start_timestamp_str = start_timestamp.strftime("%Y%m%d_%H%M%S")
 
@@ -98,13 +176,13 @@ def run_xml_scenario(
     # Generate real XML in the "real" subfolder
     real_xml_filename = f"Proligent_{test_name}.real.{start_timestamp_str}.xml"
     real_xml_target_path = real_folder / real_xml_filename
-    real_xml_path = Path(generator(real_xml_target_path, start_timestamp, make_real_document_filename))
+    real_xml_path = Path(generator(real_xml_target_path, start_timestamp))
     if not real_xml_path.exists():
         raise AssertionError(f"Generated XML not found at {real_xml_path}")
     validator(real_xml_path)
 
-    # Extract document filenames from the XML and create dummy files
-    create_dummy_documents(real_xml_path, real_folder)
+    # Generate dummy documents for the real XML
+    _generate_dummy_documents_for_xml(real_xml_path, real_folder)
 
     # return the test's 'actual' file path
     return actual_path
@@ -119,25 +197,3 @@ def copy_expected_file_to_out_folder(expected_filename: str, prefix: Path) -> Pa
     shutil.copy(expected_path, expected_copy)
     return expected_path
 
-
-def create_dummy_documents(xml_path: Path, output_folder: Path) -> None:
-    """
-    Extract document filenames from XML and create dummy files.
-
-    Args:
-        xml_path: Path to the XML file containing document references
-        output_folder: Folder where dummy document files should be created
-    """
-    xml_content = xml_path.read_text(encoding="utf-8")
-
-    # Extract all FileName attributes from Document elements
-    # Pattern matches: FileName="Document_<guid>_<suffix>.<ext>" or FileName="CompressedDocument_<guid>_<suffix>.<ext>"
-    pattern = r'FileName="((?:Compressed)?Document_[A-Fa-f0-9-]{36}[^"]+)"'
-    filenames = re.findall(pattern, xml_content)
-
-    # Create dummy files
-    for filename in filenames:
-        doc_path = output_folder / filename
-        if not doc_path.exists():
-            # Create a dummy file with minimal content
-            doc_path.write_text(f"Dummy document: {filename}\nGenerated: {datetime.now()}\n", encoding="utf-8")

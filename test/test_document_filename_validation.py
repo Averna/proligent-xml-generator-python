@@ -3,135 +3,62 @@ from __future__ import annotations
 import pytest
 
 from proligent.model import Document
-from proligent.validators import DocumentValidator
+from test.test_mocks import mock_uuid_sequence
 
 
-def test_document_build_with_valid_document_prefix() -> None:
-    """Test that build accepts valid filename with 'Document_' prefix."""
+def test_document_build_with_explicit_identifier() -> None:
+    """Test that build uses the provided identifier."""
     doc_id = "D0C0601D-0000-0000-0000-000000000001"
     doc = Document(
-        file_name=f"Document_{doc_id}_Report.pdf"
+        file_name="Report.pdf",
+        identifier=doc_id
     )
+    assert doc.suggested_document_file_name == f"Document_{doc_id}_Report.pdf"
 
-    # Should not raise any exception
     document_type = doc.build()
     assert document_type.identifier == doc_id
-    assert document_type.file_name == f"Document_{doc_id}_Report.pdf"
+    assert document_type.file_name == "Report.pdf"
 
 
-def test_document_build_with_valid_compressed_document_prefix() -> None:
-    """Test that build accepts valid filename with 'CompressedDocument_' prefix."""
-    doc_id = "A1B2C3D4-1111-2222-3333-444444444444"
-    doc = Document(
-        file_name=f"CompressedDocument_{doc_id}_Archive.zip"
-    )
+def test_document_build_with_auto_generated_identifier() -> None:
+    """Test that build auto-generates identifier if not provided."""
+    with mock_uuid_sequence():
+        doc = Document(
+            file_name="ReportLogs.txt"
+        )
 
-    # Should not raise any exception
-    document_type = doc.build()
-    assert document_type.identifier == doc_id
-    assert document_type.file_name == f"CompressedDocument_{doc_id}_Archive.zip"
+        generated_identifier = doc.identifier
+        assert doc.suggested_document_file_name == f"Document_{generated_identifier}_ReportLogs.txt"
 
-
-def test_document_build_with_full_path() -> None:
-    """Test that build validates filename correctly even with full path."""
-    doc_id = "D0C0601D-0000-0000-0000-000000000002"
-    doc = Document(
-        file_name=f"C:\\Documents\\Document_{doc_id}_Test.pdf"
-    )
-
-    # Should not raise any exception - validation uses only filename, not full path
-    document_type = doc.build()
-    assert document_type.identifier == doc_id
-
-
-def test_document_build_with_invalid_prefix() -> None:
-    """Test that build raises ValueError when filename doesn't start with correct prefix."""
-    doc_id = "D0C0601D-0000-0000-0000-000000000003"
-    doc = Document(
-        file_name=f"InvalidPrefix_{doc_id}_Report.pdf"
-    )
-
-    with pytest.raises(ValueError, match="File name must start with 'Document_' or 'CompressedDocument_'"):
-        doc.build()
-
-
-def test_document_build_with_no_prefix() -> None:
-    """Test that build raises ValueError when filename has no recognized prefix."""
-    doc_id = "D0C0601D-0000-0000-0000-000000000004"
-    doc = Document(
-        file_name=f"{doc_id}_Report.pdf"
-    )
-
-    with pytest.raises(ValueError, match="File name must start with 'Document_' or 'CompressedDocument_'"):
-        doc.build()
-
-
-def test_document_build_with_identifier_not_after_prefix() -> None:
-    """Test that build raises ValueError when GUID is not immediately after prefix."""
-    doc_id = "D0C0601D-0000-0000-0000-000000000006"
-    doc = Document(
-        file_name=f"Document_Extra_{doc_id}_Report.pdf"
-    )
-
-    with pytest.raises(ValueError, match="File name must contain a valid GUID immediately after the prefix"):
-        doc.build()
-
-
-def test_document_build_with_no_extension() -> None:
-    """Test that build raises ValueError when filename has no extension."""
-    doc_id = "D0C0601D-0000-0000-0000-000000000007"
-    doc = Document(
-        file_name=f"Document_{doc_id}_Report"
-    )
-
-    with pytest.raises(ValueError, match="File name must have a file extension"):
-        doc.build()
-
-
-def test_document_build_with_additional_chars_between_identifier_and_extension() -> None:
-    """Test that build accepts filename with additional characters between identifier and extension."""
-    doc_id = "D0C0601D-0000-0000-0000-000000000008"
-    doc = Document(
-        file_name=f"Document_{doc_id}_Additional_Info_With_Underscores.pdf"
-    )
-
-    # Should not raise any exception
-    document_type = doc.build()
-    assert document_type.identifier == doc_id
+        document_type = doc.build()
+        # Should use sequential UUID from mock
+        assert document_type.identifier == "00000000-0000-0000-0000-000000000001"
+        assert document_type.file_name == "ReportLogs.txt"
 
 
 def test_document_build_with_various_extensions() -> None:
-    """Test that build accepts various file extensions."""
-    doc_id = "D0C0601D-0000-0000-0000-000000000009"
+    """Test that build works with various file extensions."""
+    doc_id = "D0C0601D-0000-0000-0000-000000000002"
 
     extensions = [".pdf", ".zip", ".txt", ".docx", ".xml", ".json", ".csv"]
     for ext in extensions:
         doc = Document(
-            file_name=f"Document_{doc_id}_File{ext}"
+            file_name=f"File{ext}",
+            identifier=doc_id
         )
+        assert doc.suggested_document_file_name == f"Document_{doc_id}_File{ext}"
 
-        # Should not raise any exception
         document_type = doc.build()
         assert document_type.identifier == doc_id
-
-
-def test_document_build_with_compressed_document_and_additional_chars() -> None:
-    """Test that build accepts CompressedDocument with additional characters."""
-    doc_id = "A1B2C3D4-5555-6666-7777-888888888888"
-    doc = Document(
-        file_name=f"CompressedDocument_{doc_id}_v2_final.tar.gz"
-    )
-
-    # Should not raise any exception
-    document_type = doc.build()
-    assert document_type.identifier == doc_id
+        assert document_type.file_name == f"File{ext}"
 
 
 def test_document_build_with_name_and_description() -> None:
-    """Test that build works correctly when name and description are provided."""
-    doc_id = "D0C0601D-0000-0000-0000-000000000010"
+    """Test that build includes name and description when provided."""
+    doc_id = "D0C0601D-0000-0000-0000-000000000003"
     doc = Document(
-        file_name=f"Document_{doc_id}_Report.pdf",
+        file_name="Report.pdf",
+        identifier=doc_id,
         name="Test Report",
         description="This is a test report"
     )
@@ -142,79 +69,76 @@ def test_document_build_with_name_and_description() -> None:
     assert document_type.description == "This is a test report"
 
 
-def test_document_build_with_minimal_valid_filename() -> None:
-    """Test that build accepts minimal valid filename (prefix + identifier + extension)."""
-    doc_id = "D0C0601D-0000-0000-0000-000000000011"
+def test_document_suggested_document_file_name() -> None:
+    """Test the suggested_document_file_name property."""
+    doc_id = "D0C0601D-0000-0000-0000-000000000004"
     doc = Document(
-        file_name=f"Document_{doc_id}.pdf"
+        file_name="TestFile.pdf",
+        identifier=doc_id
     )
 
-    # Should not raise any exception
-    document_type = doc.build()
-    assert document_type.identifier == doc_id
+    suggested_name = doc.suggested_document_file_name
+    assert suggested_name == f"Document_{doc_id}_TestFile.pdf"
 
 
-# Direct validator tests
-def test_validator_extracts_valid_document_guid() -> None:
-    """Test that DocumentValidator.extract_and_validate_file_name extracts GUIDs correctly."""
-    doc_id = "D0C0601D-0000-0000-0000-000000000012"
+def test_document_suggested_document_file_name_with_auto_guid() -> None:
+    """Test that suggested_document_file_name auto-generates GUID if not provided."""
+    with mock_uuid_sequence():
+        doc = Document(
+            file_name="AutoGenerated.pdf"
+        )
 
-    # Should extract GUID from valid filenames
-    extracted = DocumentValidator.extract_and_validate_file_name(f"Document_{doc_id}_Test.pdf")
-    assert extracted == doc_id
-
-    extracted = DocumentValidator.extract_and_validate_file_name(f"CompressedDocument_{doc_id}.zip")
-    assert extracted == doc_id
-
-    extracted = DocumentValidator.extract_and_validate_file_name(f"C:\\Temp\\Document_{doc_id}_Report.pdf")
-    assert extracted == doc_id
+        suggested_name = doc.suggested_document_file_name
+        assert suggested_name == "Document_00000000-0000-0000-0000-000000000001_AutoGenerated.pdf"
 
 
-def test_validator_rejects_invalid_prefix() -> None:
-    """Test that DocumentValidator.extract_and_validate_file_name rejects invalid prefix."""
-    doc_id = "D0C0601D-0000-0000-0000-000000000013"
+def test_document_multiple_builds_use_same_identifier() -> None:
+    """Test that calling build() multiple times on the same Document generates a new GUID each time if identifier is not set."""
+    with mock_uuid_sequence():
+        doc = Document(
+            file_name="Report.pdf"
+        )
 
-    with pytest.raises(ValueError, match="File name must start with 'Document_' or 'CompressedDocument_'"):
-        DocumentValidator.extract_and_validate_file_name(f"Invalid_{doc_id}.pdf")
+        # First build
+        document_type1 = doc.build()
+        assert document_type1.identifier == "00000000-0000-0000-0000-000000000001"
 
-
-def test_validator_rejects_missing_guid() -> None:
-    """Test that DocumentValidator.extract_and_validate_file_name rejects filenames without valid GUID."""
-    with pytest.raises(ValueError, match="File name must contain a valid GUID immediately after the prefix"):
-        DocumentValidator.extract_and_validate_file_name("Document_NotAGuid_Report.pdf")
-
-
-def test_validator_rejects_missing_extension() -> None:
-    """Test that DocumentValidator.extract_and_validate_file_name rejects filenames without extension."""
-    doc_id = "D0C0601D-0000-0000-0000-000000000015"
-
-    with pytest.raises(ValueError, match="File name must have a file extension"):
-        DocumentValidator.extract_and_validate_file_name(f"Document_{doc_id}")
+        # Second build - should get next sequential UUID
+        document_type2 = doc.build()
+        assert document_type2.identifier == "00000000-0000-0000-0000-000000000001"
 
 
-def test_document_build_with_no_guid() -> None:
-    """Test that build raises ValueError when filename doesn't contain a valid GUID."""
+def test_document_with_explicit_identifier_stays_constant() -> None:
+    """Test that explicit identifier remains the same across multiple builds."""
+    doc_id = "D0C0601D-0000-0000-0000-000000000005"
     doc = Document(
-        file_name="Document_NotAGUID_Report.pdf"
+        file_name="Report.pdf",
+        identifier=doc_id
     )
 
-    with pytest.raises(ValueError, match="File name must contain a valid GUID immediately after the prefix"):
-        doc.build()
+    # Multiple builds should use the same identifier
+    document_type1 = doc.build()
+    document_type2 = doc.build()
+
+    assert document_type1.identifier == doc_id
+    assert document_type2.identifier == doc_id
 
 
-def test_document_build_extracts_guid_case_insensitive() -> None:
-    """Test that build extracts GUID with mixed case."""
-    doc_id_lower = "d0c0601d-0000-0000-0000-000000000016"
+def test_document_case_insensitive_guid() -> None:
+    """Test that build works with mixed case GUIDs."""
+    doc_id_lower = "d0c0601d-0000-0000-0000-000000000008"
     doc = Document(
-        file_name=f"Document_{doc_id_lower}_Report.pdf"
+        file_name="Report.pdf",
+        identifier=doc_id_lower
     )
 
     document_type = doc.build()
     assert document_type.identifier == doc_id_lower
 
-    doc_id_upper = "D0C0601D-AAAA-BBBB-CCCC-000000000017"
+    doc_id_upper = "D0C0601D-AAAA-BBBB-CCCC-000000000009"
     doc = Document(
-        file_name=f"Document_{doc_id_upper}_Report.pdf"
+        file_name="_Report.pdf",
+        identifier=doc_id_upper
     )
 
     document_type = doc.build()

@@ -24,7 +24,7 @@ from proligent.datawarehouse.datawarehouse_model import (
     MeasureKind as _MeasureKind,
 )
 from proligent.datawarehouse.datawarehouse_product_unit import ProductUnitType
-from proligent.validators import DocumentValidator, FileNameValidator
+from proligent.validators import FileNameValidator
 
 # Re-export ExecutionStatusKind so callers can import it from this namespace.
 ExecutionStatusKind = _ExecutionStatusKind
@@ -337,12 +337,21 @@ class Document(Buildable):
     Reference to a document attached to a run or product unit.
 
     Field docstrings detail the constructor parameters.
+
+    IMPORTANT: the document referenced by this item needs to be renamed to
+    include the valid prefix and the file's identifier.
+
+    See property `suggested_document_file_name` for details.
     """
+
     file_name: str
     """
-    Path or filename of the document. The format must start with 'Document_' or 'CompressedDocument_'
-    followed by a valid GUID, then optionally additional characters, and end with a file extension.
-    The GUID will be automatically extracted from the filename.
+    Filename of the document. Can be any filename.
+    """
+
+    identifier: str = field(default_factory=UTIL.uuid)
+    """
+    Optional GUID identifier. If not provided, a UUID will be auto-generated.
     """
 
     name: str = field(default='')
@@ -351,21 +360,24 @@ class Document(Buildable):
     description: str = field(default='')
     """Optional description persisted to ``Description``."""
 
+    @property
+    def suggested_document_file_name(self) -> str:
+        """
+        Generate a suggested full document filename by concatenating
+        'Document_' + identifier + file_name.
+
+        Returns:
+            A suggested filename in the format: Document_<guid>_<file_name>
+        """
+        return f"Document_{self.identifier}_{self.file_name}"
+
     def build(self) -> DocumentType:
         """
         Build the Document instance into the Proligent DocumentType.
 
-        The identifier is automatically extracted from the file_name.
-
-        Raises:
-            ValueError: If the file_name format is invalid. It must start with 'Document_' or
-                       'CompressedDocument_', followed by a valid GUID, then optionally additional
-                       characters, and end with a file extension.
+        If identifier is not provided, a UUID will be auto-generated.
         """
-        # Extract and validate the GUID from the file_name
-        identifier = DocumentValidator.extract_and_validate_file_name(self.file_name)
-
-        document_type = DocumentType(identifier=identifier, file_name=self.file_name)
+        document_type = DocumentType(identifier=self.identifier, file_name=self.file_name)
         if self.name != '':
             document_type.name = self.name
         if self.description != '':

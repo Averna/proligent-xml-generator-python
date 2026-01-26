@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import datetime
 from pathlib import Path
-from typing import Callable
 
 import pytz
 
@@ -26,8 +25,7 @@ def _default_tz_datetime(start_timestamp: datetime.datetime, hour: int, minute: 
 
 def generate_partial_operation_run(
         output_path: Path,
-        start_timestamp: datetime.datetime | None = None,
-        make_document_filename: Callable[[str, str], str] | None = None) -> Path:
+        start_timestamp: datetime.datetime | None = None) -> Path:
     tz = pytz.timezone("America/Chicago")
     default_start_timestamp = start_timestamp or tz.localize(datetime.datetime(2024, 5, 5, 0, 0, 0))
     generation_time = start_timestamp or _default_tz_datetime(default_start_timestamp, 15, 0)
