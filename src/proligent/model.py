@@ -340,12 +340,10 @@ class Document(Buildable):
     """
     file_name: str
     """
-    Path or filename of the document. The format must start with 'Document_' followed by the document's identifier
-    (GUID).
+    Path or filename of the document. The format must start with 'Document_' or 'CompressedDocument_'
+    followed by a valid GUID, then optionally additional characters, and end with a file extension.
+    The GUID will be automatically extracted from the filename.
     """
-
-    identifier: str = field(default='')
-    """The document's ID (GUID). This GUID must be in the document's file name."""
 
     name: str = field(default='')
     """Optional human-readable identifier stored in ``Name``."""
@@ -357,15 +355,17 @@ class Document(Buildable):
         """
         Build the Document instance into the Proligent DocumentType.
 
+        The identifier is automatically extracted from the file_name.
+
         Raises:
             ValueError: If the file_name format is invalid. It must start with 'Document_' or
-                       'CompressedDocument_', followed by the document's identifier, then any
+                       'CompressedDocument_', followed by a valid GUID, then optionally additional
                        characters, and end with a file extension.
         """
-        # Validate file_name format
-        DocumentValidator.validate_file_name(self.file_name, self.identifier)
+        # Extract and validate the GUID from the file_name
+        identifier = DocumentValidator.extract_and_validate_file_name(self.file_name)
 
-        document_type = DocumentType(identifier=self.identifier, file_name=self.file_name)
+        document_type = DocumentType(identifier=identifier, file_name=self.file_name)
         if self.name != '':
             document_type.name = self.name
         if self.description != '':
