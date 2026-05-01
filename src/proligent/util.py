@@ -17,8 +17,7 @@ class Util:
         self,
         timezone: str | datetime.tzinfo | None = None,
         destination_dir: str = r"C:\Proligent\IntegrationService\Acquisition",
-        schema_path: str | Path | None = None,
-        deterministic_id_process_start_time: str = "2000-01-01",
+        schema_path: str | Path | None = None
     ) -> None:
         """
         Configure defaults used across XML generation.
@@ -32,13 +31,9 @@ class Util:
                 matching the Integration Service pickup location.
             schema_path: Optional override for the Datawarehouse XSD used when
                 validating generated XML.
-            deterministic_id_process_start_time: Default process start time to use
-                for deterministic process ID generation (default: "2000-01-01").
-                Can be modified by library consumers as needed.
         """
         self.timezone = timezone
         self.destination_dir = destination_dir
-        self.deterministic_id_process_start_time = deterministic_id_process_start_time
         self._schema_path = (
             Path(schema_path)
             if schema_path is not None
@@ -91,13 +86,39 @@ class Util:
         return str(uuid.uuid4())
 
     @staticmethod
-    def get_deterministic_guid(input_text: str, encoding: str = "cp1252") -> str:
+    def get_deterministic_guid(input_text: str, encoding: str | None = None) -> str:
         """
-        Generate a deterministic GUID from a string.
+        Generate a deterministic GUID from a string using SHA-256 and UTF-8.
         This method must be in sync with Utils.GetDeterministicGuid in ResultsProcessor.
         """
-        md5_bytes = hashlib.md5(input_text.encode(encoding)).digest()  # 16 bytes
-        return str(uuid.UUID(bytes_le=md5_bytes))  # bytes_le matches .NET Guid(byte[])
+        if input_text is None:
+            raise ValueError("input_text cannot be None")
+
+        # Kept for backward compatibility with older callers; UTF-8 is always used.
+        _ = encoding
+
+        hash_bytes = hashlib.sha256(input_text.encode("utf-8")).digest()
+
+        # Use first 16 bytes in network byte order and apply UUID v4/variant bits.
+        uuid_net_order = bytearray(hash_bytes[:16])
+        uuid_net_order[6] = (uuid_net_order[6] & 0x0F) | 0x40
+        uuid_net_order[8] = (uuid_net_order[8] & 0x3F) | 0x80
+
+        # Convert network-order UUID bytes to the little-endian layout expected by .NET Guid(byte[]).
+        guid_bytes = bytes(
+            [
+                uuid_net_order[3],
+                uuid_net_order[2],
+                uuid_net_order[1],
+                uuid_net_order[0],
+                uuid_net_order[5],
+                uuid_net_order[4],
+                uuid_net_order[7],
+                uuid_net_order[6],
+                *uuid_net_order[8:16],
+            ]
+        )
+        return str(uuid.UUID(bytes_le=guid_bytes))
 
     def _load_schema(self) -> xmlschema.XMLSchema:
         if self._schema_cache is None:

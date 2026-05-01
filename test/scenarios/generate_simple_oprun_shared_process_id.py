@@ -57,7 +57,7 @@ def generate_simple_oprun_shared_process_id(
         product_unit.add_characteristic(Characteristic(full_name="Serial", value="PU-001"))
 
         process = warehouse.set_process_run(ProcessRun(
-            name="PythonLibrary/Process/simple_oprun_shared_process_id",
+            name="PythonLibrary/Process/simple_oprun_normal_order",
             process_mode="PROD",
             product_unit_identifier="PU-001",
             product_full_name="PythonLibrary/Product/simple_oprun_normal_order",

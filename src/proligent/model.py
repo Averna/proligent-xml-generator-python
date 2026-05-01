@@ -302,7 +302,7 @@ class ManufacturingStep(Buildable):
     """
 
     name: str = field(default='')
-    """Display name serialized to ``StepName``/``SequenceFullName``/etc."""
+    """Display name serialized to ``StepName``/``SequenceFullName``/``OperationName``/etc."""
 
     status: ExecutionStatusKind = field(default=ExecutionStatusKind.NOT_COMPLETED)
     """Execution status value stored in the respective ``*_Status`` attribute."""
@@ -643,17 +643,15 @@ class ProcessRun(VersionedManufacturingStep):
         Deterministic process run ID computed from the current field values.
 
         Recomputed every time it is accessed, so it always reflects the latest
-        values of ``product_full_name``, ``product_unit_identifier``, and
-        ``process_mode``. Used automatically by ``build()`` when ``id`` is ``None``.
-
-        Note that the deterministic process run ID also includes a fixed timestamp string,
-        from ``UTIL.deterministic_id_process_start_time`` (defaults to "2000-01-01", can
-        be overridden).
+        values of ``product_full_name``, ``product_unit_identifier``, ``name``,
+        ``version``, and ``process_mode``. Used automatically by ``build()`` when
+        ``id`` is ``None``.
         """
         return ProcessRun.build_deterministic_process_run_id(
             self.product_full_name,
             self.product_unit_identifier,
-            UTIL.deterministic_id_process_start_time,
+            self.name,
+            self.version,
             self.process_mode
         )
 
@@ -696,23 +694,25 @@ class ProcessRun(VersionedManufacturingStep):
     def build_deterministic_process_run_id(
             product_full_name: str,
             identifier: str,
-            process_start_time: str,
+            process_full_name: str,
+            process_version: str,
             process_mode: str) -> str:
         """
-        Build a deterministic process ID from product name, identifier, start time, and process mode.
+        Build a deterministic process ID from product/process fields and process mode.
 
         Combines all parameters to create a deterministic GUID.
 
         Args:
             product_full_name: Full product name (e.g., ProductFamily/ProductName/PartNumber)
             identifier: Product unit identifier
-            process_start_time: Process start time as a string (e.g., "2000-01-01")
+            process_full_name: Process full name (e.g., ProductFamily/ProcessName)
+            process_version: Process version string
             process_mode: Process mode string (e.g., Production, RMA, Debug)
 
         Returns:
             A deterministic GUID string derived from the combined parameters.
         """
-        input_text = f"{product_full_name}-{identifier}-{process_start_time}-{process_mode}"
+        input_text = f"{product_full_name}-{identifier}-{process_full_name}-{process_version}-{process_mode}"
         return Util.get_deterministic_guid(input_text)
 
 

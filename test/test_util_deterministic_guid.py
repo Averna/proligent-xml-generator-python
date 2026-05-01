@@ -12,15 +12,16 @@ class UtilDeterministicGuidTests(unittest.TestCase):
     def test_get_deterministic_guid_matches_known_value(self) -> None:
         guid = Util.get_deterministic_guid("ABC-123")
 
-        self.assertEqual(guid, "7215942c-cf5b-e269-8c0a-e2b4e89c1b0f")
+        self.assertEqual(guid, "4d156d7b-c9c3-4c00-8aa1-e5b06e46e1f4")
 
-    def test_get_deterministic_guid_uses_cp1252_by_default(self) -> None:
-        cp1252_guid = Util.get_deterministic_guid("é")
-        utf8_guid = Util.get_deterministic_guid("é", encoding="utf-8")
+    def test_get_deterministic_guid_uses_utf8_sha256_algorithm(self) -> None:
+        guid = Util.get_deterministic_guid("é")
 
-        self.assertEqual(cp1252_guid, "76870634-6994-dd1d-1dfb-0aca54681407")
-        self.assertEqual(utf8_guid, "97cddd66-decf-b2ab-f6fb-8a999b4bc76f")
-        self.assertNotEqual(cp1252_guid, utf8_guid)
+        self.assertEqual(guid, "4a99557e-4033-4353-9de2-eb65472017ca")
+
+    def test_get_deterministic_guid_rejects_none_input(self) -> None:
+        with self.assertRaises(ValueError):
+            Util.get_deterministic_guid(None)
 
 
 if __name__ == "__main__":

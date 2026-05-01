@@ -1,6 +1,6 @@
 import unittest
 
-from proligent.model import ProcessRun, Util
+from proligent.model import ProcessRun
 
 
 class ProcessRunBuildDeterministicProcessRunIdTests(unittest.TestCase):
@@ -17,59 +17,86 @@ class ProcessRunBuildDeterministicProcessRunIdTests(unittest.TestCase):
         actual_id = ProcessRun.build_deterministic_process_run_id(
             "ProductFamily/ProductName/PartNumber",
             "PROD-12345",
-            "2000-01-01",
+            "ProcessFamily/ProcessName",
+            "1.0",
             "PROD"
         )
-        self.assertEqual("b68f75b8-7bae-3caf-bc41-834c7f76bafa", actual_id)
+        self.assertEqual("7af755d8-3ee3-4d09-897e-2e7810170091", actual_id)
 
         # different product_full_name
         actual_id = ProcessRun.build_deterministic_process_run_id(
             "ProductFamily/ProductName/Different123",
             "PROD-12345",
-            "2000-01-01",
+            "ProcessFamily/ProcessName",
+            "1.0",
             "PROD"
         )
-        self.assertEqual("7b28bf95-b862-0e49-1bcc-49e96fdb5617", actual_id)
+        self.assertEqual("0a433e5a-2975-4672-9ad4-9d6949802492", actual_id)
 
         # different identifier
         actual_id = ProcessRun.build_deterministic_process_run_id(
             "ProductFamily/ProductName/PartNumber",
             "DIFFERENT-99999",
-            "2000-01-01",
+            "ProcessFamily/ProcessName",
+            "1.0",
             "PROD"
         )
-        self.assertEqual("da7bda3f-3989-c8f9-0e28-e4b4ec055d18", actual_id)
+        self.assertEqual("68549968-4863-4179-bd03-288af539d32f", actual_id)
 
-        # different process_start_time
+        # different process_full_name
         actual_id = ProcessRun.build_deterministic_process_run_id(
             "ProductFamily/ProductName/PartNumber",
             "PROD-12345",
-            "2026-12-31",
+            "ProcessFamily/DifferentProcessName",
+            "1.0",
             "PROD"
         )
-        self.assertEqual("9d7aefe2-05b7-19a2-bbe9-d10a480cab3f", actual_id)
+        self.assertEqual("d327dcd3-5bb8-4c53-9bc4-d4f75cd77af0", actual_id)
+
+        # different process_version
+        actual_id = ProcessRun.build_deterministic_process_run_id(
+            "ProductFamily/ProductName/PartNumber",
+            "PROD-12345",
+            "ProcessFamily/ProcessName",
+            "2.0",
+            "PROD"
+        )
+        self.assertEqual("9e64615b-72dd-48ef-b475-8cff51f3caa2", actual_id)
 
         # different process_mode
         actual_id = ProcessRun.build_deterministic_process_run_id(
             "ProductFamily/ProductName/PartNumber",
             "PROD-12345",
-            "2000-01-01",
+            "ProcessFamily/ProcessName",
+            "1.0",
             "RMA"
         )
-        self.assertEqual("7a228f80-9441-f195-c2e3-e1fcff8c5cc7", actual_id)
+        self.assertEqual("153e2144-9cc7-489f-8191-dc0662aecaf2", actual_id)
+
+        # empty process version
+        actual_id = ProcessRun.build_deterministic_process_run_id(
+            "ProductFamily/ProductName/PartNumber",
+            "PROD-12345",
+            "ProcessFamily/ProcessName",
+            "",
+            "PROD"
+        )
+        self.assertEqual("81423af8-ede4-4b27-ade1-7eb95fb59f75", actual_id)
 
     def test_build_deterministic_process_run_id_is_stable_for_same_input(self) -> None:
         """Verify that the same inputs produce the same deterministic ID."""
         first = ProcessRun.build_deterministic_process_run_id(
             "ProductFamily/ProductName/PartNumber",
             "PROD-12345",
-            "2000-01-01",
+            "ProcessFamily/ProcessName",
+            "1.0",
             "Production"
         )
         second = ProcessRun.build_deterministic_process_run_id(
             "ProductFamily/ProductName/PartNumber",
             "PROD-12345",
-            "2000-01-01",
+            "ProcessFamily/ProcessName",
+            "1.0",
             "Production"
         )
 
@@ -80,13 +107,15 @@ class ProcessRunBuildDeterministicProcessRunIdTests(unittest.TestCase):
         id1 = ProcessRun.build_deterministic_process_run_id(
             "ProductFamily/ProductName1/PartNumber",
             "PROD-12345",
-            "2000-01-01",
+            "ProcessFamily/ProcessName",
+            "1.0",
             "Production"
         )
         id2 = ProcessRun.build_deterministic_process_run_id(
             "ProductFamily/ProductName2/PartNumber",
             "PROD-12345",
-            "2000-01-01",
+            "ProcessFamily/ProcessName",
+            "1.0",
             "Production"
         )
 
@@ -97,59 +126,137 @@ class ProcessRunBuildDeterministicProcessRunIdTests(unittest.TestCase):
         id1 = ProcessRun.build_deterministic_process_run_id(
             "ProductFamily/ProductName/PartNumber",
             "PROD-11111",
-            "2000-01-01",
+            "ProcessFamily/ProcessName",
+            "1.0",
             "Production"
         )
         id2 = ProcessRun.build_deterministic_process_run_id(
             "ProductFamily/ProductName/PartNumber",
             "PROD-22222",
-            "2000-01-01",
+            "ProcessFamily/ProcessName",
+            "1.0",
             "Production"
         )
 
         self.assertNotEqual(id1, id2)
 
-    def test_build_deterministic_process_run_id_differs_with_different_process_start_time(self) -> None:
-        """Verify that different process start times produce different IDs."""
+    def test_build_deterministic_process_run_id_differs_with_different_process_full_name(self) -> None:
+        """Verify that different process full names produce different IDs."""
         id1 = ProcessRun.build_deterministic_process_run_id(
             "ProductFamily/ProductName/PartNumber",
             "PROD-12345",
-            "2000-01-01",
+            "ProcessFamily/ProcessNameA",
+            "1.0",
             "Production"
         )
         id2 = ProcessRun.build_deterministic_process_run_id(
             "ProductFamily/ProductName/PartNumber",
             "PROD-12345",
-            "2024-01-15",
+            "ProcessFamily/ProcessNameB",
+            "1.0",
             "Production"
         )
 
         self.assertNotEqual(id1, id2)
+
+    def test_build_deterministic_process_run_id_differs_with_different_process_version(self) -> None:
+        """Verify that different process versions produce different IDs."""
+        id1 = ProcessRun.build_deterministic_process_run_id(
+            "ProductFamily/ProductName/PartNumber",
+            "PROD-12345",
+            "ProcessFamily/ProcessName",
+            "1.0",
+            "Production"
+        )
+        id2 = ProcessRun.build_deterministic_process_run_id(
+            "ProductFamily/ProductName/PartNumber",
+            "PROD-12345",
+            "ProcessFamily/ProcessName",
+            "2.0",
+            "Production"
+        )
+
+        self.assertNotEqual(id1, id2)
+
+    def test_build_deterministic_process_run_id_accepts_empty_process_full_name(self) -> None:
+        """Verify deterministic ID generation works when process full name is empty."""
+        id_value = ProcessRun.build_deterministic_process_run_id(
+            "ProductFamily/ProductName/PartNumber",
+            "PROD-12345",
+            "",
+            "1.0",
+            "Production"
+        )
+
+        self.assertIsInstance(id_value, str)
+        self.assertEqual(len(id_value), 36)
+
+    def test_build_deterministic_process_run_id_accepts_empty_process_version(self) -> None:
+        """Verify deterministic ID generation works when process version is empty."""
+        id_value = ProcessRun.build_deterministic_process_run_id(
+            "ProductFamily/ProductName/PartNumber",
+            "PROD-12345",
+            "ProcessFamily/ProcessName",
+            "",
+            "Production"
+        )
+
+        self.assertIsInstance(id_value, str)
+        self.assertEqual(len(id_value), 36)
+
+    def test_build_deterministic_process_run_id_with_both_empty_process_fields_is_stable(self) -> None:
+        """Verify deterministic ID is stable when process full name and version are both empty."""
+        first = ProcessRun.build_deterministic_process_run_id(
+            "ProductFamily/ProductName/PartNumber",
+            "PROD-12345",
+            "",
+            "",
+            "Production"
+        )
+        second = ProcessRun.build_deterministic_process_run_id(
+            "ProductFamily/ProductName/PartNumber",
+            "PROD-12345",
+            "",
+            "",
+            "Production"
+        )
+        with_values = ProcessRun.build_deterministic_process_run_id(
+            "ProductFamily/ProductName/PartNumber",
+            "PROD-12345",
+            "ProcessFamily/ProcessName",
+            "1.0",
+            "Production"
+        )
+
+        self.assertEqual(first, second)
+        self.assertNotEqual(first, with_values)
 
     def test_build_deterministic_process_run_id_differs_with_different_process_mode(self) -> None:
         """Verify that different process modes produce different IDs."""
         id1 = ProcessRun.build_deterministic_process_run_id(
             "ProductFamily/ProductName/PartNumber",
             "PROD-12345",
-            "2000-01-01",
+            "ProcessFamily/ProcessName",
+            "1.0",
             "Production"
         )
         id2 = ProcessRun.build_deterministic_process_run_id(
             "ProductFamily/ProductName/PartNumber",
             "PROD-12345",
-            "2000-01-01",
+            "ProcessFamily/ProcessName",
+            "1.0",
             "RMA"
         )
 
         self.assertNotEqual(id1, id2)
 
-    def test_build_deterministic_process_run_id_with_constant_start_time(self) -> None:
-        """Verify the method works with the constant process start time value."""
-        process_start_time = "2000-01-01"
+    def test_build_deterministic_process_run_id_returns_valid_uuid_format(self) -> None:
+        """Verify the method returns a valid UUID string format."""
         id_value = ProcessRun.build_deterministic_process_run_id(
             "ProductFamily/ProductName/PartNumber",
             "PROD-12345",
-            process_start_time,
+            "ProcessFamily/ProcessName",
+            "1.0",
             "Production"
         )
 
@@ -238,29 +345,21 @@ class ProcessRunBuildDeterministicProcessRunIdTests(unittest.TestCase):
 
         self.assertNotEqual(run1.id_deterministic, run2.id_deterministic)
 
-    def test_util_default_process_start_time(self) -> None:
-        """Verify that Util has the default process start time."""
-        util = Util()
-        self.assertEqual(util.deterministic_id_process_start_time, "2000-01-01")
-
-    def test_util_custom_process_start_time(self) -> None:
-        """Verify that consumers can customize process start time in Util."""
-        custom_time = "2024-06-15"
-        util = Util(deterministic_id_process_start_time=custom_time)
-        self.assertEqual(util.deterministic_id_process_start_time, custom_time)
-
-    def test_process_run_id_deterministic_uses_util_process_start_time(self) -> None:
-        """Verify that id_deterministic uses UTIL.deterministic_id_process_start_time."""
+    def test_process_run_id_deterministic_uses_process_name_and_version(self) -> None:
+        """Verify that id_deterministic includes process name and version."""
         run = ProcessRun(
             product_full_name="TestProduct/Widget/123",
             product_unit_identifier="UNIT-001",
+            name="StationA/ProcessB",
+            version="v2.1",
             process_mode="Production"
         )
 
         expected_id = ProcessRun.build_deterministic_process_run_id(
             "TestProduct/Widget/123",
             "UNIT-001",
-            Util().deterministic_id_process_start_time,
+            "StationA/ProcessB",
+            "v2.1",
             "Production"
         )
 
