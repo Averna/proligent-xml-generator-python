@@ -209,14 +209,16 @@ if __name__ == "__main__":
 
 ### About Names
 
-Most of the "names" (product, station, etc.) in the model can be simple strings, or can be built in hierarchies.
+Most of the "names" (product, station, etc.) in the model can be simple strings,
+or can be built in hierarchies.
 
-The goal is to allow grouping of items in meaningful categories, which can be useful when selecting items for display or
+The goal is to allow grouping of items in meaningful categories, which can be
+useful when selecting items for display or
 reporting.
 
-Note that the last item in the full name (the "leaf" of the tree) must be meaningful: some reports display
-only the leaf, for simplicity and brevity. In most cases the full names is also available, but may be less visible
-(tooltips).
+Note that the last item in the full name (the "leaf" of the tree) must be
+meaningful: some reports display only the leaf, for simplicity and brevity. In
+most cases the full names is also available, but may be less visible (tooltips).
 
 #### Example: Stations
 
@@ -230,12 +232,14 @@ For stations that can test multiple units in parallel: see `test_position_name`.
 
 `ProductFamily/ProductName/PartNumber`
 
-We don't recommend having a version or revision as the leaf of the full product name. This is best recorded as a
-characteristic, either on the product unit or the operation.
+We don't recommend having a version or revision as the leaf of the full product
+name. This is best recorded as a characteristic, either on the product unit or
+the operation.
 
 ### Sequence "Tree"
 
-All sequences are added to the operation. However, typically sequences are organized in "trees".
+All sequences are added to the operation. However, typically sequences are
+organized in "trees".
 
 ```text
 MainSequence1
@@ -247,8 +251,8 @@ MainSequence2
     etc.
 ```
 
-To keep the sequences organized in trees like the example above, the sequences names need to include all nodes of the
-tree, separated by "/".
+To keep the sequences organized in trees like the example above, the sequences
+names need to include all nodes of the tree, separated by "/".
 
 ```python
     sequence = operation.add_sequence_run(SequenceRun(name="MainSequence1/SubSequence1/SubSubSeq1"))
@@ -258,10 +262,24 @@ tree, separated by "/".
     # etc.
 ```
 
-It is not necessary to create all nodes (e.g. `MainSequence1` and `MainSequence1/SubSequence1`). However, they can also
-be created if they need to old steps, characteristics or documents.
+It is not necessary to create all nodes (e.g. `MainSequence1` and
+`MainSequence1/SubSequence1`). However, they can also be created if they need to
+old steps, characteristics or documents.
 
-Also note that the full sequence name is limited to 2000 characters, and each part to 64 characters.
+Also note that the full sequence name is limited to 2000 characters, and each
+part to 64 characters.
+
+### Process Run ID
+
+By default, the ProcessRunID is automatically generated as a deterministic ID
+based on the `product_full_name`, `product_unit_identifier`, `process_mode`, and
+a configurable fixed process start time (default: "2000-01-01").
+
+This ensures that multiple operation runs within the same process refer to the
+same process run, which is critical for accurate reporting in Proligent.
+
+If you need a fixed ID regardless of field values, you can optionally set the
+`id` parameter directly when constructing the `ProcessRun`.
 
 ### File Names
 
@@ -296,6 +314,10 @@ if not is_valid:
 A few parameters are configurable in the package through the use of the UTIL
 object.
 
+`UTIL` and `Util` now live in `proligent.util`.
+Backward compatibility is kept, so importing these symbols from `proligent.model`
+still works.
+
 <!-- cspell:ignore datetimes pytz -->
 
 - `destination_dir`: Specify a different destination directory for the XML
@@ -307,7 +329,7 @@ object.
   [Wikipedia](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones).
 
 ```python
-from src.proligent.model import UTIL
+from proligent.util import UTIL
 
 if __name__ == '__main__':
     UTIL.destination_dir = r'\\NETWORK_SHARE\Acquisition'

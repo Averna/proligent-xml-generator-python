@@ -2,14 +2,11 @@ import datetime
 from enum import Enum
 from pathlib import Path
 from dataclasses import dataclass, field
-import pytz
 from typing import Any, Iterable, List
-import uuid
 from xml.etree import ElementTree as ET
-import xmlschema
 from xsdata.formats.dataclass.context import XmlContext
 from xsdata.formats.dataclass.serializers import XmlSerializer
-from xsdata.models.datatype import XmlDateTime
+
 
 from proligent.datawarehouse.datawarehouse import ProligentDatawarehouse
 from proligent.datawarehouse.datawarehouse_process_run import ProcessRunType
@@ -26,6 +23,11 @@ from proligent.datawarehouse.datawarehouse_model import (
 from proligent.datawarehouse.datawarehouse_product_unit import ProductUnitType
 from proligent.validators import FileNameValidator
 
+# DEPRECATED: import these two items from util.py for backward compatibility
+# e.g. from proligent.model import UTIL, Util should be changed
+from proligent.util import UTIL, Util
+
+
 # Re-export ExecutionStatusKind so callers can import it from this namespace.
 ExecutionStatusKind = _ExecutionStatusKind
 MeasureKind = _MeasureKind
@@ -35,105 +37,6 @@ _RESERVED_CHARACTERISTIC_ERROR = (
     f"Characteristic names starting with '{_RESERVED_CHARACTERISTIC_PREFIX}' "
     "are reserved for internal use."
 )
-
-
-class Util:
-    """
-    Convenience helpers for building Datawarehouse payloads: time formatting,
-    UUID generation, and XML validation.
-    """
-    def __init__(
-        self,
-        timezone: str | datetime.tzinfo | None = None,
-        destination_dir: str = r"C:\Proligent\IntegrationService\Acquisition",
-        schema_path: str | Path | None = None,
-    ) -> None:
-        """
-        Configure defaults used across XML generation.
-
-        Args:
-            timezone: Time zone used when serializing naive datetimes to the
-                XML ``xs:dateTime`` fields expected by the Datawarehouse model.
-                Accepts a tzinfo instance or a pytz time zone name; if omitted,
-                the machine's local time zone is used.
-            destination_dir: Default folder where ``save_xml`` will write files,
-                matching the Integration Service pickup location.
-            schema_path: Optional override for the Datawarehouse XSD used when
-                validating generated XML.
-        """
-        self.timezone = timezone
-        self.destination_dir = destination_dir
-        self._schema_path = (
-            Path(schema_path)
-            if schema_path is not None
-            else Path(__file__).resolve().parents[2] / "docs" / "xsd" / "Datawarehouse.xsd"
-        )
-        self._schema_cache: xmlschema.XMLSchema | None = None
-
-    def format_datetime(self, date_time: datetime = None) -> XmlDateTime:
-        """
-        Convert a Python ``datetime`` into the ISO-8601 string the Datawarehouse
-        schema expects for timestamps.
-
-        If ``date_time`` is naive, the configured ``timezone`` (or the machine
-        time zone by default) is applied before serialization.
-
-        Args:
-            date_time: Instant to serialize; defaults to ``datetime.now()`` when
-                omitted.
-        """
-        if date_time is None:
-            date_time = datetime.datetime.now()
-        if date_time.tzinfo is None or date_time.tzinfo.utcoffset(date_time) is None:
-            timezone = self._resolve_timezone()
-            if hasattr(timezone, "localize"):
-                localized_time = timezone.localize(date_time)  # type: ignore[attr-defined]
-            else:
-                localized_time = date_time.replace(tzinfo=timezone)
-        else:
-            localized_time = date_time
-        formatted_time = localized_time.isoformat()
-        return formatted_time
-
-    @staticmethod
-    def _machine_timezone() -> datetime.tzinfo:
-        timezone = datetime.datetime.now().astimezone().tzinfo
-        if timezone is None:
-            timezone = datetime.timezone.utc
-        return timezone
-
-    def _resolve_timezone(self) -> datetime.tzinfo:
-        if self.timezone is None:
-            return self._machine_timezone()
-        if isinstance(self.timezone, str):
-            return pytz.timezone(self.timezone)
-        return self.timezone
-
-    @staticmethod
-    def uuid() -> str:
-        """Generate a unique identifier suitable for Datawarehouse element IDs."""
-        return str(uuid.uuid4())
-
-    def _load_schema(self) -> xmlschema.XMLSchema:
-        if self._schema_cache is None:
-            self._schema_cache = xmlschema.XMLSchema(self._schema_path)
-        return self._schema_cache
-
-    def validate_xml(self, xml_file: str | Path) -> None:
-        """
-        Ensure an XML document is valid for the Proligent Datawarehouse schema.
-
-        Args:
-            xml_file: Path to the XML document to validate before submission.
-        """
-        xml_path = Path(xml_file)
-        schema = self._load_schema()
-        schema.validate(xml_path)
-
-
-# Create a Util instance for formatting datetime and generating UUIDs.
-# Can be overridden on module level if needed.
-UTIL = Util()
 
 
 class Buildable:
@@ -707,6 +610,21 @@ class ProcessRun(VersionedManufacturingStep):
     Top-level execution of a process, mapped to ``ProcessRun`` with nested
     operation runs. Field docstrings describe the constructor parameters.
     """
+    id: str = field(default=None)
+    """
+    Optional explicit process run ID written to ``ProcessRunId``.
+
+    When ``None`` (the default), ``build()`` automatically uses ``id_deterministic``,
+    which is recomputed fresh from the current field values each time. Set this only
+    when you need to force a fixed ID regardless of ``product_full_name``,
+    ``product_unit_identifier``, or ``process_mode``.
+
+    Unlike ``ManufacturingStep.id``, this field does NOT default to a random UUID.
+
+    Using a deterministic ID by default ensures that operation runs all refer to the
+    same process run, which allows for accurate reports generation in Proligent.
+    """
+
     product_unit_identifier: str = field(default_factory=UTIL.uuid)
     """Identifier stored in ``ProductUnitIdentifier`` (immutable once set)."""
 
@@ -719,12 +637,33 @@ class ProcessRun(VersionedManufacturingStep):
     process_mode: str = field(default='')
     """Optional process mode string persisted to ``ProcessMode`` (e.g. Production, RMA, Debug, GageRNR)."""
 
+    @property
+    def id_deterministic(self) -> str:
+        """
+        Deterministic process run ID computed from the current field values.
+
+        Recomputed every time it is accessed, so it always reflects the latest
+        values of ``product_full_name``, ``product_unit_identifier``, and
+        ``process_mode``. Used automatically by ``build()`` when ``id`` is ``None``.
+
+        Note that the deterministic process run ID also includes a fixed timestamp string,
+        from ``UTIL.deterministic_id_process_start_time`` (defaults to "2000-01-01", can
+        be overridden).
+        """
+        return ProcessRun.build_deterministic_process_run_id(
+            self.product_full_name,
+            self.product_unit_identifier,
+            UTIL.deterministic_id_process_start_time,
+            self.process_mode
+        )
+
     def build(self) -> ProcessRunType:
         """
         Build the process run into ``ProcessRunType`` with execution timing,
         status, process metadata, and nested operation runs.
         """
-        process_run = ProcessRunType(process_run_id=self.id,
+        process_run_id = self.id if self.id is not None else self.id_deterministic
+        process_run = ProcessRunType(process_run_id=process_run_id,
                                      product_unit_identifier=self.product_unit_identifier,
                                      product_full_name=self.product_full_name)
         for operation in self.operations:
@@ -752,6 +691,29 @@ class ProcessRun(VersionedManufacturingStep):
         return operation_run
 
     AddOperationRun = add_operation_run
+
+    @staticmethod
+    def build_deterministic_process_run_id(
+            product_full_name: str,
+            identifier: str,
+            process_start_time: str,
+            process_mode: str) -> str:
+        """
+        Build a deterministic process ID from product name, identifier, start time, and process mode.
+
+        Combines all parameters to create a deterministic GUID.
+
+        Args:
+            product_full_name: Full product name (e.g., ProductFamily/ProductName/PartNumber)
+            identifier: Product unit identifier
+            process_start_time: Process start time as a string (e.g., "2000-01-01")
+            process_mode: Process mode string (e.g., Production, RMA, Debug)
+
+        Returns:
+            A deterministic GUID string derived from the combined parameters.
+        """
+        input_text = f"{product_full_name}-{identifier}-{process_start_time}-{process_mode}"
+        return Util.get_deterministic_guid(input_text)
 
 
 @dataclass
