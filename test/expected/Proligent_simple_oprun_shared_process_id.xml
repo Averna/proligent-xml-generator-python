@@ -1,0 +1,37 @@
+<?xml version='1.0' encoding='utf-8'?>
+<Proligent.Datawarehouse xmlns="http://www.averna.com/products/proligent/analytics/DIT/6.85" GenerationTime="2024-01-02T10:00:00-05:00" DataSourceFingerprint="00000000-0000-0000-0000-000000000001">
+  <TopProcessRun ProcessRunId="e22b79b2-8c82-54ac-bfbb-2d87403b5b45" ProcessFullName="PythonLibrary/Process/simple_oprun_shared_process_id" ProductUnitIdentifier="PU-001" ProductFullName="PythonLibrary/Product/simple_oprun_normal_order" ProcessRunStatus="PASS" ProcessRunStartTime="2024-01-02T09:00:00-05:00" ProcessRunEndTime="2024-01-02T09:25:00-05:00" ProcessMode="PROD">
+    <OperationRun OperationRunId="00000000-0000-0000-0000-000000000002" ProcessFullName="PythonLibrary/Process/simple_oprun_shared_process_id" OperationName="Operation/ExtendedValidation" StationFullName="PythonLibrary/Station/simple_oprun_shared_process_id" User="operator_b" OperationStatus="PASS" OperationRunStartTime="2024-01-02T09:00:00-05:00" OperationRunEndTime="2024-01-02T09:25:00-05:00">
+      <Characteristic FullName="Lot" Value="L-9001" />
+      <Document Identifier="00000000-0000-0000-0000-000000000003" Name="Validation Packet" FileName="ValidationPacket.pdf" Description="Evidence package for extended validation operation" />
+      <SequenceRun StartDate="2024-01-02T09:05:00-05:00" EndDate="2024-01-02T09:18:00-05:00" SequenceExecutionStatus="PASS" SequenceRunId="00000000-0000-0000-0000-000000000004" SequenceFullName="Sequence/Secondary" SequenceVersion="2.1" StationFullName="PythonLibrary/Station/simple_oprun_shared_process_id" User="operator_b">
+        <StepRun StepExecutionStatus="PASS" StepRunId="00000000-0000-0000-0000-000000000006" StepName="Continuity" StartDate="2024-01-02T09:06:00-05:00" EndDate="2024-01-02T09:06:00-05:00">
+          <Measure MeasureId="00000000-0000-0000-0000-000000000005" MeasureTime="2024-01-02T09:06:00-05:00" MeasureExecutionStatus="PASS">
+            <Value Type="BOOL">True</Value>
+          </Measure>
+          <Characteristic FullName="Fixture" Value="FX-7" />
+        </StepRun>
+        <StepRun StepExecutionStatus="PASS" StepRunId="00000000-0000-0000-0000-000000000008" StepName="TorqueAudit" StartDate="2024-01-02T09:09:15-05:00" EndDate="2024-01-02T09:09:15-05:00">
+          <Measure MeasureId="00000000-0000-0000-0000-000000000007" MeasureTime="2024-01-02T09:09:15-05:00" Unit="Nm" Symbol="Nm" MeasureExecutionStatus="PASS">
+            <Value Type="REAL">5.8</Value>
+            <Limit LimitExpression="5.5 &lt;= X &lt; 6.1" />
+          </Measure>
+        </StepRun>
+        <StepRun StepExecutionStatus="PASS" StepRunId="00000000-0000-0000-0000-000000000010" StepName="FirmwareCheck" StartDate="2024-01-02T09:12:30-05:00" EndDate="2024-01-02T09:12:30-05:00">
+          <Measure MeasureId="00000000-0000-0000-0000-000000000009" MeasureTime="2024-01-02T09:12:30-05:00" MeasureExecutionStatus="PASS">
+            <Value Type="STRING">FW-1.2.3</Value>
+          </Measure>
+        </StepRun>
+        <StepRun StepExecutionStatus="PASS" StepRunId="00000000-0000-0000-0000-000000000013" StepName="LabelScan" StartDate="2024-01-02T09:15:45-05:00" EndDate="2024-01-02T09:15:45-05:00">
+          <Measure MeasureId="00000000-0000-0000-0000-000000000011" MeasureTime="2024-01-02T09:15:45-05:00" MeasureExecutionStatus="PASS">
+            <Value Type="INTEGER">1001</Value>
+          </Measure>
+          <Document Identifier="00000000-0000-0000-0000-000000000012" Name="Label Image" FileName="LabelImage.png" Description="Captured label image for traceability" />
+        </StepRun>
+      </SequenceRun>
+    </OperationRun>
+  </TopProcessRun>
+  <ProductUnit ProductUnitIdentifier="PU-001" ProductFullName="PythonLibrary/Product/simple_oprun_normal_order">
+    <Characteristic FullName="Serial" Value="PU-001" />
+  </ProductUnit>
+</Proligent.Datawarehouse>
