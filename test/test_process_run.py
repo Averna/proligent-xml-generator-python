@@ -15,73 +15,92 @@ class ProcessRunBuildDeterministicProcessRunIdTests(unittest.TestCase):
         CPDD: {4CABFF4A-F1A0-4C73-AD91-4C84BA2E0E92}
         """
         actual_id = ProcessRun.build_deterministic_process_run_id(
-            "ProductFamily/ProductName/PartNumber",
-            "PROD-12345",
-            "ProcessFamily/ProcessName",
-            "1.0",
-            "PROD"
+            product_full_name="ProductFamily/ProductName/PartNumber",
+            identifier="PROD-12345",
+            process_full_name="ProcessFamily/ProcessName",
+            process_version="1.0",
+            process_mode="PROD",
         )
         self.assertEqual("7af755d8-3ee3-4d09-897e-2e7810170091", actual_id)
 
         # different product_full_name
         actual_id = ProcessRun.build_deterministic_process_run_id(
-            "ProductFamily/ProductName/Different123",
-            "PROD-12345",
-            "ProcessFamily/ProcessName",
-            "1.0",
-            "PROD"
+            product_full_name="ProductFamily/ProductName/Different123",
+            identifier="PROD-12345",
+            process_full_name="ProcessFamily/ProcessName",
+            process_version="1.0",
+            process_mode="PROD",
         )
         self.assertEqual("0a433e5a-2975-4672-9ad4-9d6949802492", actual_id)
 
         # different identifier
         actual_id = ProcessRun.build_deterministic_process_run_id(
-            "ProductFamily/ProductName/PartNumber",
-            "DIFFERENT-99999",
-            "ProcessFamily/ProcessName",
-            "1.0",
-            "PROD"
+            product_full_name="ProductFamily/ProductName/PartNumber",
+            identifier="DIFFERENT-99999",
+            process_full_name="ProcessFamily/ProcessName",
+            process_version="1.0",
+            process_mode="PROD",
         )
         self.assertEqual("68549968-4863-4179-bd03-288af539d32f", actual_id)
 
         # different process_full_name
         actual_id = ProcessRun.build_deterministic_process_run_id(
-            "ProductFamily/ProductName/PartNumber",
-            "PROD-12345",
-            "ProcessFamily/DifferentProcessName",
-            "1.0",
-            "PROD"
+            product_full_name="ProductFamily/ProductName/PartNumber",
+            identifier="PROD-12345",
+            process_full_name="ProcessFamily/DifferentProcessName",
+            process_version="1.0",
+            process_mode="PROD",
         )
         self.assertEqual("d327dcd3-5bb8-4c53-9bc4-d4f75cd77af0", actual_id)
 
         # different process_version
         actual_id = ProcessRun.build_deterministic_process_run_id(
-            "ProductFamily/ProductName/PartNumber",
-            "PROD-12345",
-            "ProcessFamily/ProcessName",
-            "2.0",
-            "PROD"
+            product_full_name="ProductFamily/ProductName/PartNumber",
+            identifier="PROD-12345",
+            process_full_name="ProcessFamily/ProcessName",
+            process_version="2.0",
+            process_mode="PROD",
         )
         self.assertEqual("9e64615b-72dd-48ef-b475-8cff51f3caa2", actual_id)
 
         # different process_mode
         actual_id = ProcessRun.build_deterministic_process_run_id(
-            "ProductFamily/ProductName/PartNumber",
-            "PROD-12345",
-            "ProcessFamily/ProcessName",
-            "1.0",
-            "RMA"
+            product_full_name="ProductFamily/ProductName/PartNumber",
+            identifier="PROD-12345",
+            process_full_name="ProcessFamily/ProcessName",
+            process_version="1.0",
+            process_mode="RMA"
         )
         self.assertEqual("153e2144-9cc7-489f-8191-dc0662aecaf2", actual_id)
 
         # empty process version
         actual_id = ProcessRun.build_deterministic_process_run_id(
-            "ProductFamily/ProductName/PartNumber",
-            "PROD-12345",
-            "ProcessFamily/ProcessName",
-            "",
-            "PROD"
+            product_full_name="ProductFamily/ProductName/PartNumber",
+            identifier="PROD-12345",
+            process_full_name="ProcessFamily/ProcessName",
+            process_version="",
+            process_mode="PROD",
         )
         self.assertEqual("81423af8-ede4-4b27-ade1-7eb95fb59f75", actual_id)
+
+        # all fields empty and null
+        expected_when_all_empty_or_null = "bd64bb8e-fa5b-4f27-a644-2f23600c3b51"
+        actual_id = ProcessRun.build_deterministic_process_run_id(
+            product_full_name="",
+            identifier="",
+            process_full_name="",
+            process_version="",
+            process_mode="",
+        )
+        self.assertEqual(expected_when_all_empty_or_null, actual_id)
+        actual_id = ProcessRun.build_deterministic_process_run_id(
+            product_full_name=None,
+            identifier=None,
+            process_full_name=None,
+            process_version=None,
+            process_mode=None,
+        )
+        self.assertEqual(expected_when_all_empty_or_null, actual_id)
 
     def test_build_deterministic_process_run_id_is_stable_for_same_input(self) -> None:
         """Verify that the same inputs produce the same deterministic ID."""
@@ -203,6 +222,46 @@ class ProcessRunBuildDeterministicProcessRunIdTests(unittest.TestCase):
 
         self.assertIsInstance(id_value, str)
         self.assertEqual(len(id_value), 36)
+
+    def test_build_deterministic_process_run_id_treats_none_as_empty_string(self) -> None:
+        """Verify None inputs are normalized the same as empty strings."""
+        with_none = ProcessRun.build_deterministic_process_run_id(
+            "ProductFamily/ProductName/PartNumber",
+            "PROD-12345",
+            None,
+            None,
+            "Production"
+        )
+        with_empty = ProcessRun.build_deterministic_process_run_id(
+            "ProductFamily/ProductName/PartNumber",
+            "PROD-12345",
+            "",
+            "",
+            "Production"
+        )
+
+        self.assertEqual(with_none, with_empty)
+
+    def test_build_deterministic_process_run_id_accepts_all_none_fields(self) -> None:
+        """Verify the method handles all None inputs and remains deterministic."""
+        first = ProcessRun.build_deterministic_process_run_id(
+            None,
+            None,
+            None,
+            None,
+            None
+        )
+        second = ProcessRun.build_deterministic_process_run_id(
+            "",
+            "",
+            "",
+            "",
+            ""
+        )
+
+        self.assertEqual(first, second)
+        self.assertIsInstance(first, str)
+        self.assertEqual(len(first), 36)
 
     def test_build_deterministic_process_run_id_with_both_empty_process_fields_is_stable(self) -> None:
         """Verify deterministic ID is stable when process full name and version are both empty."""

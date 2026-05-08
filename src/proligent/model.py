@@ -692,11 +692,11 @@ class ProcessRun(VersionedManufacturingStep):
 
     @staticmethod
     def build_deterministic_process_run_id(
-            product_full_name: str,
-            identifier: str,
-            process_full_name: str,
-            process_version: str,
-            process_mode: str) -> str:
+            product_full_name: str | None,
+            identifier: str | None,
+            process_full_name: str | None,
+            process_version: str | None,
+            process_mode: str | None) -> str:
         """
         Build a deterministic process ID from product/process fields and process mode.
 
@@ -712,7 +712,16 @@ class ProcessRun(VersionedManufacturingStep):
         Returns:
             A deterministic GUID string derived from the combined parameters.
         """
-        input_text = f"{product_full_name}-{identifier}-{process_full_name}-{process_version}-{process_mode}"
+        normalized_product_full_name = '' if product_full_name is None else str(product_full_name)
+        normalized_identifier = '' if identifier is None else str(identifier)
+        normalized_process_full_name = '' if process_full_name is None else str(process_full_name)
+        normalized_process_version = '' if process_version is None else str(process_version)
+        normalized_process_mode = '' if process_mode is None else str(process_mode)
+
+        input_text = (
+            f"{normalized_product_full_name}-{normalized_identifier}-"
+            f"{normalized_process_full_name}-{normalized_process_version}-{normalized_process_mode}"
+        )
         return Util.get_deterministic_guid(input_text)
 
 
