@@ -41,7 +41,7 @@ jobs:
           repository-url: https://upload.pypi.org/legacy/
       - name: Upload built distributions
         if: always()
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: dist-artifacts
           path: dist
