@@ -65,6 +65,7 @@ def generate_complex_oprun(
 
         process = warehouse.set_process_run(ProcessRun(
             name="PythonLibrary/Process/complex_oprun",
+            version="2.0",
             process_mode="AUTO",
             product_unit_identifier="PU-COMP-999",
             product_full_name="PythonLibrary/Product/complex_oprun",

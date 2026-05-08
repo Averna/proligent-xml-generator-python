@@ -16,6 +16,9 @@ from test.scenarios.generate_simple_oprun_reverse_order import (
 from test.scenarios.generate_simple_oprun_normal_order import (
     generate_simple_oprun_normal_order,
 )
+from test.scenarios.generate_simple_oprun_shared_process_id import (
+    generate_simple_oprun_shared_process_id,
+)
 from test.xml_scenario_runner import run_xml_scenario
 
 
@@ -61,6 +64,17 @@ class OperationRunsGenerationsScenarios(unittest.TestCase):
             test_name="simple_oprun_normal_order",
             generator=generate_simple_oprun_normal_order,
             expected_filename="Proligent_simple_oprun_normal_order.xml",
+            validator=validator,
+        )
+
+    def test_simple_oprun_shared_process_id(self) -> None:
+        def validator(path: Path) -> None:
+            validate_xml(path)
+
+        run_xml_scenario(
+            test_name="simple_oprun_shared_process_id",
+            generator=generate_simple_oprun_shared_process_id,
+            expected_filename="Proligent_simple_oprun_shared_process_id.xml",
             validator=validator,
         )
 

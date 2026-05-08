@@ -11,7 +11,7 @@
   // Set ruler at 80 for readability
   "editor.rulers": [80, 120],
   // Set tab size per file types
-  "editor.tabSize": 2,
+  "editor.tabSize": 4,
   "[ignore]": {
     "editor.defaultFormatter": "foxundermoon.shell-format"
   },
