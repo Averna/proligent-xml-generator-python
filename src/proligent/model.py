@@ -167,6 +167,9 @@ class Measure(Buildable):
     status: ExecutionStatusKind | None = field(default=None)
     """Execution status emitted as ``MeasureExecutionStatus``."""
 
+    precision: int | None = field(default=None)
+    """Optional numeric precision of the measure value written to the ``Precision`` attribute on ``Value``. Only valid for values of type REAL."""
+
     @staticmethod
     def _init_value(value: bool | str | int | float | datetime.datetime) -> MeasureType.Value:
         """Create a MeasureType.Value object based on the type of ``value``."""
@@ -202,6 +205,8 @@ class Measure(Buildable):
             measure_type.symbol = self.symbol
         if self.status is not None:
             measure_type.measure_execution_status = self.status
+        if self.precision is not None:
+            measure_type.value.precision = self.precision
         return measure_type
 
 
