@@ -146,9 +146,9 @@ def generate_simple_oprun_reverse_order(
 
         operation = OperationRun(
             name="Operation/Example",
-            station="PythonLibrary/Station/simple_oprun_reverse_order",
+            station="XmlGenerator/Station/simple_oprun_reverse_order",
             user="operator",
-            process_name="PythonLibrary/Process/simple_oprun_reverse_order",
+            process_name="XmlGenerator/Process/simple_oprun_reverse_order",
             status=ExecutionStatusKind.PASS,
             start_time=process_start,
             end_time=process_end,
@@ -166,10 +166,10 @@ def generate_simple_oprun_reverse_order(
         )
 
         process = ProcessRun(
-            name="PythonLibrary/Process/simple_oprun_reverse_order",
+            name="XmlGenerator/Process/simple_oprun_reverse_order",
             process_mode="PROD",
             product_unit_identifier="PU-001",
-            product_full_name="PythonLibrary/Product/simple_oprun_reverse_order",
+            product_full_name="XmlGenerator/Product/simple_oprun_reverse_order",
             status=ExecutionStatusKind.PASS,
             start_time=process_start,
             end_time=process_end,
@@ -178,7 +178,7 @@ def generate_simple_oprun_reverse_order(
 
         product_unit = ProductUnit(
             product_unit_identifier="PU-001",
-            product_full_name="PythonLibrary/Product/simple_oprun_reverse_order",
+            product_full_name="XmlGenerator/Product/simple_oprun_reverse_order",
             characteristics=[
                 Characteristic(full_name="Serial", value="PU-001"),
             ],

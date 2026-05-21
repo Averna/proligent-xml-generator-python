@@ -52,21 +52,21 @@ def generate_simple_oprun_shared_process_id(
         # Keep these values aligned with simple_oprun_normal_order so ProcessRunId matches.
         product_unit = warehouse.set_product_unit(ProductUnit(
             product_unit_identifier="PU-001",
-            product_full_name="PythonLibrary/Product/simple_oprun_normal_order",
+            product_full_name="XmlGenerator/Product/simple_oprun_normal_order",
         ))
         product_unit.add_characteristic(Characteristic(full_name="Serial", value="PU-001"))
 
         process = warehouse.set_process_run(ProcessRun(
-            name="PythonLibrary/Process/simple_oprun_normal_order",
+            name="XmlGenerator/Process/simple_oprun_normal_order",
             process_mode="PROD",
             product_unit_identifier="PU-001",
-            product_full_name="PythonLibrary/Product/simple_oprun_normal_order",
+            product_full_name="XmlGenerator/Product/simple_oprun_normal_order",
             start_time=process_start,
         ))
 
         operation = process.add_operation_run(OperationRun(
             name="Operation/ExtendedValidation",
-            station="PythonLibrary/Station/simple_oprun_shared_process_id",
+            station="XmlGenerator/Station/simple_oprun_shared_process_id",
             user="operator_b",
             start_time=process_start,
         ))

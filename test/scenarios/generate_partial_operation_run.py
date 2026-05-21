@@ -42,15 +42,15 @@ def generate_partial_operation_run(
 
         product_unit = ProductUnit(
             product_unit_identifier="PU-PARTIAL-01",
-            product_full_name="PythonLibrary/Product/partial_operation_flow",
+            product_full_name="XmlGenerator/Product/partial_operation_flow",
         )
         warehouse.set_product_unit(product_unit)
 
         process = ProcessRun(
-            name="PythonLibrary/Process/partial_operation_flow",
+            name="XmlGenerator/Process/partial_operation_flow",
             process_mode="AUTO",
             product_unit_identifier="PU-PARTIAL-01",
-            product_full_name="PythonLibrary/Product/partial_operation_flow",
+            product_full_name="XmlGenerator/Product/partial_operation_flow",
             status=ExecutionStatusKind.NOT_COMPLETED,
             start_time=process_start,
         )
@@ -58,7 +58,7 @@ def generate_partial_operation_run(
 
         operation = OperationRun(
             name="Operation/Partial",
-            station="PythonLibrary/Station/partial_operation_flow",
+            station="XmlGenerator/Station/partial_operation_flow",
             user="in-progress.operator",
             status=ExecutionStatusKind.NOT_COMPLETED,
             start_time=process_start,

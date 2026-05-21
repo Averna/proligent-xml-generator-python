@@ -51,7 +51,7 @@ def generate_complex_oprun(
 
         warehouse.set_product_unit(ProductUnit(
             product_unit_identifier="PU-COMP-999",
-            product_full_name="PythonLibrary/Product/complex_oprun",
+            product_full_name="XmlGenerator/Product/complex_oprun",
             manufacturer='Averna',
             creation_time=process_start,
             manufacturing_time=process_start,
@@ -64,17 +64,17 @@ def generate_complex_oprun(
         ))
 
         process = warehouse.set_process_run(ProcessRun(
-            name="PythonLibrary/Process/complex_oprun",
+            name="XmlGenerator/Process/complex_oprun",
             version="2.0",
             process_mode="AUTO",
             product_unit_identifier="PU-COMP-999",
-            product_full_name="PythonLibrary/Product/complex_oprun",
+            product_full_name="XmlGenerator/Product/complex_oprun",
             start_time=process_start,
         ))
 
         operation = process.add_operation_run(OperationRun(
             name="Operation/Comprehensive",
-            station="PythonLibrary/Station/complex_oprun",
+            station="XmlGenerator/Station/complex_oprun",
             user="chief.operator",
             start_time=process_start,
             test_position_name="UUT1",
@@ -188,6 +188,27 @@ def generate_complex_oprun(
         step_run_time = _default_tz_datetime(safety_start, minute=3)
         safety_sequence.add_step_run(
             StepRun(
+                name="RawMeasure",
+                status=ExecutionStatusKind.PASS,
+                start_time=step_run_time,
+                end_time=step_run_time,
+                measure=Measure(
+                        value=123.456789,
+                        time=step_run_time,
+                        unit="Amp",
+                        symbol="A",
+                        precision=3,
+                        status=ExecutionStatusKind.PASS,
+                        limit=Limit(
+                            LimitExpression.LOWERBOUND_LEQ_X_LE_HIGHER_BOUND,
+                            lower_bound=100.0,
+                            higher_bound=130.0,
+                        ),
+                    ),
+            )
+        )
+        safety_sequence.add_step_run(
+            StepRun(
                 name="OverCurrentDetection",
                 status=ExecutionStatusKind.FAIL,
                 start_time=step_run_time,
@@ -197,6 +218,7 @@ def generate_complex_oprun(
                         time=step_run_time,
                         unit="Amp",
                         symbol="A",
+                        precision=3,
                         status=ExecutionStatusKind.FAIL,
                         limit=Limit(
                             LimitExpression.LOWERBOUND_LEQ_X_LE_HIGHER_BOUND,
