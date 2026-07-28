@@ -46,7 +46,7 @@ Suggestion: use `proligent-xml-generator-python-demo` from averna-reuse.
 From the other project, install the freshly built wheel:
 
 ```powershell
-$version = '1.1.2' # change this
+$version = '1.1.3' # change this
 $pathToPackage = "..\proligent-xml-generator-python\dist\proligent_xml_generator-$version-py3-none-any.whl"
 pip install --force-reinstall $pathToPackage
 ```
