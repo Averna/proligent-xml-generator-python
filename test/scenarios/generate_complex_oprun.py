@@ -12,6 +12,7 @@ from proligent.model import (
     Limit,
     LimitExpression,
     Measure,
+    MeasureKind,
     OperationRun,
     ProcessRun,
     ProductUnit,
@@ -44,6 +45,8 @@ def generate_complex_oprun(
         safety_end = _default_tz_datetime(start_timestamp, 0, 23)
         diagnostics_start = _default_tz_datetime(start_timestamp, 0, 32)
         diagnostics_end = _default_tz_datetime(start_timestamp, 0, 47)
+        force_measure_type_start = _default_tz_datetime(start_timestamp, 0, 48)
+        force_measure_type_end = _default_tz_datetime(start_timestamp, 0, 49)
 
         warehouse = DataWareHouse(
             generation_time=generation_time,
@@ -344,6 +347,68 @@ def generate_complex_oprun(
         diagnostics_sequence.complete(
             status=ExecutionStatusKind.PASS,
             end_time=diagnostics_end,
+        )
+
+        force_measure_type_sequence = operation.add_sequence_run(SequenceRun(
+            name="Sequence/ForceMeasureTypes",
+            user="chief.operator",
+            start_time=force_measure_type_start
+        ))
+
+        limit = Limit(LimitExpression.LOWERBOUND_LEQ_X_LE_HIGHER_BOUND, lower_bound=123, higher_bound=124)
+
+        step_run_time = _default_tz_datetime(force_measure_type_start, second=1)
+        force_measure_type_sequence.add_step_run(
+            StepRun(
+                name="RealValue",
+                status=ExecutionStatusKind.PASS,
+                start_time=step_run_time,
+                end_time=step_run_time,
+                measure=Measure(
+                    value="123.456",
+                    force_measure_kind=MeasureKind.REAL,
+                    limit=limit,
+                    time=step_run_time,
+                    status=ExecutionStatusKind.PASS,
+                ),
+            )
+        )
+        step_run_time = _default_tz_datetime(force_measure_type_start, second=2)
+        force_measure_type_sequence.add_step_run(
+            StepRun(
+                name="RealAsStringValue",
+                status=ExecutionStatusKind.PASS,
+                start_time=step_run_time,
+                end_time=step_run_time,
+                measure=Measure(
+                    value="123.456",
+                    force_measure_kind=MeasureKind.STRING,
+                    limit=limit,
+                    time=step_run_time,
+                    status=ExecutionStatusKind.PASS,
+                ),
+            )
+        )
+        step_run_time = _default_tz_datetime(force_measure_type_start, second=3)
+        force_measure_type_sequence.add_step_run(
+            StepRun(
+                name="IntAsRealValue",
+                status=ExecutionStatusKind.PASS,
+                start_time=step_run_time,
+                end_time=step_run_time,
+                measure=Measure(
+                    value=123,
+                    force_measure_kind=MeasureKind.REAL,
+                    limit=limit,
+                    time=step_run_time,
+                    status=ExecutionStatusKind.PASS,
+                ),
+            )
+        )
+
+        force_measure_type_sequence.complete(
+            status=ExecutionStatusKind.PASS,
+            end_time=force_measure_type_end,
         )
 
         operation.complete(

@@ -77,6 +77,26 @@
         <Characteristic FullName="Routing" Value="Manual" />
         <Document Identifier="00000000-0000-0000-0000-000000000021" Name="Diagnostics Matrix" FileName="DiagnosticsMatrix.xlsx" Description="Manual routing instructions for diagnostics sequence." />
       </SequenceRun>
+      <SequenceRun StartDate="2024-04-01T07:48:00-05:00" EndDate="2024-04-01T07:49:00-05:00" SequenceExecutionStatus="PASS" SequenceRunId="00000000-0000-0000-0000-000000000031" SequenceFullName="Sequence/ForceMeasureTypes" StationFullName="XmlGenerator/Station/complex_oprun" User="chief.operator">
+        <StepRun StepExecutionStatus="PASS" StepRunId="00000000-0000-0000-0000-000000000033" StepName="RealValue" StartDate="2024-04-01T07:48:01-05:00" EndDate="2024-04-01T07:48:01-05:00">
+          <Measure MeasureId="00000000-0000-0000-0000-000000000032" MeasureTime="2024-04-01T07:48:01-05:00" MeasureExecutionStatus="PASS">
+            <Value Type="REAL">123.456</Value>
+            <Limit LimitExpression="123 &lt;= X &lt; 124" />
+          </Measure>
+        </StepRun>
+        <StepRun StepExecutionStatus="PASS" StepRunId="00000000-0000-0000-0000-000000000035" StepName="RealAsStringValue" StartDate="2024-04-01T07:48:02-05:00" EndDate="2024-04-01T07:48:02-05:00">
+          <Measure MeasureId="00000000-0000-0000-0000-000000000034" MeasureTime="2024-04-01T07:48:02-05:00" MeasureExecutionStatus="PASS">
+            <Value Type="STRING">123.456</Value>
+            <Limit LimitExpression="123 &lt;= X &lt; 124" />
+          </Measure>
+        </StepRun>
+        <StepRun StepExecutionStatus="PASS" StepRunId="00000000-0000-0000-0000-000000000037" StepName="IntAsRealValue" StartDate="2024-04-01T07:48:03-05:00" EndDate="2024-04-01T07:48:03-05:00">
+          <Measure MeasureId="00000000-0000-0000-0000-000000000036" MeasureTime="2024-04-01T07:48:03-05:00" MeasureExecutionStatus="PASS">
+            <Value Type="REAL">123</Value>
+            <Limit LimitExpression="123 &lt;= X &lt; 124" />
+          </Measure>
+        </StepRun>
+      </SequenceRun>
     </OperationRun>
   </TopProcessRun>
   <ProductUnit ProductUnitIdentifier="PU-COMP-999" ProductFullName="XmlGenerator/Product/complex_oprun" Scrapped="true" ScrappedTime="2024-04-01T07:50:00-05:00" CreationTime="2024-04-01T07:00:00-05:00" ManufacturingTime="2024-04-01T07:00:00-05:00" ByManufacturer="Averna">

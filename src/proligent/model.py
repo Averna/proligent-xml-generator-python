@@ -170,9 +170,86 @@ class Measure(Buildable):
     precision: int | None = field(default=None)
     """Optional numeric precision of the measure value written to the ``Precision`` attribute on ``Value``. Only valid for values of type REAL."""
 
+    force_measure_kind: MeasureKind | None = field(default=None)
+    """
+    Override the automatically inferred ``MeasureKind``.
+
+    When set, the value must be compatible with the specified kind — an attempt
+    is made to cast it (e.g. ``int(value)`` for INTEGER, ``float(value)`` for
+    REAL) and a ``ValueError`` is raised if the cast fails.
+    """
+
     @staticmethod
-    def _init_value(value: bool | str | int | float | datetime.datetime) -> MeasureType.Value:
-        """Create a MeasureType.Value object based on the type of ``value``."""
+    def _init_value(value: bool | str | int | float | datetime.datetime, force_measure_kind: MeasureKind | None = None) -> MeasureType.Value:
+        """Create a MeasureType.Value object based on ``value`` and optional forced kind."""
+        if force_measure_kind is not None:
+            return Measure._init_value_forced_kind(value, force_measure_kind)
+        return Measure._init_value_inferred_kind(value)
+
+    @staticmethod
+    def _init_value_forced_kind(value: bool | str | int | float | datetime.datetime,
+                                force_measure_kind: MeasureKind) -> MeasureType.Value:
+        """
+        Validate compatibility with a forced kind and create the MeasureType.Value.
+
+        String values are always accepted for any kind; the string must parse to
+        the target type (e.g. ``int("123")`` for INTEGER, ``float("3.14")`` for
+        REAL, ``'true'/'false'`` case-insensitively for BOOL).
+        Native numeric types may also cross-convert (e.g. ``int`` is valid for
+        REAL).
+        """
+        try:
+            if force_measure_kind == MeasureKind.STRING:
+                pass  # str() is always valid
+            elif force_measure_kind == MeasureKind.BOOL:
+                if isinstance(value, bool):
+                    pass
+                elif isinstance(value, str):
+                    if value.lower() not in ('true', 'false'):
+                        raise ValueError(
+                            f"expected 'true' or 'false' (case-insensitive), got {value!r}"
+                        )
+                else:
+                    raise ValueError(
+                        f"expected bool or boolean string, got {type(value).__name__}"
+                    )
+            elif force_measure_kind == MeasureKind.INTEGER:
+                if isinstance(value, bool):
+                    raise ValueError(f"expected int or integer string, got bool")
+                elif isinstance(value, str):
+                    int(value)
+                elif not isinstance(value, int):
+                    raise ValueError(
+                        f"expected int or integer string, got {type(value).__name__}"
+                    )
+            elif force_measure_kind == MeasureKind.REAL:
+                if isinstance(value, bool):
+                    raise ValueError(f"expected numeric or numeric string, got bool")
+                elif isinstance(value, str):
+                    float(value)
+                elif not isinstance(value, (int, float)):
+                    raise ValueError(
+                        f"expected numeric or numeric string, got {type(value).__name__}"
+                    )
+            elif force_measure_kind == MeasureKind.DATETIME:
+                if isinstance(value, (datetime.datetime, str)):
+                    pass
+                else:
+                    raise ValueError(
+                        f"expected datetime or datetime string, got {type(value).__name__}"
+                    )
+            else:
+                raise ValueError(f"Unsupported MeasureKind: {force_measure_kind}")
+        except (ValueError, TypeError) as exc:
+            raise ValueError(
+                f"Value {value!r} of type '{type(value).__name__}' is not compatible "
+                f"with {force_measure_kind}: {exc}"
+            ) from exc
+        return MeasureType.Value(str(value), force_measure_kind)
+
+    @staticmethod
+    def _init_value_inferred_kind(value: bool | str | int | float | datetime.datetime) -> MeasureType.Value:
+        """Infer MeasureKind from value type and create the MeasureType.Value."""
         if type(value) is str:
             kind = MeasureKind.STRING
         elif type(value) is bool:
@@ -192,7 +269,7 @@ class Measure(Buildable):
         Build the Measure into the XML-ready ``MeasureType`` with value,
         timestamps, limits, and metadata populated.
         """
-        measure_type = MeasureType(value=Measure._init_value(self.value),
+        measure_type = MeasureType(value=Measure._init_value(self.value, self.force_measure_kind),
                                    measure_id=self.id,
                                    measure_time=UTIL.format_datetime(self.time))
         if self.limit is not None:
