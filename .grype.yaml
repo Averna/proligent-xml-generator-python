@@ -1,0 +1,5 @@
+---
+# Avoid scanning local virtual environments as repository dependencies.
+exclude:
+  - "**/venv/**"
+  - "**/.venv/**"

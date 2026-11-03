@@ -13,18 +13,22 @@ on:
 
 permissions:
   contents: read
-  pull-requests: write
 
 jobs:
   lint:
     name: Lint code
     runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      pull-requests: write
     steps:
       - name: Checkout repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
       - name: Lint code
         # cspell:ignore oxsecurity
-        uses: oxsecurity/megalinter@62c799d895af9bcbca5eacfebca29d527f125a57 # v9.1.0
+        uses: oxsecurity/megalinter@ef3e84b8b836d76db562d0f3ed7da61e8fd538bc # v9.6.0
         env:
           GITHUB_TOKEN: ${{ secrets.github_token }}
 
@@ -39,6 +43,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
         with:
