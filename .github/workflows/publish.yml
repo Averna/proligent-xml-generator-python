@@ -40,6 +40,9 @@ jobs:
       - name: Publish to PyPI
         uses: pypa/gh-action-pypi-publish@7245906fb61fa33a13554f9d5fb856fe61758086 # v1.14.3
         with:
+          # Do not include user and password for security reasons.
+          # It uses "Trusted Publisher", which can be defined in PyPI.
+          # https://pypi.org/manage/project/proligent-xml-generator/settings/publishing/
           repository-url: https://upload.pypi.org/legacy/
       - name: Upload built distributions
         if: always()
