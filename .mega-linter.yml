@@ -4,7 +4,6 @@
 
 # cspell:ignore DEVSKIM
 DISABLE_LINTERS:
-  - ACTION_ZIZMOR
   - REPOSITORY_DEVSKIM
 FLAVOR_SUGGESTIONS: false
 # Force warnings into errors
