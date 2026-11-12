@@ -13,10 +13,9 @@
 Python™ library for generating Proligent™ XML files. It provides a simple,
 structured API for building valid import files, reducing manual XML writing and
 ensuring consistent data formatting. These files are used to import data into
-[Proligent™ Cloud][cloud] and [Proligent™ Analytics][analytics].
+[Proligent™][proligent].
 
-[cloud]: https://www.averna.com/en/products/smart-data-management/proligent-cloud
-[analytics]: https://www.averna.com/en/products/proligent-analytics
+[proligent]: https://www.averna.com/en/products/smart-data-management/proligent
 
 > **Tip:** Refer to the [Proligent™ Manufacturing Information Model][model] to
 > learn how to structure and map your data in Proligent™.
