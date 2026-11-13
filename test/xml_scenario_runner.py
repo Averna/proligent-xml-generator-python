@@ -1,10 +1,8 @@
 from __future__ import annotations
 
 import difflib
-import re
 import shutil
 import sys
-import uuid
 import xml.etree.ElementTree as ET
 from datetime import datetime
 from pathlib import Path

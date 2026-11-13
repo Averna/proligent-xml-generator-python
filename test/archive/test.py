@@ -1,5 +1,4 @@
 from proligent_processor import ProligentProcessor
-from datawarehouse.datawarehouse_model import ExecutionStatusKind
 import datetime
 
 # Create the data warehouse

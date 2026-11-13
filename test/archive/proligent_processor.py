@@ -7,7 +7,6 @@ from datawarehouse.datawarehouse_measure import MeasureType
 from datawarehouse.datawarehouse_model import (
     ExecutionStatusKind,
     MeasureKind,
-    CustomDataType,
 )
 from datawarehouse.datawarehouse_product_unit import ProductUnitType
 import datetime
