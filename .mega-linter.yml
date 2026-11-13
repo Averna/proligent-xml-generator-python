@@ -17,8 +17,3 @@ YAML_YAMLLINT_CONFIG_FILE: .yamllint.yml
 # Allow zizmor to use GITHUB_TOKEN for online audits.
 ACTION_ZIZMOR_UNSECURED_ENV_VARIABLES:
   - GITHUB_TOKEN
-
-# Temporarily disabling all Python linter. TODO: Re-enable them and fix issues.
-DISABLE:
-  - PYTHON
-  - COPYPASTE

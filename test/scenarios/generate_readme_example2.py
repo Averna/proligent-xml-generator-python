@@ -27,7 +27,7 @@ def generate_readme_example2(
     with mock_util_timezone("Europe/Paris"), mock_datetime_now(frozen_timestamp):
         warehouse = DataWareHouse(generation_time=frozen_timestamp)
 
-        product = warehouse.set_product_unit(ProductUnit(
+        warehouse.set_product_unit(ProductUnit(
             product_unit_identifier='DutSerialNumber',
             product_full_name='Product/readme_example2',
             manufacturer='Averna'

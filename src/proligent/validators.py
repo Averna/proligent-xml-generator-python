@@ -5,10 +5,6 @@ This module contains validation functions used across the data model
 to ensure data integrity and compliance with Proligent requirements.
 """
 
-import os
-import re
-
-
 def _extract_filename(file_path: str) -> str:
     """
     Extract the filename from a path, handling both Windows and Unix separators.
