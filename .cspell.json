@@ -15,24 +15,32 @@
     "yaml"
   ],
   // Ignore file list
+  // about datawarehouse: these files have some typos, but come from another project;
+  // should be fixed there instead
   "ignorePaths": [
     ".cspell.json",
     ".git",
     ".gitignore",
     ".vscode",
+    "src/proligent/datawarehouse/**",
     "*.xml",
     "*.xsd",
     "requirements.txt"
   ],
   // Custom project dictionary
   "words": [
-    "Averna",
-    "Datawarehouse",
+    "averna",
+    "cpdd",
+    "datawarehouse",
+    "dflt",
     "docstrings",
+    "higherbound",
+    "kwdefaults",
     "kics",
+    "lineterm",
     "lowerbound",
     "oprun",
-    "Proligent",
+    "proligent",
     "pypa",
     "pypi",
     "pyproject",
@@ -42,6 +50,7 @@
     "setuptools",
     "sitecustomize",
     "testpypi",
+    "tofile",
     "venv",
     "xsdata",
     "zizmor"
